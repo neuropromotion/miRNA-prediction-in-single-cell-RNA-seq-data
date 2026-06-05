@@ -1,0 +1,251 @@
+# GSE299340 / GSM9037559
+```{r}
+sample_id = 3
+main_path <- '/mnt/jack-5/amismailov/miRNA_study/breast/'
+type <- 'breast'
+```
+
+
+# LOAD
+```{r}
+library(Seurat) 
+#saveRDS(seu, file = paste0(main_path, 'rds/', sample_id, '.rds'))
+seu <- readRDS(file = paste0(main_path, 'rds/', sample_id, '.rds'))
+```
+ 
+
+# stantard workflow
+```{r}
+library(DoubletFinder)
+deduplex <- function(obj){
+  nExp <- round(0.05 * ncol(obj))
+  
+  obj <- doubletFinder(obj, PCs = 1:10, pN = 0.25, pK = 0.09, 
+                       nExp = nExp, reuse.pANN = NULL, sct = FALSE)
+  
+  df_cols <- grep("DF.classifications", colnames(obj@meta.data), value = TRUE)
+  df_col <- df_cols[1]
+  cat("Doublet column:", df_col, "\n")
+  
+  cat('Cells Before:', ncol(obj), '\n')
+  
+  # Фикс: Индексация по meta.data напрямую (без subset/FetchData)
+  singlet_idx <- which(obj@meta.data[[df_col]] == "Singlet")
+  obj <- obj[, singlet_idx]
+  
+  cat('Cells After:', ncol(obj), '\n')
+  return(obj)
+}
+stantard_workflow <- function(seu, n_components=15, res=0.1){
+  seu <- NormalizeData(seu)                             
+  seu <- FindVariableFeatures(seu, selection.method = "vst", nfeatures = 2000)   
+  seu <- ScaleData(seu, features = rownames(seu)) 
+  seu <- RunPCA(seu, features = VariableFeatures(object = seu))
+  seu <- FindNeighbors(seu, reduction = "pca", dims = 1:n_components)
+  seu <- FindClusters(seu, resolution = res)
+  seu <- RunUMAP(seu, reduction = "pca", dims = 1:n_components)
+  seu <- deduplex(seu)
+  return(seu)
+} # Norm, Scale, PCA, UMAP
+
+change_n <- function(seu, res=0.1, n=10){
+  seu <- FindNeighbors(seu, dims = 1:n)
+  seu <- FindClusters(seu, res=res)
+  seu <- RunUMAP(seu, dims = 1:n)
+  return(seu)
+}
+```
+
+
+# DATA LOAD
+```{r}
+library(Matrix)
+library(Seurat)
+library(data.table)
+
+path <- paste0(main_path, sample_id)
+
+# counts
+counts <- readMM(file.path(path, "matrix.mtx.gz"))
+
+# barcodes
+barcodes <- fread(file.path(path, "barcodes.tsv.gz"), header = FALSE)[[1]]
+
+# features
+features <- fread(file.path(path, "features.tsv.gz"), header = FALSE)
+colnames(features) <- c("feature_id", "feature_name", 'x')
+features$x = NULL
+
+features$feature_name <- make.unique(features$feature_name)
+rownames(counts) <- features$feature_name
+colnames(counts) <- barcodes
+
+seu <- CreateSeuratObject(
+  counts = counts,
+  project = as.character(sample_id)
+)
+seu[["RNA"]]@meta.data$gene_id <- features$feature_id
+seu[["RNA"]]@meta.data$gene_name <- features$feature_name # save HGNC: BEST practice
+print(seu)
+```
+
+
+# QC
+```{r}
+# QC метрики
+seu[["percent.mt"]] <- PercentageFeatureSet(seu, pattern = "^MT-")   
+seu[["percent.ribo"]] <- PercentageFeatureSet(seu, pattern = "^RP[SL]")
+
+p1 <- VlnPlot(seu, features='nFeature_RNA', layer='counts', pt.size=0)
+p2 <- VlnPlot(seu, features='nCount_RNA', layer='counts', pt.size=0)
+p3 <- VlnPlot(seu, features='percent.mt', layer='counts', pt.size=0)
+
+p1
+p2
+p3
+
+```
+
+# Filtering + standard workflow
+```{r} 
+set.seed(123)
+seu <- subset(seu, subset = percent.mt < 15 & nFeature_RNA > 300 & nFeature_RNA < 4e3 & nCount_RNA < 10e4) # ФИЛЬТРЫ!
+
+seu <- stantard_workflow(seu, res=0.1, n_components = 5)
+
+DimPlot(seu, reduction = 'umap', label = T)
+```
+# ЕСЛИ ХОЧЕШЬ ПОМЕНЯТЬ КОЛИЧЕСТВО КОМПОНЕНТ!
+```{r}
+seu <- change_n(seu, n=15)
+
+DimPlot(seu, reduction = 'umap', label = T)
+```
+
+# Differentially expressed genes
+```{r}
+
+FAM <- FindAllMarkers(seu,
+                      logfc.threshold = 0.25, 
+                      min.pct = 0.1,
+                      only.pos = TRUE,
+                      test.use = 'wilcox',
+                      layer = 'data')
+
+FAM <- FAM[FAM$p_val_adj<0.05,]
+
+
+
+clusters <- names(table(Idents(seu)))
+
+top_genes <- list()
+for (cl in clusters) {
+  cluster_genes <- FAM$gene[FAM$cluster == cl][1:30]  
+  top_genes[[as.character(cl)]] <- cluster_genes
+}
+top_genes
+```
+
+
+```{r}
+FeaturePlot(seu, 'EGFR', order=T)
+DimPlot(seu, label=T)
+```
+
+# COPYKAT
+```{r}
+library(copykat)
+
+seu_subset <- subset(seu, idents=c('2', '0', '6')) # ВЫБИРАЕШЬ РАКОВЫЙ и ИММУННЫЙ КЛАСТЕР
+
+immune_clusters <- c(2) # ВЫБИРАЕШЬ ИММУННЫЙ КЛАСТЕР
+
+background <- colnames(seu_subset)[seu_subset$seurat_clusters %in% immune_clusters]
+
+counts <- GetAssayData(seu_subset, layer = "counts", assay = "RNA")
+
+copykat_res <- copykat(
+  rawmat          = as.matrix(counts),
+  id.type         = "S",
+  ngene.chr       = 5,
+  win.size        = 25, 
+  norm.cell.names = background,
+  distance        = "pearson",
+  n.cores         = 8,
+  KS.cut          = 0.1,           # Strict cutoff
+  plot            = F,
+  output.seg      = F
+)
+rm(counts)
+gc()
+```
+
+```{r}
+pred <- data.frame(copykat_res$prediction)
+seu_subset$copykat_pred <- pred$copykat.pred[match(colnames(seu_subset), pred$cell.names)]
+
+DimPlot(seu_subset, group.by = "copykat_pred")
+DimPlot(seu_subset, label=T)
+```
+ 
+# Rename clusters 
+```{r}
+new_cluster_names <- c( 
+  '0' = 'T cells', 
+  '1' = 'TAMs', 
+  '2' = 'Malignant cells',
+  '4' = 'Fibroblasts',
+  
+  '3' = 'Remove'
+)
+seu <- RenameIdents(seu, new_cluster_names)  
+seu$Annotation <- as.character(Idents(seu))
+
+#seu <- subset(seu, idents='Remove', invert=T)
+DimPlot(seu, reduction = 'umap', label = T)
+```
+
+# GO analysis
+```{r}
+#### Differentially expressed genes
+FAM <- FindAllMarkers(seu,
+                      logfc.threshold = 0.25, 
+                      min.pct = 0.1,
+                      only.pos = TRUE,
+                      test.use = 'wilcox',
+                      layer = 'data')
+
+FAM <- FAM[FAM$p_val_adj<0.05,]
+
+
+clusters <- names(table(Idents(seu)))
+top_genes <- list()
+for (cl in clusters) {
+  cluster_genes <- FAM$gene[FAM$cluster == cl][1:200]  
+  top_genes[[as.character(cl)]] <- cluster_genes
+}
+####################
+```
+
+```{r}
+top_genes$`Malignant cells`
+```
+
+
+
+
+```{r}
+library(clusterProfiler)
+library(org.Hs.eg.db)
+
+res <- enrichGO(gene = top_genes$`Malignant cells`,
+                    OrgDb = org.Hs.eg.db,
+                    keyType = "SYMBOL",
+                    ont = "BP",
+                    pAdjustMethod = "BH",
+                    qvalueCutoff = 0.05)
+ 
+# визуализация
+dotplot(res, showCategory=10) 
+```
+ 

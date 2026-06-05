@@ -1,0 +1,261 @@
+# collect
+```{r}
+# sample_id = 5
+# type <- 'breast'
+# 
+#
+library(Seurat)
+library(dplyr)
+
+path <- '/mnt/jack-5/amismailov/miRNA_study/cancers' 
+types <- list.dirs(path, recursive=F, full.names = F)
+ 
+
+n_datasets <- c(
+  'RCC' = 5,
+  'breast' = 5,
+  'col' = 5,
+  'ovarian_met' = 5,
+  'cervic' = 5,
+  'DLBCL' = 6,
+  'ICC' = 5,
+  'pancreas' = 5,
+  'LUAD_metastasis' = 7,
+  'colorectal_met' = 5,
+  'LUAD' = 5, 
+  'breast_met' = 5,
+  'HCC' = 5,
+  'thyroid' = 6,
+  'met_cholangiocarcinoma' = 5,
+  'GC' = 5,
+  'thyroid_met' = 5,
+  'pbmc' = 5,
+  'ovarian' = 6,
+  'mel' = 5, 
+  'ccRCC-BM' = 6, 
+  'GCM' = 5,
+  'cSCC' = 5
+)
+
+for (type in types){
+  cat('Starting process type: ', type, '\n')
+  for (sample_id in 1:n_datasets[[type]]){
+      cat(sample_id, '/', n_datasets[type], '\n')
+    
+      main_path <- paste0('/mnt/jack-5/amismailov/miRNA_study/cancers/', type, '/')
+      
+      
+      seu <- readRDS(file = paste0(main_path, 'rds/', sample_id, '.rds'))
+      
+      DefaultAssay(seu) <- "miRNA_XGB" 
+      
+      deg_list <- list()
+      clusters <- as.vector(unique(Idents(seu)))
+      
+      #print(clusters)
+      
+      target_clusters <- c('Fibroblasts', 'TAMs', 'Malignant cells', 'Endothelial cells', 'Neutrophiles', 'T cells')
+      
+      
+      clusters <- levels(Idents(seu))
+      robust_markers <- list()
+      
+      for (cl1 in intersect(clusters, target_clusters)) {
+        
+        gene_lists <- list()  # сюда будем накапливать результаты для одного cl1
+        
+        for (cl2 in setdiff(clusters, cl1)) {
+          
+          res <- FindMarkers(
+            seu,
+            ident.1 = cl1,
+            ident.2 = cl2,
+            assay = "miRNA_XGB",
+            logfc.threshold = 0.25,
+            min.pct = 0.1,
+            only.pos = TRUE
+          )
+          
+          res <- res[res$p_val_adj < 0.05, ]
+          
+          gene_lists[[cl2]] <- rownames(res)
+        }
+        
+        # пересечение всех сравнений для cl1
+        robust_genes <- Reduce(intersect, gene_lists)
+        
+        robust_markers[[cl1]] <- robust_genes
+      }
+      
+      
+      
+      # IMMUNE
+      
+      immune_clusters <- c("T cells", "TAMs", 'DCs', 'Dendritic cells', 'B cells', 'T/B lymphocytes', 'Neutrophiles', 'Cycling Immune', 'Plasmacytes',
+                           'NK cells', 'NK_cells', 'pDCs', 'Lymphocytes', 'plasmacytes')
+      
+      current_set <- intersect(c("T cells", "TAMs"), clusters)
+      
+      if(length(current_set) == 2){
+      
+        other_clusters <- setdiff(clusters, immune_clusters)
+        
+        gene_lists <- list()
+        
+        for (cl2 in other_clusters) {
+          
+          res <- FindMarkers(
+            seu,
+            ident.1 = current_set,  # объединённая группа
+            ident.2 = cl2,
+            assay = "miRNA_XGB",
+            logfc.threshold = 0.25,
+            min.pct = 0.1,
+            only.pos = TRUE
+          )
+          
+          res <- res[res$p_val_adj < 0.05, ]
+          
+          gene_lists[[cl2]] <- rownames(res)
+        }
+        
+        # пересечение всех сравнений
+        robust_immune_markers <- Reduce(intersect, gene_lists)
+        
+        robust_markers$T_CELL_TAMs <- robust_immune_markers
+      }
+      
+      robust_df <- stack(robust_markers)
+      colnames(robust_df) <- c("miRNA", "Cluster")
+      
+       
+       
+      write.csv(
+        robust_df,
+        file = paste0('/mnt/jack-5/amismailov/miRNA_study/cancers/', type, '/DEGs/', sample_id, '_h.csv'),
+        row.names = FALSE
+      )
+
+  }
+}
+```
+
+# intersection
+```{r}
+for (type in types){
+
+  cat('Starting process type: ', type, '\n') 
+  #files <- list.files(paste0("/home/amismailov/MIR/DEGs/", type, "/harsh/"), pattern="_robust.csv$", full.names = TRUE)
+  files <- list.files(paste0('/mnt/jack-5/amismailov/miRNA_study/cancers/', type, '/DEGs/'), pattern="_h.csv$", full.names = TRUE)
+  # Список для хранения df каждого файла
+  df_list <- lapply(files, read.csv)
+
+  library(dplyr)
+  cluster_miRNA_list <- list()
+  
+  for (df in df_list) {
+    for (cl in unique(df$Cluster)) {
+      if (!cl %in% names(cluster_miRNA_list)) {
+        cluster_miRNA_list[[cl]] <- list()
+      }
+      cluster_miRNA_list[[cl]] <- append(cluster_miRNA_list[[cl]], list(df$miRNA[df$Cluster == cl]))
+    }
+  }
+
+  robust_cluster_miRNA <- list()
+  for (cl in names(cluster_miRNA_list)) {
+    # объединяем все векторы для данного кластера в один вектор
+    all_miRNAs <- unlist(cluster_miRNA_list[[cl]])
+    # считаем, сколько раз каждая miRNA встречается
+    miRNA_counts <- table(all_miRNAs)
+    # берём только те, что встречаются хотя бы 3 раза
+    robust_cluster_miRNA[[cl]] <- names(miRNA_counts[miRNA_counts >= 2])
+  }
+
+  robust_df <- stack(robust_cluster_miRNA)
+  colnames(robust_df) <- c("miRNA", "Cluster")
+  
+  write.csv(
+    robust_df, 
+    file = paste0('/mnt/jack-5/amismailov/miRNA_study/cancers/', type, '/DEGs/intersection_XGB.csv'),
+    row.names = FALSE
+  )
+}
+```
+
+
+
+# analyze
+```{r}
+library(dplyr)
+ 
+
+all_df_list <- list()
+
+for (type in types) {
+  file_path <- paste0('/mnt/jack-5/amismailov/miRNA_study/cancers/', type, '/DEGs/intersection_XGB.csv')
+  
+  if (!file.exists(file_path)) next
+  
+  df <- read.csv(file_path)
+  df$type <- type
+  all_df_list[[type]] <- df
+}
+
+# Объединяем все
+all_df <- bind_rows(all_df_list)
+
+# --- Исключаем объединённый кластер T_CELL_TAMs для фильтрации ---
+all_df_no_union <- all_df %>% filter(Cluster != "T_CELL_TAMs")
+
+# --- Считаем сколько разных кластеров на одну miRNA ---
+cluster_count <- all_df_no_union %>%
+  group_by(miRNA) %>%
+  summarize(n_clusters = n_distinct(Cluster), .groups='drop')
+
+# оставляем только miRNA, уникальные для одного кластера
+unique_miRNA <- cluster_count %>% filter(n_clusters == 1) %>% pull(miRNA)
+
+all_df_unique <- all_df %>% filter(miRNA %in% unique_miRNA)
+
+# --- Считаем, в скольких типах рака встречается каждая miRNA для данного кластера ---
+miRNA_cancer_count <- all_df_unique %>%
+  group_by(Cluster, miRNA) %>%
+  summarize(n_cancer_types = n_distinct(type), .groups='drop')
+
+# --- Добавляем колонку n_cancer_types ---
+all_df_final <- all_df_unique %>%
+  left_join(miRNA_cancer_count, by = c("Cluster", "miRNA"))
+
+# --- Сортировка внутри кластера по убыванию n_cancer_types ---
+all_df_final_sorted <- all_df_final %>%
+  group_by(Cluster) %>%
+  arrange(desc(n_cancer_types), .by_group = TRUE) %>%
+  ungroup()
+
+
+write.csv(all_df_final_sorted, "/home/amismailov/MIR/h_XGB_res.csv", row.names = FALSE)
+
+
+all_df_final_sorted#[all_df_final_sorted$Cluster == 'T cells',]
+```
+
+
+
+
+
+```{r}
+unique_miRNA_df <- all_df_final %>%
+  group_by(Cluster, miRNA) %>%
+  summarize(n_cancer_types = max(n_cancer_types), .groups = "drop") %>%
+  arrange(Cluster, desc(n_cancer_types))  # сортировка по кластерам и убыванию n_cancer_types
+
+unique_miRNA_df[unique_miRNA_df$Cluster=='Malignant cells',]
+```
+
+
+
+```{r}
+all_df_final_sorted[all_df_final_sorted$Cluster == 'Malignant cells',]
+```
+

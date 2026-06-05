@@ -1,0 +1,237 @@
+# collect
+```{r}
+library(Seurat)
+library(dplyr)
+
+path <- '/mnt/jack-5/amismailov/miRNA_study/cancers' 
+types <- list.dirs(path, recursive=F, full.names = F)
+ 
+
+n_datasets <- c(
+  'RCC' = 5,
+  'breast' = 5,
+  'col' = 5,
+  'ovarian_met' = 5,
+  'cervic' = 5,
+  'DLBCL' = 6,
+  'ICC' = 5,
+  'pancreas' = 5,
+  'LUAD_metastasis' = 7,
+  'colorectal_met' = 5,
+  'LUAD' = 5, 
+  'breast_met' = 5,
+  'HCC' = 5,
+  'thyroid' = 6,
+  'met_cholangiocarcinoma' = 5,
+  'GC' = 5,
+  'thyroid_met' = 5,
+  'pbmc' = 5,
+  'ovarian' = 6,
+  'mel' = 5, 
+  'ccRCC-BM' = 6, 
+  'GCM' = 5,
+  'cSCC' = 5
+)
+
+for (type in types){
+  cat('Starting process type: ', type, '\n')
+  for (sample_id in 1:n_datasets[[type]]){
+      cat(sample_id, '/', n_datasets[type], '\n')
+    
+      main_path <- paste0('/mnt/jack-5/amismailov/miRNA_study/cancers/', type, '/')
+      
+      seu <- readRDS(file = paste0(main_path, 'rds/', sample_id, '.rds'))
+      
+      DefaultAssay(seu) <- "miRNA_XGB" 
+      
+      FAM <- FindAllMarkers(seu,
+                      logfc.threshold = 0.5, 
+                      min.pct = 0.25,
+                      only.pos = TRUE,
+                      test.use = 'wilcox',
+                      layer = 'data')
+      
+      write.csv(FAM, 
+                file = paste0('/mnt/jack-5/amismailov/miRNA_study/cancers/', type, '/DEGs/', sample_id, '_s.csv'),
+                row.names = TRUE)
+  }
+}
+```
+
+# intersection
+```{r}
+library(dplyr)
+library(purrr)
+library(tidyr)
+
+path <- '/mnt/jack-5/amismailov/miRNA_study/cancers'
+types <- list.dirs(path, recursive=FALSE, full.names = FALSE)
+
+# Пересекаем только с теми типами, которые реально есть в n_datasets и на диске
+types <- intersect(types, names(n_datasets))
+
+for (type in types) {
+  cat('\n=== Processing type:', type, '===\n')
+  
+  degs_dir <- paste0(path, '/', type, '/DEGs/')
+  files <- list.files(degs_dir, pattern = "_s.csv$", full.names = TRUE)
+  
+  if (length(files) == 0) {
+    cat('No _s.csv files found for', type, '- skipping.\n')
+    next
+  }
+  
+  # 1. Читаем все файлы и объединяем в один большой датафрейм
+  all_degs <- lapply(files, function(f) {
+    df <- read.csv(f, stringsAsFactors = FALSE)
+    # Seurat сохраняет гены в rownames, при чтении они падают в колонку "X"
+    if ("X" %in% colnames(df)) {
+      colnames(df)[colnames(df) == "X"] <- "miRNA"
+    }
+    return(df)
+  }) %>% bind_rows()
+  
+  # Проверяем, что данные не пустые
+  if (nrow(all_degs) == 0) next
+  
+  # 2. Определяем порог фильтрации
+  # Вариант А: Ваша жесткая тройка
+  min_datasets <- 3 
+  
+  cat('Total datasets found:', length(files), '| Threshold set to >=', min_datasets, '\n')
+  
+  # 3. Фильтруем кластеры (оставляем только те, что есть минимум в X датасетах)
+  # Для этого смотрим, в скольких уникальных файлах (образцах) встретился кластер
+  # (Seurat в FindAllMarkers пишет p_val_adj, по его наличию считаем факт детекции маркера)
+  
+  valid_clusters <- all_degs %>%
+    group_by(cluster) %>%
+    # считаем сколько раз уникально сработал поиск маркеров (каждая miRNA внутри образца уникальна)
+    # но надежнее сгруппировать еще и по miRNA, если мы хотим знать стабильность
+    summarise(n_samples_with_cluster = length(unique(miRNA))) # грубый чек, ниже сделаем точнее
+  
+  # Правильный подсчет: в скольких датасетах у кластера вообще были ХОТЬ КАКИЕ-ТО маркеры.
+  # Но мы сделаем элегантнее через финальный подсчет частот.
+  
+  # 4. Считаем консенсус: сколько раз конкретная miRNA была маркером конкретного кластера
+  consensus_df <- all_degs %>%
+    # Фильтруем по p-value (на всякий случай, хотя FindAllMarkers уже фильтрует)
+    filter(p_val_adj < 0.05) %>%
+    group_by(cluster, miRNA) %>%
+    # n() здесь покажет, в скольких датасетах эта miRNA значима для этого кластера
+    summarise(freq = n(), .groups = 'drop') %>%
+    filter(freq >= min_datasets)
+  
+  # 5. Теперь применяем фильтр к самим кластерам: 
+  # Кластер валиден, если в нем осталась хотя бы одна консенсусная miRNA
+  # (это автоматически означает, что кластер присутствовал и генерировал маркеры как минимум в 3 датасетах)
+  
+  final_robust_markers <- consensus_df %>%
+    group_by(cluster) %>%
+    filter(length(unique(miRNA)) > 0) %>% # защита от пустых кастеров
+    ungroup() %>%
+    arrange(cluster, desc(freq))
+  
+  # 6. Сохраняем результат для текущего типа рака
+  output_file <- paste0(degs_dir, 'consensus_markers.csv')
+  write.csv(final_robust_markers, file = output_file, row.names = FALSE)
+  
+  cat('Saved consensus markers to:', output_file, '\n')
+  print(table(final_robust_markers$cluster)) # Выведем в консоль сколько маркеров нашлось для каждого типа клеток
+}
+```
+
+
+
+# analyze
+```{r}
+# install.packages("openxlsx")
+library(dplyr)
+library(purrr)
+library(tidyr)
+library(openxlsx)
+
+path <- '/mnt/jack-5/amismailov/miRNA_study/cancers'
+# Получаем список всех папок раков
+types <- list.dirs(path, recursive = FALSE, full.names = FALSE)
+
+# Список для накопления данных от каждого рака
+pan_cancer_list <- list()
+
+for (type in types) {
+  consensus_file <- paste0(path, '/', type, '/DEGs/consensus_markers.csv')
+  
+  # Проверяем, существует ли файл консенсуса
+  if (file.exists(consensus_file)) {
+    cat('Reading consensus for:', type, '\n')
+    
+    df <- read.csv(consensus_file, stringsAsFactors = FALSE)
+    
+    if (nrow(df) > 0) {
+      # Добавляем колонку с типом рака, чтобы не потерять источник
+      df$Cancer_Type <- type
+      pan_cancer_list[[type]] <- df
+    }
+  } else {
+    cat('No consensus file for:', type, '- skipping.\n')
+  }
+}
+
+
+eligable_vector <- readLines('/mnt/jack-5/amismailov/XGB/eligable_mirs.txt')
+
+# Объединяем все раки в один большой датафрейм
+pan_cancer_df <- bind_rows(pan_cancer_list)
+pan_cancer_df$miRNA <- gsub("^XGB-", "hsa-", pan_cancer_df$miRNA)
+pan_cancer_df <- pan_cancer_df %>% 
+  dplyr::filter(miRNA %in% eligable_vector)
+
+# Меняем порядок колонок для удобства чтения (miRNA на первое место)
+pan_cancer_df <- pan_cancer_df %>% 
+  dplyr::select(miRNA, cluster, Cancer_Type, freq) %>%
+  arrange(miRNA, cluster, desc(freq))
+
+cat('\n=== Всего найдено уникальных комбинаций:', nrow(pan_cancer_df), '===\n')
+
+
+# ТЮНИНГ СТРУКТУРЫ ДАННЫХ
+
+
+# 1. Создаем глобальную метрику: в скольки ВИДАХ РАКА эта miRNA является маркером для данного кластера?
+# (Например: miR-21 в Фибробластах при Breast, RCC, LUAD -> Cancer_Count = 3)
+pan_cancer_summary <- pan_cancer_df %>%
+  group_by(miRNA, cluster) %>%
+  mutate(Cancer_Count = n_distinct(Cancer_Type)) %>%
+  ungroup() %>%
+  arrange(desc(Cancer_Count), miRNA, cluster)
+
+# 2. Создаем широкую сводную матрицу (Pivot Table)
+# Строки — miRNA и Кластер, колонки — Виды рака, на пересечении — freq (сколько раз встретилась внутри рака)
+pivot_matrix <- pan_cancer_summary %>%
+  dplyr::select(miRNA, cluster, Cancer_Type, freq) %>%
+  pivot_wider(names_from = Cancer_Type, values_from = freq, values_fill = 0)
+
+
+# СОХРАНЕНИЕ РЕЗУЛЬТАТОВ В EXCEL
+
+
+output_root <- '/home/amismailov/MIR/DEGs/'
+
+# Создаем многостраничный Excel для основной базы данных
+wb_base <- createWorkbook()
+addWorksheet(wb_base, "Long_Format_All_Data")
+addWorksheet(wb_base, "Summary_By_Cancer_Count")
+
+writeData(wb_base, "Long_Format_All_Data", pan_cancer_df)
+writeData(wb_base, "Summary_By_Cancer_Count", unique(pan_cancer_summary %>% dplyr::select(miRNA, cluster, Cancer_Count)))
+
+saveWorkbook(wb_base, file = paste0(output_root, "pan_cancer_miRNA_markers.xlsx"), overwrite = TRUE)
+
+# Сохраняем сводную матрицу в отдельный файл (ее безумно удобно крутить в Excel фильтрами)
+write.xlsx(pivot_matrix, file = paste0(output_root, "miRNA_cancer_cluster_matrix.xlsx"), overwrite = TRUE)
+
+cat('Все результаты успешно сохранены в папку:', output_root, '\n')
+```
+
+
+
