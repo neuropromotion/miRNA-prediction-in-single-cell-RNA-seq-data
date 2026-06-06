@@ -7,14 +7,14 @@ import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from boruta import BorutaPy
 
-
+# for robust unpredictible stage 7 miRs
 def main():
     def log(msg: str) -> None:
         ts = time.strftime("%Y-%m-%d %H:%M:%S")
         print(f"[{ts}] {msg}", flush=True)
 
     # --- Параметры (можно менять) ---
-    MAX_TARGETS = 5  # например: 5 для теста; None = все current_targets
+    MAX_TARGETS = None  # например: 5 для теста; None = все current_targets
     RANDOM_STATE = 42
 
     # Boruta может быть тяжелым; для старта уменьшаем лимиты
@@ -41,7 +41,7 @@ def main():
     with config_path.open("r") as f:
         config = json.load(f)
 
-    current_targets = ['hsa-mir-577', 'hsa-mir-188']#config["stages"]["stage_7"]
+    current_targets = config["stages"]["stage_7"]
 
     targets = list(current_targets)
     if MAX_TARGETS is not None:
