@@ -1,6 +1,6 @@
 ## Feature Selection 
 
-This repository contains a scalable pipeline designed to handle high-dimensional transcriptomic data characterized by a severe feature-to-sample ratio: **17k+ features** against **300+ targets** (miRNAs). 
+This repository contains a scalable pipeline designed to handle a severe feature-to-sample ratio of out train data: **17k+ features** against **300+ targets** (miRNAs). 
 
 To identify the most robust and computationally efficient feature selection strategy, we implemented a benchmarking framework using a representative subset of **50 randomly selected miRNAs** before scaling the optimal approach to the entire dataset.
 
