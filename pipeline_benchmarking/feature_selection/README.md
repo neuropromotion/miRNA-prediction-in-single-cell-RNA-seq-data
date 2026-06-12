@@ -25,22 +25,25 @@ To evaluate and compare the performance of each selection method, we train a dow
 
 ### Benchmarking Results
 
-The evaluation of the feature selection strategies demonstrated that **ElasticNet** provides the optimal trade-off between predictive performance, generalization, and feature sparsity. 
+The evaluation of the feature selection strategies revealed a tight competition between the linear methods, while non-linear approaches and their pairwise combinations significantly underperformed, particularly in terms of the performance-to-sparsity trade-off.
 
-The results, compiled in `summary_by_config.csv`, reveal that ElasticNet consistently maintained high prediction accuracy while aggressively reducing the feature space to an average of **656 selected features** per target. Crucially, it outperformed pure non-linear and baseline models when transferring learned feature spaces to low-sample-size regimes.
+The final results, compiled in `summary_by_config.csv`, demonstrate that **ElasticNet** and **Lasso** deliver highly comparable predictive accuracy, but with a noticeable difference in the size of the selected feature space.
 
 #### Key Findings:
-* **The Winner (ElasticNet):** Achieved the best performance trade-off, specifically demonstrating superior median $R^2$ scores on the `K1+K2` validation sets (pseudo-single-cell level). This success is largely driven by its $L_2$ regularization component, which stabilizes feature selection in the presence of highly correlated transcriptomic networks.
-* **Model Stability:** Testing on the restricted `K1+K2` subset confirmed that ElasticNet successfully identifies robust biological signals rather than over-fitting to bulk data noise, fulfilling our core requirement for stability under restricted single-cell conditions.
+
+* **Lasso vs. ElasticNet Matrix:** * **Lasso** aggressively restricted the feature space to an average of **527.84 features** per target. On the pseudo-single-cell level (`K1+K2` subset), its median $R^2$ score was only **0.01 lower** than that of ElasticNet. 
+  * While Lasso could arguably be considered a better immediate trade-off due to its higher sparsity, we strategically selected **ElasticNet** as the definitive winner. This decision is forward-looking: the additional feature capacity provided by ElasticNet (averaging **656 features**) serves as a crucial buffer that is hypothesized to enhance model robustness and stability when scaling the pipeline to the full dataset of 300+ targets.
+* **Failure of Non-Linear Approaches:** Pure non-linear methods (Shallow XGBoost, Mutual Information) and their pairwise unions with linear models failed to yield competitive results. They suffered from high computational overhead and poor generalization on the restricted single-cell data, proving that non-linear interaction modeling at this stage introduces more noise than signal.
+* **Robustness under Restricted Conditions:** Testing on the `K1+K2` (pseudo-single-cell) subset proved that both linear methods are highly resilient to low-sample-size regimes, ensuring that the selected features capture stable biological signals rather than dataset-specific artifacts.
 
 #### Performance Visualization
 
-The cross-target validation performance across different selection methods is illustrated below:
+The cross-target validation performance across the benchmarked configuration options is illustrated below:
 
 ##### 1. Bulk Validation Performance (`r2_by_target_bulk.png`)
 ![Bulk R2 Performance](r2_by_target_bulk.png)
-*This plot displays the distribution of $R^2$ scores across the benchmarked miRNAs evaluated on bulk data.*
+*This plot displays the distribution of $R^2$ scores across the benchmarked miRNAs evaluated on bulk training data.*
 
 ##### 2. Pseudo-Single-Cell Validation Performance (`r2_by_target_sc.png`)
 ![Single-Cell R2 Performance](r2_by_target_sc.png)
-*This plot highlights the stability and generalization of the feature selection methods on the restricted `K1+K2` single-cell level data.*
+*This plot highlights the stability and generalization of the selection methods on the restricted `K1+K2` single-cell level data, justifying the selection of ElasticNet for scaling.*
