@@ -5,12 +5,16 @@
   "spearman_thr_low": 0.1,
   "min_spearman_features": 100,
   "max_spearman_features": 3000,
-  "second_stage_top_k": 400,
+  "second_stage_top_k": 800,
+  "union_policy": "sc_first_then_bulk_only",
+  "adaptive_second_stage": true,
   "sc_train": "sc_k1_train + sc_pb_train(K2)",
   "methods": [
     "method_a_lasso",
+    "method_d_elasticnet",
     "method_b_xgb_imp",
-    "method_c_mi"
+    "method_c_mi",
+    "method_e_spearman"
   ],
   "targets": [
     "hsa-mir-1180-3p",
