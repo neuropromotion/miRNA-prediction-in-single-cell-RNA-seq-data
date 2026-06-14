@@ -1,0 +1,10 @@
+benchmark;model;n_train_pool;n_infer_total;mean_train_sec;mean_infer_sec;mean_infer_sec_per_1k_samples;total_train_50mirna_h;total_infer_50mirna_h;total_train_327mirna_h;total_infer_327mirna_h
+stage03_speed;xgb_default;24451.0;5170;0.502;0.003;0.0006;0.01;0.0;0.05;0.0
+tabpfn3_speed;tabpfn_v3;24451.0;5170;3.174;235.662;45.5825;0.04;3.27;0.29;21.41
+stage03_speed;xgb_optuna;24451.0;5170;4.377;0.003;0.0006;0.06;0.0;0.4;0.0
+stage03_speed;dcnv2;24451.0;5170;27.066;0.074;0.0143;0.38;0.0;2.46;0.01
+stage03_speed;realmlp;24451.0;5170;34.692;0.076;0.0147;0.48;0.0;3.15;0.01
+stage03_speed;resnet;24451.0;5170;45.539;0.115;0.0222;0.63;0.0;4.14;0.01
+stage03_speed;tabm;24451.0;5170;53.312;0.387;0.0749;0.74;0.01;4.84;0.04
+stage03_speed;tabnet;24451.0;5170;122.988;0.429;0.0829;1.71;0.01;11.17;0.04
+stage03_speed;fttransformer;24451.0;5170;647.308;0.315;0.061;8.99;0.0;58.8;0.03
