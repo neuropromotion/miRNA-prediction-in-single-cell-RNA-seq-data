@@ -1,0 +1,30 @@
+{
+  "r2_threshold": 0.4,
+  "baseline": "xgb_default",
+  "sort_by": "xgb_default metric ascending",
+  "metrics_file": "results/test_metrics_all.csv",
+  "n_targets": 50,
+  "models": [
+    "xgb_default",
+    "xgb_optuna",
+    "dcnv2",
+    "realmlp",
+    "resnet",
+    "tabm",
+    "tabnet"
+  ],
+  "outputs": [
+    "outputs/r2_by_target_k1.png",
+    "outputs/r2_by_target_bulk.png",
+    "outputs/r2_by_target_inner_val.png",
+    "outputs/mean_median_r2_by_model.png",
+    "outputs/k1_r2_density.png",
+    "outputs/k1_threshold_counts_0.4.png",
+    "outputs/k1_r2_heatmap.png",
+    "outputs/k1_rank_violin.png"
+  ],
+  "tables": [
+    "outputs/k1_threshold_summary_0.4.csv",
+    "outputs/exclusive_targets_k1_gt_0.4.csv"
+  ]
+}

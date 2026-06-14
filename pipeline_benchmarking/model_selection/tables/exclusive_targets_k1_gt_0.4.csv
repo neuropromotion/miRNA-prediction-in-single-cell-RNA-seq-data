@@ -1,0 +1,2 @@
+model,model_label,target,xgb_default_k1_r2,xgb_optuna_k1_r2,dcnv2_k1_r2,realmlp_k1_r2,resnet_k1_r2,tabm_k1_r2,tabnet_k1_r2
+xgb_optuna,XGB Optuna,hsa-mir-423-5p,0.3985,0.452,-0.2726,0.3253,0.3846,0.3879,0.2605
