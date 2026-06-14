@@ -18,7 +18,7 @@ The benchmark evaluated the following methods:
 * **Predictive Model:** XGBoost with default parameters. Early stopping and evaluation metrics were computed on validation splits.
 
 ## Results
-KNN 5 achieved the highest predictive performance on the K1 validation sets.
+KNN 5 achieved the highest predictive performance on the K1 validation sets (full results stored in /table directory).
 
 * **Delta Mean Val K1:** +0.087
 * **Delta Median Val K1:** +0.048
