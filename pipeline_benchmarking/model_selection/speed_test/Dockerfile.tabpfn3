@@ -1,0 +1,29 @@
+# TabPFN-3 benchmark image (separate from inference-gpu 6.4.1 stack)
+FROM nvidia/cuda:12.4.0-base-ubuntu22.04
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PYTHONNOUSERSITE=1
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.10 \
+    python3.10-venv \
+    python3-pip \
+    build-essential \
+    git \
+    && ln -sf /usr/bin/python3.10 /usr/bin/python \
+    && ln -sf /usr/bin/python3.10 /usr/bin/python3 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /workspace/FINAL_VERSION/stage03_models/speed_test
+
+COPY requirements-tabpfn3.txt /tmp/requirements-tabpfn3.txt
+
+RUN python -m pip install --upgrade pip setuptools wheel \
+    && python -m pip install torch --index-url https://download.pytorch.org/whl/cu124 \
+    && python -m pip install -r /tmp/requirements-tabpfn3.txt
+
+ENV PYTHONPATH=/workspace/FINAL_VERSION/stage03_models
+
+CMD ["python3", "tabpfn3_speed_benchmark.py"]
