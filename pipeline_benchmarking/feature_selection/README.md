@@ -40,7 +40,8 @@ Split selected genes into SC pool (kept intact) and bulk-only set (bulk \ sc).
 Rank bulk-only genes by XGB shallow importance on bulk train.
 Per-target K from {50, 100, 150, 200}: pick the smallest K that keeps bulk val R² within 10% relative / 0.02 absolute of the full union, and does not decrease SC val R² vs baseline; otherwise increase K or fall back to the full bulk-only set.
 Skip targets with bulk_only < 50 or baseline bulk val R² < 0.4.
-On the 50-miRNA pilot (summary_by_method.csv), ElasticNet + bulk trim gave mean bulk val R² 0.747 (vs 0.750 for ElasticNet), mean SC val R² 0.084 (vs 0.049), and ~307 features (vs ~656), with 13/50 SC targets above R² = 0.4 (vs 12). Bulk performance stayed stable while SC improved and the feature space shrank by ~2×. The same procedure was applied to all 327 targets; outputs are in
+On the 50-miRNA pilot (summary_by_method.csv), ElasticNet + bulk trim gave mean bulk val R² 0.747 (vs 0.750 for ElasticNet), mean SC val R² 0.084 (vs 0.049), and ~307 features (vs ~656), with 13/50 SC targets above R² = 0.4 (vs 12). Bulk performance stayed stable while SC improved and the feature space shrank by ~2×. The same procedure was applied to all 327 targets
+
 #### Performance Visualization
 
 The cross-target validation performance across the benchmarked configuration options is illustrated below:
