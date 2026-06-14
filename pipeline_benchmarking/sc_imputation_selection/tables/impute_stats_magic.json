@@ -1,0 +1,19 @@
+{
+  "method": "magic",
+  "train_zero_before": 0.6035138062994745,
+  "val_zero_before": 0.6010955642855367,
+  "magic_knn": 5,
+  "magic_t": 3,
+  "magic_solver": "approximate",
+  "val_policy": "separate_fit_transform_no_leakage",
+  "train_zero_after": 0.018341766329346827,
+  "val_zero_after": 0.07618445262189512,
+  "n_bulk_train": 25706,
+  "n_k1_train": 1477,
+  "n_pb_train": 1584,
+  "n_train_total": 28767,
+  "n_bulk_val": 4537,
+  "n_k1_val": 370,
+  "n_pb_val": 263,
+  "n_val_mixed_total": 5170
+}
