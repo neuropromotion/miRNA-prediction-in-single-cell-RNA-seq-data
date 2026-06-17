@@ -44,8 +44,8 @@ Based on our evaluation metrics, four models clearly outperformed the rest of th
 | **4** | **ResNet-like** | 0.1940 | **ResNet-like** | 0.0940 |
 
 ##### FIGUERS
-!(figures/mean_median_r2_by_model.png)
-!(figures/r2_by_target_k1.png)
+![R2 Performance](figures/mean_median_r2_by_model.png)
+![R2 Performance](figures/r2_by_target_k1.png)
 
 
 
