@@ -522,7 +522,7 @@ class SingleCell:
         """
         Full inference for all eligible miRNAs from raw counts.
 
-        Routing (from predict_manifest.json):
+        Routing (from target_config.json):
         - **K1** cohort → single-cell + KNN impute
         - **K2, K3, K4, K5, K10** cohorts → KNN pseudobulk (within CellType)
 
