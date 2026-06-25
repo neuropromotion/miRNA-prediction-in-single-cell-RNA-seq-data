@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Batch predict_all on every .parquet in all_parquets/."""
+"""Batch predict_all on every scRNA-seq datasets (N=121)."""
 
 from __future__ import annotations
 
