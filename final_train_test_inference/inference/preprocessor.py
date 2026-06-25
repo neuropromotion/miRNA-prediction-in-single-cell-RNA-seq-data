@@ -9,13 +9,13 @@ import numpy as np
 import pandas as pd
 
 try:
-    from .constants import K1_REF_PATH, MANIFEST_PATH, resolve_gene_mapping_path
+    from .constants import K1_REF_PATH, CONFIG_PATH, resolve_gene_mapping_path
     from .stack_predictor import StackPredictor
 except ImportError:
     _fv = Path(__file__).resolve().parent.parent
     if str(_fv) not in sys.path:
         sys.path.insert(0, str(_fv))
-    from TOTAL_INFERENCE.constants import K1_REF_PATH, MANIFEST_PATH, resolve_gene_mapping_path
+    from TOTAL_INFERENCE.constants import K1_REF_PATH, CONFIG_PATH, resolve_gene_mapping_path
     from TOTAL_INFERENCE.stack_predictor import StackPredictor
 
 ALLOWED_PSEUDOBULK_K = frozenset({2, 3, 4, 5, 10})
@@ -116,7 +116,7 @@ class SingleCell:
         self,
         path_length="df_gene_mapping.parquet",
         path_mrna="mRNA_names.json",
-        manifest_path=None,
+        config_path=None,
         device="cuda",
         catboost_task="CPU",
         preload_models=False,
@@ -127,7 +127,7 @@ class SingleCell:
         self.log = log
         self._device = device
         self._catboost_task = catboost_task
-        self._manifest_path = Path(manifest_path or MANIFEST_PATH)
+        self._config_path = Path(config_path or CONFIG_PATH)
 
         path_length = Path(path_length)
         path_mrna = Path(path_mrna)
@@ -152,9 +152,9 @@ class SingleCell:
                 "Gene length table must contain 'gene_id' and 'gene_length_kb' columns."
             )
 
-        manifest = json.loads(self._manifest_path.read_text(encoding="utf-8"))
-        self._cohorts: dict[str, list[str]] = manifest["cohorts"]
-        self._available_mirnas: list[str] = list(manifest["eligible_mirs"])
+        config = json.loads(self._config_path.read_text(encoding="utf-8"))
+        self._cohorts: dict[str, list[str]] = config["cohorts"]
+        self._available_mirnas: list[str] = list(config["eligible_mirs"])
 
         self._knn_ref = None
         self._knn_ref_path = None
@@ -192,7 +192,7 @@ class SingleCell:
             return self._predictor
         print("Loading final_train stack models...")
         self._predictor = StackPredictor(
-            manifest_path=self._manifest_path,
+            config_path=self._config_path,
             device=self._device,
             catboost_task=self._catboost_task,
             preload_all=False,
@@ -440,7 +440,7 @@ class SingleCell:
         Single-cell inference with KNN imputation (recommended for K1 cohort).
 
         Pipeline: prepare_input → TPM/log2 → KNN impute → stack predict.
-        Default miRNAs: K1 cohort from manifest.
+        Default miRNAs: K1 cohort from config.
         """
         if mirnas is None:
             mirnas = self.mirnas_for_cohort("K1")
@@ -536,7 +536,7 @@ class SingleCell:
         Returns
         -------
         DataFrame
-            cells × all eligible miRNAs (log2 scale), columns in manifest order.
+            cells × all eligible miRNAs (log2 scale), columns in config order.
         """
         raw = self._load_raw_input(data)
         n_cells = raw.shape[0]
@@ -576,7 +576,7 @@ class SingleCell:
             parts.append(pb_pred)
 
         if not parts:
-            raise RuntimeError("No cohort predictions produced; check manifest.")
+            raise RuntimeError("No cohort predictions produced; check config.")
 
         combined = pd.concat(parts, axis=1)
         combined = combined.reindex(columns=self._available_mirnas)
@@ -663,7 +663,7 @@ class SingleCell:
         For every anchor cell: pseudobulk = anchor + (K-1) nearest neighbors
         (Euclidean KNN on PCA of HVG log1p-CPM, built inside CellType only).
         Raw counts are summed, then TPM/log2 and stack prediction.
-        Default miRNAs: cohort K{K} from manifest (no KNN impute on pseudobulk).
+        Default miRNAs: cohort K{K} from config (no KNN impute on pseudobulk).
         """
         self._validate_pseudobulk_k(K)
         cohort = f"K{K}"
@@ -675,7 +675,7 @@ class SingleCell:
             if wrong:
                 raise ValueError(
                     f"miRNAs {wrong[:5]} are not assigned to cohort {cohort}. "
-                    f"Use mirnas_for_pseudobulk_k({K}) or check manifest."
+                    f"Use mirnas_for_pseudobulk_k({K}) or check config."
                 )
 
         expression, celltypes = self._split_expression_and_celltype(
