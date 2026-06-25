@@ -17,4 +17,7 @@ For each target, the final prediction level was chosen as the lowest pseudobulk 
 | `constants.py` | Project-wide constants and configuration parameters |
 | `Inference_tutorial.ipynb` | Step-by-step tutorial demonstrating inference on five RCC (renal cell carcinoma) single-cell datasets |
 | `total_inference/total_inference.py` | Pipeline for large-scale inference across all 121 single-cell datasets analyzed in this study |
-| `X_train.parquet` | Reference scRNA-seq dataset for KNN imputing |
+
+
+
+`X_train.parquet`- reference scRNA-seq dataset for KNN imputing available on KAGGLE as X_TRAIN_K1.parquet. Link: https://www.kaggle.com/datasets/ismailovaly/mirna-prediction-project
