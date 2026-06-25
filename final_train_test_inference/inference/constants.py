@@ -8,7 +8,7 @@ TOTAL_INFERENCE = Path(__file__).resolve().parent
 FINAL_VERSION = TOTAL_INFERENCE.parent
 WORKSPACE = FINAL_VERSION.parent
 
-MANIFEST_PATH = FINAL_VERSION / "FINAL_CONFIG_AND_FIGURES" / "target_config.json"
+CONFIG_PATH = FINAL_VERSION / "FINAL_CONFIG_AND_FIGURES" / "target_config.json"
 MODELS_ROOT = FINAL_VERSION / "final_train" / "results"
 ENSEMBLE_ID = "catboost_tabm_resnet_stack"
 WEIGHTS_DIR = MODELS_ROOT / "ensemble" / ENSEMBLE_ID / "weights"
