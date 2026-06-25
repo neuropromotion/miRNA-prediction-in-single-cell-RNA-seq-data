@@ -15,7 +15,7 @@ import pandas as pd
 from .constants import (
     ENSEMBLE_ID,
     FINAL_VERSION,
-    MANIFEST_PATH,
+    CONFIG_PATH,
     MODELS_ROOT,
     STACK_MODELS,
     WEIGHTS_DIR,
@@ -48,14 +48,14 @@ class StackPredictor:
 
   def __init__(
       self,
-      manifest_path: Path | str = MANIFEST_PATH,
+      config_path: Path | str = CONFIG_PATH,
       weights_dir: Path | str = WEIGHTS_DIR,
       models_root: Path | str = MODELS_ROOT,
       device: str = "cuda",
       catboost_task: str = "CPU",
       preload_all: bool = False,
   ) -> None:
-      self._manifest_path = Path(manifest_path)
+      self._cofig_path = Path(config_path)
       self._weights_dir = Path(weights_dir)
       self._models_root = Path(models_root)
       self._device = device
@@ -64,11 +64,11 @@ class StackPredictor:
       os.environ["FINAL_DEVICE"] = device
       os.environ["CATBOOST_TASK"] = catboost_task
 
-      manifest = json.loads(self._manifest_path.read_text(encoding="utf-8"))
-      self._manifest = manifest
-      self._target_info: dict[str, dict] = manifest["targets"]
-      self._available_mirnas: list[str] = list(manifest["eligible_mirs"])
-      self._cohorts: dict[str, list[str]] = manifest["cohorts"]
+      config = json.loads(self._config_path.read_text(encoding="utf-8"))
+      self._config = config
+      self._target_info: dict[str, dict] = config["targets"]
+      self._available_mirnas: list[str] = list(config["eligible_mirs"])
+      self._cohorts: dict[str, list[str]] = config["cohorts"]
 
       self._cache: dict[str, _TargetBundle] = {}
       if preload_all:
@@ -76,7 +76,7 @@ class StackPredictor:
 
   @property
   def available_mirnas(self) -> list[str]:
-      """miRNAs with trained stack models (eligible_mirs from manifest)."""
+      """miRNAs with trained stack models (eligible_mirs from config)."""
       return list(self._available_mirnas)
 
   @property
