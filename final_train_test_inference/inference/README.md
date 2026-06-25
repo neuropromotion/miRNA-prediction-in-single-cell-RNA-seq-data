@@ -22,7 +22,7 @@ For each target, the final prediction level was chosen as the lowest pseudobulk 
 
 `X_train.parquet`- reference scRNA-seq dataset for KNN imputing available on KAGGLE as X_TRAIN_K1.parquet. Link: https://www.kaggle.com/datasets/ismailovaly/mirna-prediction-project
 
-## Inference results 
+## Inference results (Renal cell cancer snRNA-seq datasets examples)
 ![Inference](figures/cancer_mirs.jpg)
 ![Inference](figures/immune.jpg)
 ![Inference](figures/vascular.jpg)
