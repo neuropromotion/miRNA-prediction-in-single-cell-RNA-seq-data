@@ -1,5 +1,3 @@
-"""Paths for TOTAL_INFERENCE stack predictor."""
-
 from __future__ import annotations
 
 from pathlib import Path
@@ -8,6 +6,7 @@ TOTAL_INFERENCE = Path(__file__).resolve().parent
 FINAL_VERSION = TOTAL_INFERENCE.parent
 WORKSPACE = FINAL_VERSION.parent
 
+# paths on my workspace
 CONFIG_PATH = FINAL_VERSION / "FINAL_CONFIG_AND_FIGURES" / "target_config.json"
 MODELS_ROOT = FINAL_VERSION / "final_train" / "results"
 ENSEMBLE_ID = "catboost_tabm_resnet_stack"
