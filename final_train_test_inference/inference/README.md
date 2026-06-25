@@ -1,6 +1,6 @@
 ## Overview
 
-Model performance was evaluated on 327 target miRNAs. A total of 168 targets achieved the predefined performance threshold (R² > 0.4) and were selected for downstream inference.
+Model performance was evaluated on 327 target miRNAs. A total of 164 targets achieved the predefined performance threshold (R² > 0.4) and were selected for downstream inference.
 
 For each target, the final prediction level was chosen as the lowest pseudobulk aggregation level (including single-cell resolution, K = 1) at which the target achieved R² > 0.4.
 
@@ -17,3 +17,4 @@ For each target, the final prediction level was chosen as the lowest pseudobulk 
 | `constants.py` | Project-wide constants and configuration parameters |
 | `Inference_tutorial.ipynb` | Step-by-step tutorial demonstrating inference on five RCC (renal cell carcinoma) single-cell datasets |
 | `total_inference/total_inference.py` | Pipeline for large-scale inference across all 121 single-cell datasets analyzed in this study |
+| `X_train.parquet` | Reference scRNA-seq dataset for KNN imputing |
