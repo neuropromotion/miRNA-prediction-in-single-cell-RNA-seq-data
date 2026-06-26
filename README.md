@@ -4,6 +4,8 @@ End-to-end machine learning pipeline for predicting miRNA expression from single
 
 The training dataset combines bulk RNA-seq (TCGA, GTEx) with paired single-cell RNA-seq data. The repository includes the complete workflow from data preparation and benchmark experiments to final model training and large-scale inference. During development, multiple feature selection methods, scRNA-seq imputation strategies, model architectures, and ensemble approaches were evaluated. The final predictor is a stacking ensemble consisting of **CatBoost**, **ResNet-like**, and **TabM** models. 
 
+Out of 327 miRNAs, 164 achieved acceptable predictive performance on the test set (R² > 0.4), with a median R² of 0.82.
+
 ### Processed datasets and models
 - **Training datasets:** *[link](https://www.kaggle.com/datasets/ismailovaly/mirna-prediction-project)*
 - **Pretrained models:** *[link](https://www.kaggle.com/models/ismailovaly/mirna-prediction-model)*
