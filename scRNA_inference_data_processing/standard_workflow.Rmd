@@ -1,8 +1,8 @@
-# GSE299340 / GSM9037559
+# GSE...
 ```{r}
-sample_id = 3
-main_path <- '/mnt/jack-5/amismailov/miRNA_study/breast/'
-type <- 'breast'
+sample_id = 3 # typically from 1 to 5
+main_path <- '/path_to/miRNA_study/breast/'
+type <- 'breast' # 'RCC', 'col', 'GC', 'HCC', 'ovarian'...
 ```
 
 
@@ -231,9 +231,6 @@ for (cl in clusters) {
 top_genes$`Malignant cells`
 ```
 
-
-
-
 ```{r}
 library(clusterProfiler)
 library(org.Hs.eg.db)
@@ -249,3 +246,37 @@ res <- enrichGO(gene = top_genes$`Malignant cells`,
 dotplot(res, showCategory=10) 
 ```
  
+# save for prediction
+```{r}
+save <- function(seu, path=paste0(main_path, 'ML/sample_', sample_id, '.csv')){
+  seu$Annotation <- as.character(Idents(seu))
+  
+  raw_counts <- GetAssayData(seu, assay = "RNA", layer = "counts")
+  
+  # ТРАНСПОНИРУЕМ: теперь строки = клетки
+  raw_counts_df <- as.data.frame(as.matrix(t(raw_counts)))
+  
+  # barcodes
+  raw_counts_df$barcode <- rownames(raw_counts_df)
+  
+  # добавляем CellType из metadata
+  raw_counts_df$CellType <- seu@meta.data[rownames(raw_counts_df), "Annotation"]
+  
+  # порядок столбцов
+  raw_counts_df <- raw_counts_df[, c("barcode", "CellType", setdiff(colnames(raw_counts_df), c("barcode", "CellType")))]
+  
+  write.csv(raw_counts_df, file = path, row.names = FALSE)
+  
+  rm(raw_counts_df, raw_counts)
+  gc()
+}
+```
+
+# SAVE data for machine learning miRNA prediction
+```{r}
+if(all(seu@assays$RNA@layers$counts %% 1 == 0)){
+  save(seu, path="/path_to/miRNA_study/ML_cancers/', type '/sample_', sample_id, '_.csv")
+} else{
+  message('NORMALIZED DATA!') # DATA should be in counts!
+}
+```
