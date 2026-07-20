@@ -6,7 +6,7 @@ import sys
 
 import pandas as pd
 
-from final_train.constants import INFERENCE_DIR, SEED
+from constants import INFERENCE_DIR, SEED
 
 KNN_K = 5
 
