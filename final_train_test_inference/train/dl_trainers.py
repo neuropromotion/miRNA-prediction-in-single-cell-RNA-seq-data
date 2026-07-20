@@ -18,8 +18,8 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 
-from final_train.constants import SEED, TABM_DIR
-from final_train.shared.metrics import weighted_rmse
+from constants import SEED, TABM_DIR
+from metrics import weighted_rmse
 
 
 @dataclass
