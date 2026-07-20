@@ -10,18 +10,16 @@ import time
 import traceback
 from pathlib import Path
 
-_STAGE04 = Path(__file__).resolve().parent
-_ROOT = _STAGE04.parent
-_STAGE03 = _ROOT / "stage03_models"
-for p in (_ROOT, _STAGE03):
-    if str(p) not in sys.path:
-        sys.path.insert(0, str(p))
+_STAGE = Path(__file__).resolve().parent
+_ML_PIPELINE = _STAGE.parents[1]
+if str(_ML_PIPELINE) not in sys.path:
+    sys.path.insert(0, str(_ML_PIPELINE))
 
 import numpy as np
 import pandas as pd
 
-from stage04_ensembles_v2.base_models import model_exists, predict_all_splits, true_all_splits
-from stage04_ensembles_v2.constants import (
+from base_models import model_exists, predict_all_splits, true_all_splits
+from constants import (
     BASE_MODELS,
     ENSEMBLE_METHODS,
     ENSEMBLE_SETS,
@@ -33,8 +31,8 @@ from stage04_ensembles_v2.constants import (
     TEST_METRIC_COLS,
     TUNE_SPLITS,
 )
-from stage04_ensembles_v2.ensemble import apply_fit, ensemble_id, fit_ensemble, fit_to_dict
-from stage04_ensembles_v2.metrics import r2
+from ensemble import apply_fit, ensemble_id, fit_ensemble, fit_to_dict
+from metrics import r2
 from shared.data import build_modality_bundle
 from shared.io_splits import load_features, load_pilot_targets
 
@@ -239,7 +237,7 @@ def main() -> None:
             "tune": "pooled K1 + pseudo-bulk PB (K2-K10), no real bulk",
             "tune_metric": "R2 on pooled tune samples (+ mean per-split for reporting)",
             "test": "inner val, bulk (held-out), K1, PB K2-K10",
-            "base_artifacts": "stage03_models/results/{model}/models/{target}/",
+            "base_artifacts": "pipeline_benchmarking/model_selection/results/{model}/models/{target}/",
         },
     }
     (STAGE / "config.json").write_text(json.dumps(cfg, indent=2), encoding="utf-8")

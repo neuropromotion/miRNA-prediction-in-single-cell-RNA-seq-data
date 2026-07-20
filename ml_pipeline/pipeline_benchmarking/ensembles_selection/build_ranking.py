@@ -7,14 +7,14 @@ import json
 import sys
 from pathlib import Path
 
-_STAGE04 = Path(__file__).resolve().parent
-_ROOT = _STAGE04.parent
-if str(_ROOT) not in sys.path:
-    sys.path.insert(0, str(_ROOT))
+_STAGE = Path(__file__).resolve().parent
+_ML_PIPELINE = _STAGE.parents[1]
+if str(_ML_PIPELINE) not in sys.path:
+    sys.path.insert(0, str(_ML_PIPELINE))
 
 import pandas as pd
 
-from stage04_ensembles_v2.constants import (
+from constants import (
     BASE_MODEL_LABELS,
     BASE_MODELS,
     ENSEMBLE_METHODS,
@@ -23,8 +23,8 @@ from stage04_ensembles_v2.constants import (
     RESULTS,
     STAGE03_RESULTS,
 )
-from stage04_ensembles_v2.ensemble import ensemble_id
-from stage04_ensembles_v2.run_ensembles import rebuild_global_outputs, summarize_ensemble
+from ensemble import ensemble_id
+from run_ensembles import rebuild_global_outputs, summarize_ensemble
 
 OUT = RESULTS / "ranking"
 

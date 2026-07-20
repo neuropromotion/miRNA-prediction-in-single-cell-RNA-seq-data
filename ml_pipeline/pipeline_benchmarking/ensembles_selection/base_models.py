@@ -7,16 +7,16 @@ import sys
 from pathlib import Path
 
 import numpy as np
-import xgboost as xgb
-from catboost import CatBoostRegressor
 
-from stage04_ensembles_v2.constants import BASE_MODELS, PILOT_DIR, STAGE03, STAGE03_RESULTS
-from stage04_ensembles_v2.metrics import clip_nonneg
+from constants import BASE_MODELS, ML_PIPELINE, PILOT_DIR, STAGE03_RESULTS
+from metrics import clip_nonneg
 
-sys.path.insert(0, str(PILOT_DIR))
+if str(ML_PIPELINE) not in sys.path:
+    sys.path.insert(0, str(ML_PIPELINE))
+if str(PILOT_DIR) not in sys.path:
+    sys.path.insert(0, str(PILOT_DIR))
+
 from dl_trainers import predict_tabm, predict_torch_model  # noqa: E402
-
-sys.path.insert(0, str(STAGE03))
 from shared.data import ModalityBundle, select_features  # noqa: E402
 from shared.io_splits import PB_COHORTS  # noqa: E402
 
@@ -41,10 +41,14 @@ def model_exists(model_name: str, target: str) -> bool:
 def load_artifact(model_name: str, target: str):
     d = model_dir(model_name, target)
     if model_name.startswith("xgb"):
+        import xgboost as xgb
+
         m = xgb.XGBRegressor()
         m.load_model(str(d / "model.json"))
         return m
     if model_name == "catboost_optuna":
+        from catboost import CatBoostRegressor
+
         m = CatBoostRegressor()
         m.load_model(str(d / "model.cbm"))
         return m

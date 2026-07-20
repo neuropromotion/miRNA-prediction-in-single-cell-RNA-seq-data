@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 import numpy as np
 from sklearn.linear_model import RidgeCV
 
-from stage04_ensembles_v2.constants import (
+from constants import (
     BLEND_GRID_STEP,
     RIDGE_ALPHAS,
     SAFETY_GATE,
@@ -15,7 +15,7 @@ from stage04_ensembles_v2.constants import (
     SOUP_PRUNE_PASSES,
     TUNE_SPLITS,
 )
-from stage04_ensembles_v2.metrics import clip_nonneg, r2
+from metrics import clip_nonneg, r2
 
 
 @dataclass
