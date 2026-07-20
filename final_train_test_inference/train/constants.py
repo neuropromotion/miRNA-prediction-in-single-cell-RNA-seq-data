@@ -8,11 +8,13 @@ ROOT = Path(__file__).resolve().parent
 FINAL_VERSION = ROOT.parent
 WORKSPACE = FINAL_VERSION.parent
 
+# TRAIN DATA
 BULK_SOURCE = FINAL_VERSION / "bulk_TRAIN"
 SC_SOURCE = FINAL_VERSION / "sc_TRAIN"
 SC_TEST = FINAL_VERSION / "sc_TEST"
 
 SPLITS = ROOT / "splits"
+FEATURES = "selected_features.json"
 FEATURES_SRC = FEATURES
 
 RESULTS = ROOT / "results"
