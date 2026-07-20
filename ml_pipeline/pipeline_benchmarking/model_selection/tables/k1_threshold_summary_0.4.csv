@@ -1,0 +1,12 @@
+model,model_label,n_targets_k1_gt_0_4,n_exclusive_k1_gt_0_4,pct_targets_k1_gt_0_4
+xgb_default,XGB default,12,0,24.0
+xgb_optuna,XGB Optuna,15,0,30.0
+catboost_optuna,CatBoost Optuna,15,0,30.0
+dcnv2,DCNv2,12,0,24.0
+realmlp,RealMLP,11,0,22.0
+resnet,ResNet,14,0,28.0
+tabm,TabM,13,0,26.0
+tabnet,TabNet,10,0,20.0
+fttransformer,FT-Transformer,12,0,24.0
+gandalf,GANDALF,13,0,26.0
+lassonet,LassoNet,4,0,11.1

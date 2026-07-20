@@ -1,0 +1,13 @@
+{
+  "dataset": "sc_k1",
+  "source_x": "sc_TRAIN/X_TRAIN_K1.parquet",
+  "source_y": "sc_TRAIN/Y_TRAIN_K1.parquet",
+  "n_total": 1847,
+  "n_train": 1477,
+  "n_val": 370,
+  "val_frac": 0.2,
+  "n_features": 17392,
+  "n_targets": 327,
+  "transform": "log2(x+1)",
+  "seed": 42
+}

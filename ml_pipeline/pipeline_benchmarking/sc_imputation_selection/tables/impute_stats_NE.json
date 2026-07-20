@@ -1,0 +1,27 @@
+{
+  "method": "ne",
+  "train_zero_before": 0.6035138062994745,
+  "val_zero_before": 0.6010955642855367,
+  "n_pca": 50,
+  "ne_k": 20,
+  "ne_alpha": 0.9,
+  "ne_order": 2,
+  "self_weight": 1.5,
+  "val_ne": {
+    "n_pca": 50,
+    "ne_k": 20,
+    "ne_alpha": 0.9,
+    "ne_order": 2,
+    "self_weight": 1.5
+  },
+  "train_zero_after": 0.022512665844077136,
+  "val_zero_after": 0.12804846589920188,
+  "n_bulk_train": 25706,
+  "n_k1_train": 1477,
+  "n_pb_train": 1584,
+  "n_train_total": 28767,
+  "n_bulk_val": 4537,
+  "n_k1_val": 370,
+  "n_pb_val": 263,
+  "n_val_mixed_total": 5170
+}

@@ -1,0 +1,17 @@
+{
+  "method": "softimpute",
+  "train_zero_before": 0.6035138062994745,
+  "val_zero_before": 0.6010955642855367,
+  "softimpute_max_iters": 100,
+  "val_policy": "gene_mean_from_train",
+  "train_zero_after": 0.017536798528058877,
+  "val_zero_after": 0.017510691464233324,
+  "n_bulk_train": 25706,
+  "n_k1_train": 1477,
+  "n_pb_train": 1584,
+  "n_train_total": 28767,
+  "n_bulk_val": 4537,
+  "n_k1_val": 370,
+  "n_pb_val": 263,
+  "n_val_mixed_total": 5170
+}

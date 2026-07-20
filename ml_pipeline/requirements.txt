@@ -1,0 +1,17 @@
+catboost>=1.2
+xgboost>=2.0
+optuna>=3.0
+numpy>=1.24
+pandas>=2.0
+scikit-learn>=1.3
+scipy>=1.10
+torch>=2.0
+tabm
+rtdl-revisiting-models
+pyarrow>=14
+matplotlib>=3.7
+seaborn>=0.13
+joblib>=1.3
+tqdm>=4.65
+fancyimpute>=0.7
+# optional: magic-impute, pytorch-tabular, lassonet, tabnet (model screen only)

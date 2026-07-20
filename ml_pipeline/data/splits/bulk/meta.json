@@ -1,0 +1,13 @@
+{
+  "dataset": "bulk",
+  "source_x": "bulk_TRAIN/X_BULK_TRAIN.parquet",
+  "source_y": "bulk_TRAIN/Y_BULK_TRAIN.parquet",
+  "n_total": 30243,
+  "n_train": 25706,
+  "n_val": 4537,
+  "val_frac": 0.15,
+  "n_features": 17392,
+  "n_targets": 327,
+  "transform": "log2(x+1)",
+  "seed": 42
+}

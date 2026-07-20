@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+
+# Data
+data/splits/**/*.parquet
+
+# models
+final_train_test_inference/models/**/*.joblib
+final_train_test_inference/models/**/*.json
+final_train_test_inference/models/**/*.pt
+
+# inference
+data/inference_inputs/**/*.parquet
+data/inference_outputs/**/*.csv

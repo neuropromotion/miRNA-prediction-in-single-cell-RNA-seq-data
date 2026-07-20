@@ -1,0 +1,4537 @@
+Brain - Putamen (basal ganglia)_231
+Adipose - Visceral (Omentum)_117
+Artery - Tibial_5
+Whole Blood_158
+Artery - Tibial_509
+Cells - Cultured fibroblasts_415
+TCGA-44-5645-01A
+Liver_55
+TCGA-CJ-5681-11A
+TCGA-EW-A1J3-01A
+Thyroid_70
+Brain - Putamen (basal ganglia)_0
+TCGA-A2-A3XT-01A
+TCGA-SX-A7SR-01A
+Testis_327
+Skin - Sun Exposed (Lower leg)_163
+547f521a-5851-426c-a125-d9d82c
+TCGA-BQ-7044-11A
+Adrenal Gland_281
+TCGA-13-0762-01A
+C3N-02439-07
+Colon - Sigmoid_127
+HTMCP-01-01-00451-01A
+TARGET-20-PAXIHA-09A
+Artery - Aorta_215
+Testis_264
+Cells - EBV-transformed lymphocytes_192
+TCGA-WE-AAA4-06A
+TCGA-BR-8077-01A
+TCGA-DZ-6131-01A
+Lung_503
+TCGA-2G-AAFG-05A
+TCGA-3G-AB14-01A
+TCGA-EB-A85J-01A
+TARGET-52-PARZBI-11A
+C3N-02758-02, C3N-02758-01
+TCGA-DD-AACA-01A
+Whole Blood_785
+Nerve - Tibial_544
+Artery - Tibial_563
+TCGA-HT-7689-01A
+TCGA-BQ-5891-11A
+TCGA-D8-A1Y1-01A
+TCGA-AJ-A3BH-01A
+Brain - Nucleus accumbens (basal ganglia)_88
+Artery - Tibial_667
+C3L-01106-06
+Ovary_137
+TARGET-20-PAVDRG-09A
+Colon - Sigmoid_290
+Pituitary_87
+Esophagus - Mucosa_243
+TARGET-20-PAXCWZ-09A
+TCGA-BA-5153-01A
+Pancreas_233
+Esophagus - Muscularis_417
+Brain - Nucleus accumbens (basal ganglia)_38
+TARGET-20-PAWVCG-09A
+TCGA-B6-A0IK-01A
+Artery - Tibial_267
+Muscle - Skeletal_741
+Heart - Left Ventricle_218
+Artery - Tibial_40
+Pituitary_39
+Skin - Not Sun Exposed (Suprapubic)_371
+Heart - Atrial Appendage_162
+TARGET-20-PAVZEC-09A
+Heart - Atrial Appendage_159
+Heart - Atrial Appendage_144
+TCGA-2J-AABU-01A
+TCGA-HV-A5A6-01A
+Colon - Transverse_301
+BLGSP-71-30-00657-01A
+BLGSP-71-06-00078-01B
+Small Intestine - Terminal Ileum_84
+Esophagus - Mucosa_294
+Brain - Frontal Cortex (BA9)_221
+TARGET-20-PAUUMZ-03A
+TCGA-B8-A54G-01A
+TCGA-GD-A2C5-01A
+C3N-00494-02, C3N-00494-03
+Brain - Putamen (basal ganglia)_81
+TARGET-20-PANXWX-09A
+TCGA-D6-A6EQ-01A
+Brain - Hippocampus_39
+TCGA-AA-3941-01A
+TCGA-NC-A5HQ-01A
+Esophagus - Mucosa_305
+Thyroid_562
+Cells - EBV-transformed lymphocytes_113
+Breast - Mammary Tissue_34
+Whole Blood_443
+TCGA-ER-A1A1-06A
+C3N-00293-04
+TCGA-85-A53L-01A
+Adipose - Visceral (Omentum)_340
+Brain - Putamen (basal ganglia)_140
+TCGA-AB-2992-03A
+TCGA-DJ-A3UT-01A
+TCGA-JV-A5VE-01A
+Lung_104
+Pancreas_296
+Adrenal Gland_263
+TCGA-55-8511-01A
+Artery - Aorta_406
+Brain - Cortex_200
+C3N-02082-03
+Heart - Left Ventricle_155
+Prostate_186
+Skin - Not Sun Exposed (Suprapubic)_580
+Brain - Caudate (basal ganglia)_164
+TCGA-CZ-5988-11A
+Brain - Cortex_226
+Brain - Substantia nigra_160
+C3N-02529-03
+Uterus_9
+TCGA-DC-6157-01A
+Minor Salivary Gland_131
+TCGA-ER-A2NH-06A
+TARGET-20-PAWWPA-09A
+Lung_216
+Skin - Not Sun Exposed (Suprapubic)_256
+TCGA-C5-A1MN-01A
+TARGET-20-PAURDN-09A
+C3N-00437-01
+Brain - Cerebellar Hemisphere_216
+Stomach_216
+Artery - Tibial_362
+Brain - Cerebellum_205
+TARGET-20-PASBAX-03A
+C3N-02339-06
+TCGA-MB-A8JL-01A
+TCGA-EB-A1NK-01A
+TCGA-OR-A5KW-01A
+Brain - Cerebellar Hemisphere_173
+Adipose - Visceral (Omentum)_309
+TCGA-FD-A6TA-01A
+Thyroid_119
+Cells - Cultured fibroblasts_240
+Liver_161
+Esophagus - Mucosa_52
+MP2PRT-PATXPY-TTM2-A
+TCGA-4H-AAAK-01A
+Colon - Transverse_368
+Brain - Putamen (basal ganglia)_27
+Colon - Transverse_220
+TCGA-59-2363-01A
+TCGA-DU-A5TP-01A
+TCGA-KN-8437-01A
+Brain - Amygdala_35
+Brain - Frontal Cortex (BA9)_188
+TCGA-OR-A5J6-01A
+Whole Blood_387
+Adrenal Gland_190
+Brain - Hippocampus_98
+TCGA-N6-A4V9-01A
+Esophagus - Muscularis_370
+TARGET-15-SJMPAL043507-04B
+Adipose - Subcutaneous_265
+Esophagus - Mucosa_582
+Cells - Cultured fibroblasts_299
+Nerve - Tibial_127
+TARGET-10-PARNMF-04A
+Thyroid_4
+HTMCP-02-07-01066-01A
+Skin - Not Sun Exposed (Suprapubic)_38
+Adipose - Subcutaneous_187
+Pancreas_271
+Heart - Left Ventricle_19
+Adipose - Subcutaneous_217
+Lung_466
+Esophagus - Mucosa_356
+Kidney - Cortex_99
+TCGA-HZ-8005-01A
+Cells - Cultured fibroblasts_38
+Pancreas_315
+Adipose - Subcutaneous_216
+Adipose - Subcutaneous_349
+TARGET-15-SJMPAL040037-09B
+C3L-02606-02, C3L-02606-01
+TCGA-CM-6676-01A
+Skin - Not Sun Exposed (Suprapubic)_286
+Adipose - Subcutaneous_210
+Esophagus - Muscularis_283
+Small Intestine - Terminal Ileum_165
+TCGA-MH-A561-01A
+Spleen_7
+BLGSP-71-27-00513-01A
+Brain - Hypothalamus_228
+Nerve - Tibial_319
+Thyroid_357
+Nerve - Tibial_486
+Breast - Mammary Tissue_470
+Nerve - Tibial_323
+Cells - Cultured fibroblasts_563
+TCGA-43-2581-01A
+Artery - Aorta_75
+Lung_70
+TCGA-23-1027-01A
+Brain - Anterior cingulate cortex (BA24)_166
+Artery - Tibial_329
+Muscle - Skeletal_85
+Brain - Putamen (basal ganglia)_229
+TCGA-ZD-A8I3-01A
+TCGA-ET-A3BS-01A
+Brain - Cortex_171
+Brain - Cerebellar Hemisphere_256
+TCGA-13-1483-01A
+Skin - Sun Exposed (Lower leg)_681
+Thyroid_437
+TCGA-RD-A8N0-01A
+Muscle - Skeletal_697
+TCGA-CV-6961-11A
+Colon - Transverse_247
+Artery - Tibial_504
+TARGET-20-PAWXSL-09A
+Stomach_94
+Lung_90
+Stomach_126
+Cells - Cultured fibroblasts_168
+TCGA-TQ-A7RW-01A
+Cells - Cultured fibroblasts_185
+C3N-00435-05
+Brain - Frontal Cortex (BA9)_65
+Esophagus - Muscularis_228
+TCGA-BB-4228-01A
+Heart - Left Ventricle_385
+Skin - Not Sun Exposed (Suprapubic)_92
+Esophagus - Muscularis_204
+TARGET-50-PAKJGM-01A
+Adipose - Visceral (Omentum)_137
+TCGA-CG-4441-01A
+Brain - Anterior cingulate cortex (BA24)_63
+Brain - Amygdala_46
+TARGET-20-PAKERZ-09A
+Colon - Sigmoid_316
+TCGA-2G-AAKL-01A
+Brain - Caudate (basal ganglia)_165
+Whole Blood_521
+TARGET-21-PATKWH-41A
+Artery - Tibial_64
+Skin - Not Sun Exposed (Suprapubic)_78
+TCGA-FD-A62O-01A
+Lung_513
+Esophagus - Mucosa_364
+Esophagus - Mucosa_393
+28d0abdb-f682-4bd3-9425-a9c508
+Adipose - Subcutaneous_622
+Minor Salivary Gland_153
+Brain - Caudate (basal ganglia)_116
+Brain - Caudate (basal ganglia)_143
+TARGET-20-PATAKC-09A
+Testis_393
+TCGA-A4-8311-01A
+TCGA-AY-A69D-01A
+TARGET-20-PASWVH-09A
+Brain - Hypothalamus_102
+Artery - Coronary_197
+Breast - Mammary Tissue_52
+Minor Salivary Gland_16
+TCGA-EA-A5FO-01A
+Colon - Sigmoid_416
+Minor Salivary Gland_152
+TARGET-20-PAXMPW-09A
+TCGA-DD-AACP-01A
+C3N-02193-07, C3N-02193-06
+TCGA-EA-A97N-01A
+TCGA-OR-A5L5-01A
+Whole Blood_342
+Artery - Tibial_111
+Esophagus - Mucosa_421
+Cells - Cultured fibroblasts_141
+Adipose - Visceral (Omentum)_471
+TCGA-X7-A8M7-01A
+Kidney - Medulla_4
+TARGET-20-PASSUW-09A
+Colon - Sigmoid_385
+Uterus_76
+Nerve - Tibial_280
+Brain - Caudate (basal ganglia)_32
+Cells - Cultured fibroblasts_268
+C3L-00902-06
+Heart - Atrial Appendage_181
+Lung_8
+TCGA-24-2298-01A
+Muscle - Skeletal_669
+TCGA-GD-A3OP-01A
+Artery - Tibial_309
+Lung_145
+Brain - Amygdala_136
+TCGA-TQ-A7RV-01A
+Brain - Cortex_90
+Cells - EBV-transformed lymphocytes_204
+Adipose - Visceral (Omentum)_577
+TCGA-24-1553-01A
+Adipose - Subcutaneous_417
+Nerve - Tibial_518
+Thyroid_318
+TCGA-86-A4D0-01A
+TCGA-EL-A3GO-01A
+TCGA-DK-A3WW-01A
+C3N-00578-06
+Adrenal Gland_246
+Artery - Tibial_285
+Whole Blood_573
+TCGA-G4-6323-01A
+HTMCP-01-15-00366-01A
+TCGA-CN-6021-01A
+TCGA-VQ-A8PK-01A
+Skin - Sun Exposed (Lower leg)_434
+TCGA-BF-AAP6-01A
+C3L-01732-01
+Heart - Left Ventricle_129
+Muscle - Skeletal_33
+TCGA-KK-A8IK-01A
+Colon - Transverse_474
+Small Intestine - Terminal Ileum_43
+Brain - Cerebellum_231
+TCGA-ZP-A9D0-01A
+Esophagus - Gastroesophageal Junction_333
+Brain - Nucleus accumbens (basal ganglia)_213
+Brain - Hypothalamus_139
+Nerve - Tibial_311
+Heart - Atrial Appendage_259
+TCGA-CV-7089-01A
+C3N-00859-04
+Whole Blood_188
+2ed8beb2-bc63-4bad-b5fe-1916a0
+Colon - Sigmoid_65
+TCGA-AD-6964-01A
+TARGET-50-PAJNCZ-01A
+TCGA-B0-4811-01A
+C3L-00279-03, C3L-00279-02
+Prostate_170
+Adrenal Gland_224
+Thyroid_571
+HTMCP-01-06-00185-01A
+TCGA-D3-A5GL-06A
+Brain - Hypothalamus_225
+TCGA-IQ-7630-01A
+Artery - Tibial_129
+TCGA-DO-A1JZ-11A
+cfd76f9a-ce60-4ec7-8e6b-a8fc31
+Pancreas_224
+Adipose - Subcutaneous_314
+Breast - Mammary Tissue_14
+Breast - Mammary Tissue_62
+Thyroid_526
+TCGA-DX-A6B8-01A
+Thyroid_262
+C3L-02546-03
+Prostate_226
+Adipose - Visceral (Omentum)_473
+Adipose - Subcutaneous_284
+TCGA-DO-A1JZ-01A
+Brain - Spinal cord (cervical c-1)_53
+Skin - Sun Exposed (Lower leg)_319
+Heart - Atrial Appendage_342
+TCGA-EE-A3JA-06A
+Colon - Transverse_418
+Pituitary_203
+TARGET-20-PAWTNN-09A
+Esophagus - Muscularis_436
+Heart - Left Ventricle_212
+Brain - Nucleus accumbens (basal ganglia)_77
+TCGA-AA-3494-01A
+Esophagus - Muscularis_4
+TARGET-10-PARDWN-09B
+TCGA-69-7978-01A
+TCGA-DA-A1I2-06A
+Lung_345
+TCGA-BQ-7061-11A
+Thyroid_598
+Brain - Spinal cord (cervical c-1)_56
+Whole Blood_96
+Nerve - Tibial_222
+Brain - Nucleus accumbens (basal ganglia)_145
+Vagina_34
+Heart - Left Ventricle_411
+Liver_160
+Thyroid_588
+TCGA-CR-6491-01A
+Skin - Sun Exposed (Lower leg)_379
+Breast - Mammary Tissue_472
+TCGA-V1-A9OY-01A
+Artery - Coronary_251
+TARGET-20-PAKVYM-09A
+TCGA-P3-A5QE-01A
+TCGA-75-7030-01A
+Heart - Left Ventricle_145
+TCGA-34-8456-01A
+TARGET-20-PARNNT-09A
+Whole Blood_234
+Esophagus - Muscularis_331
+TCGA-RW-A68G-01A
+TCGA-29-1761-01A
+C3L-01962-01
+TCGA-23-2078-01A
+Testis_107
+Uterus_22
+C3N-00150-03
+TCGA-D1-A2G6-01A
+Stomach_398
+BLGSP-71-06-00001-01A
+Spleen_141
+Artery - Tibial_234
+Testis_236
+Muscle - Skeletal_10
+TCGA-KN-8436-11A
+TCGA-P5-A5EV-01A
+TCGA-33-AASL-01A
+Muscle - Skeletal_533
+Artery - Coronary_157
+Bladder_43
+Brain - Putamen (basal ganglia)_209
+TCGA-29-1766-01A
+TCGA-TS-A8AY-01A
+TCGA-BC-A69H-01A
+Artery - Tibial_668
+TARGET-20-PAWLKE-09A
+TARGET-20-PAXDEG-09A
+TARGET-52-PARUGK-01A
+Artery - Tibial_162
+C3L-00997-04
+C3L-00094-06
+Minor Salivary Gland_51
+TCGA-DD-AAE3-01A
+Esophagus - Muscularis_154
+TCGA-91-6835-11A
+TCGA-C9-A480-01A
+Esophagus - Mucosa_362
+Brain - Cerebellum_96
+Colon - Transverse_294
+Pancreas_217
+TCGA-AY-A54L-01A
+TARGET-50-PAJNSL-11A
+TCGA-50-6593-01A
+Heart - Left Ventricle_401
+C3N-02783-05
+Whole Blood_757
+TARGET-20-PAUYCB-09A
+Pancreas_75
+Adipose - Subcutaneous_271
+TCGA-A1-A0SN-01A
+TCGA-49-4490-01A
+TCGA-CJ-6027-01A
+TCGA-H7-7774-01A
+Cells - Cultured fibroblasts_175
+TCGA-BB-A5HU-01A
+Esophagus - Mucosa_489
+Lung_452
+Stomach_109
+Brain - Frontal Cortex (BA9)_104
+Esophagus - Muscularis_299
+Esophagus - Muscularis_487
+Brain - Spinal cord (cervical c-1)_143
+TARGET-20-PARUZS-03A
+Vagina_104
+TCGA-X7-A8D6-11A
+Cells - Cultured fibroblasts_430
+TCGA-55-7907-01A
+Cervix - Endocervix_22
+Brain - Putamen (basal ganglia)_112
+TCGA-55-7994-01A
+Cells - EBV-transformed lymphocytes_218
+Brain - Frontal Cortex (BA9)_144
+TCGA-XF-A9T6-01A
+Artery - Tibial_533
+TCGA-3B-A9HX-01A
+Brain - Anterior cingulate cortex (BA24)_41
+TCGA-55-7815-01A
+Artery - Coronary_92
+Whole Blood_88
+TCGA-33-4582-01A
+Testis_202
+Skin - Not Sun Exposed (Suprapubic)_312
+Liver_250
+Thyroid_616
+Nerve - Tibial_77
+TCGA-A8-A09C-01A
+Skin - Not Sun Exposed (Suprapubic)_477
+Adipose - Visceral (Omentum)_138
+Colon - Transverse_63
+TCGA-MA-AA3Z-01A
+Brain - Frontal Cortex (BA9)_198
+TCGA-BR-4368-01A
+TCGA-A2-A0YL-01A
+TCGA-HM-A3JJ-01A
+TCGA-T9-A92H-01A
+C3L-02654-02
+TCGA-AA-3968-01A
+TARGET-20-PAVSLI-09A
+Thyroid_452
+Skin - Sun Exposed (Lower leg)_679
+Artery - Tibial_450
+Spleen_198
+C3N-02333-06
+TCGA-B9-4113-01A
+Cells - Cultured fibroblasts_97
+Cells - Cultured fibroblasts_644
+TCGA-DU-A5TS-01A
+Stomach_342
+TCGA-13-0720-01A
+Brain - Cerebellum_218
+TCGA-E2-A1LB-11A
+TCGA-ZB-A969-01A
+Brain - Caudate (basal ganglia)_136
+Cells - Cultured fibroblasts_194
+TCGA-33-4533-01A
+Nerve - Tibial_595
+TCGA-AA-A02J-01A
+Whole Blood_339
+C3N-03767-01
+TCGA-DJ-A3VK-01A
+TARGET-21-PARNAW-41A
+Stomach_377
+TCGA-BH-A0BO-01A
+TCGA-SP-A6QG-01A
+Thyroid_76
+Prostate_211
+8c73f3a5-fea8-4942-90c0-966f66
+Whole Blood_511
+TCGA-AK-3443-01A
+TCGA-ER-A2NB-01A
+Skin - Sun Exposed (Lower leg)_576
+TCGA-EW-A1P1-01A
+TCGA-BG-A2AE-01A
+C3N-00314-02
+Artery - Aorta_287
+Lung_170
+TARGET-20-PAVDZL-03A
+Stomach_177
+Skin - Sun Exposed (Lower leg)_93
+TCGA-DX-A7ES-01A
+TCGA-55-8510-01A
+Brain - Cerebellum_191
+TCGA-W3-AA1W-06A
+TARGET-20-PAWYDD-09A
+BLGSP-71-19-00127-04A.1
+TCGA-55-7281-01A
+TCGA-YF-AA3L-01A
+Lung_585
+Brain - Frontal Cortex (BA9)_180
+Nerve - Tibial_553
+Brain - Frontal Cortex (BA9)_8
+C3N-01879-01
+TCGA-D8-A27M-01A
+Vagina_2
+Nerve - Tibial_296
+TCGA-EJ-7782-01A
+TCGA-E2-A1L9-01A
+TCGA-2H-A9GN-01A
+Brain - Putamen (basal ganglia)_19
+Brain - Nucleus accumbens (basal ganglia)_3
+TCGA-CQ-7071-01A
+Artery - Tibial_484
+TCGA-AO-A0JG-01A
+TARGET-20-PARXEC-09A
+TCGA-C8-A26X-01A
+TCGA-25-2393-01A
+TARGET-20-PARKUY-09A
+TCGA-G9-6362-01A
+C3N-02723-06
+Adrenal Gland_53
+Adipose - Visceral (Omentum)_174
+TCGA-B0-4822-01A
+TCGA-A6-6649-01A
+Skin - Not Sun Exposed (Suprapubic)_575
+Adipose - Subcutaneous_502
+Pancreas_254
+Artery - Aorta_160
+C3N-02143-06
+Whole Blood_426
+Brain - Caudate (basal ganglia)_16
+Thyroid_291
+TCGA-A2-A0D4-01A
+Skin - Not Sun Exposed (Suprapubic)_63
+TCGA-AA-3877-01A
+Muscle - Skeletal_721
+TCGA-55-7570-01A
+Skin - Not Sun Exposed (Suprapubic)_16
+Adipose - Visceral (Omentum)_574
+Brain - Nucleus accumbens (basal ganglia)_105
+Cells - EBV-transformed lymphocytes_12
+Colon - Sigmoid_376
+C3N-03853-02, C3N-03853-01
+TCGA-AF-5654-01A
+C3L-04759-07
+Brain - Nucleus accumbens (basal ganglia)_233
+TARGET-20-PANNHB-09A
+Breast - Mammary Tissue_177
+Adrenal Gland_163
+Small Intestine - Terminal Ileum_13
+TARGET-00-RO02280-14A
+Adipose - Visceral (Omentum)_226
+Esophagus - Mucosa_17
+Muscle - Skeletal_574
+Brain - Cerebellar Hemisphere_87
+Brain - Frontal Cortex (BA9)_218
+TARGET-20-PAUYEV-09A
+TARGET-20-PATEID-09A
+Skin - Sun Exposed (Lower leg)_689
+TCGA-22-4596-01A
+TCGA-HT-7610-01A
+TCGA-VD-AA8M-01A
+Thyroid_682
+TCGA-64-5775-01A
+Brain - Frontal Cortex (BA9)_97
+Esophagus - Mucosa_487
+Esophagus - Muscularis_477
+Vagina_27
+TCGA-A2-A0D0-01A
+TCGA-JX-A3PZ-01A
+TARGET-50-CAAAAB-01A
+BLGSP-71-06-00086-01B
+TCGA-BP-4985-01A
+Brain - Cortex_233
+Colon - Sigmoid_113
+Uterus_39
+TCGA-BR-6456-01A
+Brain - Nucleus accumbens (basal ganglia)_163
+TCGA-SC-A6LR-01A
+Skin - Not Sun Exposed (Suprapubic)_380
+TARGET-20-PAWKUR-09A
+Esophagus - Gastroesophageal Junction_205
+Heart - Atrial Appendage_264
+TARGET-50-PAJNGH-02A
+Skin - Not Sun Exposed (Suprapubic)_285
+Brain - Cerebellum_130
+Brain - Substantia nigra_98
+TCGA-24-1464-01A
+Muscle - Skeletal_133
+TCGA-BH-A0AW-01A
+TCGA-W4-A7U2-01A
+TCGA-CV-7438-01A
+C3N-01414-06
+Brain - Hippocampus_94
+Pancreas_159
+C3N-04152-01
+TCGA-95-8039-01A
+Brain - Putamen (basal ganglia)_222
+TCGA-EV-5901-01A
+TCGA-AB-2849-03A
+Brain - Anterior cingulate cortex (BA24)_69
+TCGA-P5-A77X-01A
+TCGA-63-A5MR-01A
+Heart - Left Ventricle_239
+Thyroid_108
+Cells - Cultured fibroblasts_382
+TARGET-20-PAUYWJ-09A
+Cells - Cultured fibroblasts_11
+Brain - Frontal Cortex (BA9)_214
+Brain - Anterior cingulate cortex (BA24)_66
+Esophagus - Muscularis_407
+Muscle - Skeletal_593
+Skin - Sun Exposed (Lower leg)_355
+Colon - Sigmoid_194
+TCGA-CQ-5334-01A
+TCGA-55-8203-01A
+Stomach_68
+Testis_36
+Uterus_111
+HTMCP-03-06-02068-01A
+Heart - Left Ventricle_298
+Brain - Nucleus accumbens (basal ganglia)_214
+Vagina_161
+TCGA-RD-A8N5-01A
+C3N-04278-01
+Cells - Cultured fibroblasts_252
+Brain - Frontal Cortex (BA9)_35
+Muscle - Skeletal_360
+Minor Salivary Gland_30
+TCGA-2Y-A9HB-01A
+TARGET-20-PASTIE-03A
+TCGA-64-5781-01A
+TCGA-BP-4975-01A
+Artery - Tibial_641
+TARGET-20-PAWIWJ-09A
+Adrenal Gland_171
+Lung_576
+Colon - Sigmoid_170
+TCGA-A7-A0CG-01A
+Brain - Nucleus accumbens (basal ganglia)_86
+Heart - Atrial Appendage_350
+TCGA-85-8479-01A
+Adipose - Subcutaneous_403
+TCGA-29-1763-01A
+TCGA-Z7-A8R6-01A
+TARGET-20-PASLMR-09A
+2563cb02-d58a-4286-8634-7502cd
+TARGET-20-PASWGS-03A
+C3N-00822-01
+Ovary_3
+MP2PRT-PATAUM-TTM2-A
+TCGA-BJ-A28S-01A
+BLGSP-71-23-00406-01A
+Brain - Cortex_60
+Adipose - Subcutaneous_336
+TARGET-20-PARSAN-03A
+Thyroid_559
+TARGET-20-PARKCX-09A
+Skin - Not Sun Exposed (Suprapubic)_412
+Artery - Tibial_255
+TCGA-CN-6995-01A
+Artery - Aorta_197
+TCGA-BH-A1FC-01A
+Skin - Not Sun Exposed (Suprapubic)_291
+Thyroid_474
+Prostate_58
+Vagina_20
+TCGA-CV-7263-01A
+C3L-01672-01
+Skin - Sun Exposed (Lower leg)_113
+Adrenal Gland_17
+TCGA-C8-A12M-01A
+Adipose - Subcutaneous_62
+TCGA-TM-A7C4-01A
+Skin - Not Sun Exposed (Suprapubic)_542
+Brain - Spinal cord (cervical c-1)_89
+Adrenal Gland_144
+TCGA-CJ-4885-01A
+TARGET-20-PAWYKA-09A
+TCGA-13-1496-01A
+Nerve - Tibial_464
+TCGA-77-7140-01A
+TARGET-10-PANRYM-09A
+Brain - Putamen (basal ganglia)_61
+Skin - Not Sun Exposed (Suprapubic)_402
+TCGA-DF-A2KU-01A
+Brain - Hippocampus_35
+Thyroid_532
+Nerve - Tibial_407
+TCGA-E2-A1LB-01A
+TCGA-AX-A3G6-01A
+Thyroid_80
+C3L-03400-05, C3L-03400-02
+Pituitary_161
+Esophagus - Mucosa_265
+Skin - Not Sun Exposed (Suprapubic)_585
+Artery - Aorta_49
+Cells - Cultured fibroblasts_462
+Adrenal Gland_236
+Spleen_157
+TCGA-BP-4795-01A
+TCGA-W5-AA2H-01A
+Lung_31
+C3L-02163-07
+Skin - Not Sun Exposed (Suprapubic)_188
+Colon - Sigmoid_343
+TCGA-X6-A7WD-01A
+Bladder_71
+Whole Blood_411
+C3L-00081-06
+Thyroid_220
+Pancreas_236
+Brain - Caudate (basal ganglia)_270
+Heart - Left Ventricle_36
+Stomach_79
+Brain - Spinal cord (cervical c-1)_155
+TCGA-B2-4101-01A
+TCGA-FY-A3TY-11A
+TCGA-BH-A1EO-01A
+Brain - Cortex_102
+Brain - Hippocampus_84
+Artery - Aorta_396
+Skin - Sun Exposed (Lower leg)_714
+TCGA-TQ-A7RM-01A
+Cells - EBV-transformed lymphocytes_256
+Nerve - Tibial_255
+TCGA-EJ-A8FO-11A
+Artery - Tibial_384
+TCGA-C5-A8XH-01A
+Pituitary_72
+Artery - Coronary_180
+Colon - Sigmoid_18
+HTMCP-01-06-00242-01A
+Esophagus - Gastroesophageal Junction_56
+Prostate_86
+Spleen_169
+Skin - Sun Exposed (Lower leg)_253
+Esophagus - Mucosa_389
+TCGA-GS-A9TY-01A
+TCGA-DM-A0XD-01A
+TARGET-20-PARHBA-03A
+TCGA-DA-A95Z-06A
+TCGA-EY-A1GM-01A
+Brain - Hippocampus_132
+TCGA-TM-A84L-01A
+TCGA-2Z-A9JT-01A
+TARGET-21-PASLZE-09A
+TCGA-E9-A1RB-11A
+Nerve - Tibial_189
+Brain - Cerebellum_185
+TCGA-38-4625-01A
+Brain - Caudate (basal ganglia)_254
+Cells - EBV-transformed lymphocytes_217
+Testis_380
+TCGA-BP-4331-01A
+Whole Blood_360
+TCGA-BG-A3PP-01A
+Stomach_280
+TCGA-AJ-A3EK-01A
+TCGA-J8-A42S-01A
+C3L-01311-06
+TCGA-EJ-7123-11A
+TCGA-K1-A6RV-01A
+TCGA-TM-A84I-01A
+Adipose - Visceral (Omentum)_376
+Colon - Sigmoid_350
+Brain - Caudate (basal ganglia)_247
+Brain - Putamen (basal ganglia)_45
+Whole Blood_747
+Whole Blood_581
+Thyroid_281
+Breast - Mammary Tissue_403
+TCGA-B0-4844-01A
+Brain - Anterior cingulate cortex (BA24)_34
+TCGA-04-1357-01A
+Artery - Aorta_220
+Colon - Transverse_222
+TCGA-QK-A6IF-01A
+Ovary_153
+Artery - Tibial_333
+TCGA-VM-A8CF-01A
+TCGA-UF-A7JC-01A
+TARGET-50-CAAAAO-01A
+Ovary_93
+TCGA-97-A4M3-01A
+Brain - Hypothalamus_236
+Testis_373
+C3N-02529-01, C3N-02529-02
+TCGA-73-4676-01A
+Colon - Transverse_454
+TCGA-E8-A44M-01A
+Brain - Caudate (basal ganglia)_282
+Spleen_248
+TCGA-C5-A2LV-01A
+Colon - Transverse_191
+Brain - Nucleus accumbens (basal ganglia)_95
+Artery - Aorta_381
+Nerve - Tibial_376
+Brain - Substantia nigra_158
+TCGA-TP-A8TV-01A
+TCGA-L5-A891-01A
+TCGA-AZ-5403-01A
+TARGET-20-PAWNHU-09A
+HTMCP-03-06-02013-01A
+TCGA-BH-A0BS-01A
+Whole Blood_43
+Muscle - Skeletal_296
+Nerve - Tibial_303
+Artery - Tibial_158
+C3N-00709-01
+Muscle - Skeletal_785
+Brain - Cortex_83
+TARGET-20-PARBIU-04A
+TCGA-22-5473-01A
+TARGET-20-PARKFB-09A
+Brain - Caudate (basal ganglia)_138
+TCGA-63-A5ML-01A
+Thyroid_539
+C3L-03378-04
+Cells - Cultured fibroblasts_106
+Lung_100
+TCGA-5P-A9KF-01A
+Brain - Frontal Cortex (BA9)_51
+C3N-03490-06
+Skin - Not Sun Exposed (Suprapubic)_251
+Adipose - Visceral (Omentum)_29
+Brain - Caudate (basal ganglia)_77
+Small Intestine - Terminal Ileum_44
+C3L-01287-06
+Brain - Putamen (basal ganglia)_201
+BLGSP-71-08-00039-01A
+Pancreas_317
+Liver_253
+C3L-01869-06
+TCGA-SN-A84Y-01A
+TCGA-B0-5696-11A
+TCGA-EL-A3MW-01A
+Skin - Sun Exposed (Lower leg)_527
+Pituitary_104
+TARGET-20-PAVZIB-09A
+Skin - Not Sun Exposed (Suprapubic)_198
+Adipose - Visceral (Omentum)_502
+C3L-00510-04
+Adipose - Subcutaneous_504
+Thyroid_126
+Brain - Hypothalamus_168
+Artery - Tibial_176
+Brain - Substantia nigra_159
+Brain - Hippocampus_244
+TARGET-20-PAVLTF-09A
+TCGA-CS-5390-01A
+Muscle - Skeletal_797
+Brain - Putamen (basal ganglia)_194
+Lung_24
+TCGA-BR-A4QM-01A
+Colon - Sigmoid_13
+Heart - Left Ventricle_0
+TCGA-BJ-A3EZ-01A
+Artery - Tibial_178
+Skin - Not Sun Exposed (Suprapubic)_469
+Esophagus - Mucosa_299
+TCGA-CN-6023-01A
+TCGA-AB-2893-03A
+TCGA-A5-A0GU-01A
+C3N-03088-01
+TCGA-E9-A1NE-01A
+TCGA-E1-A7YN-01A
+TCGA-44-6775-01A
+Adipose - Visceral (Omentum)_40
+Vagina_168
+TCGA-AA-3980-01A
+TCGA-DX-A6BF-01A
+Ovary_126
+TCGA-FY-A4B4-01A
+TCGA-AB-2856-03A
+TCGA-B8-5545-01A
+TCGA-77-8008-01A
+Skin - Sun Exposed (Lower leg)_375
+Whole Blood_305
+TCGA-CS-6290-01A
+Brain - Frontal Cortex (BA9)_237
+TCGA-61-2092-01A
+TARGET-20-PAXAAA-09A
+C3N-00314-04
+TARGET-20-PANMTU-09A
+Brain - Cortex_104
+TCGA-AH-6643-01A
+TCGA-52-7811-01A
+TCGA-B6-A1KN-01A
+Small Intestine - Terminal Ileum_138
+Breast - Mammary Tissue_233
+Esophagus - Muscularis_212
+Artery - Tibial_538
+TCGA-BR-8081-01A
+Muscle - Skeletal_146
+Testis_256
+TCGA-CQ-A4C7-01A
+C3L-02346-06
+Minor Salivary Gland_114
+C3L-00800-01
+TCGA-59-2348-01A
+TCGA-56-A62T-01A
+TCGA-HB-A5W3-01A
+Breast - Mammary Tissue_162
+TCGA-CZ-4862-01A
+Small Intestine - Terminal Ileum_46
+Adipose - Visceral (Omentum)_264
+Skin - Sun Exposed (Lower leg)_544
+Brain - Hippocampus_4
+TCGA-D9-A1JX-06A
+Artery - Aorta_424
+TARGET-20-PAUWHF-03A
+TCGA-TS-A7OY-01A
+TCGA-IB-AAUV-01A
+TCGA-AN-A04D-01A
+BLGSP-71-06-00002-01D
+TARGET-20-PAVYYR-09A
+TCGA-09-1665-01B
+TCGA-24-1616-01A
+C3L-00095-01
+TCGA-D6-6825-01A
+Heart - Atrial Appendage_135
+Brain - Hypothalamus_153
+Adipose - Subcutaneous_360
+C3N-03074-02
+Artery - Coronary_85
+TCGA-W5-AA2X-11A
+TCGA-4J-AA1J-01A
+TCGA-59-2350-01A
+Whole Blood_795
+Esophagus - Muscularis_314
+TCGA-EW-A2FS-01A
+Whole Blood_46
+Brain - Frontal Cortex (BA9)_176
+TCGA-AB-2920-03B
+Artery - Aorta_95
+Adipose - Visceral (Omentum)_292
+Whole Blood_275
+TCGA-B5-A0K1-01A
+Skin - Not Sun Exposed (Suprapubic)_159
+TCGA-E9-A1RI-01A
+TARGET-20-PAWNPU-09A
+Heart - Atrial Appendage_216
+Vagina_133
+TCGA-FG-5963-02A
+Skin - Not Sun Exposed (Suprapubic)_28
+Heart - Left Ventricle_53
+Uterus_16
+C3N-01364-02
+Skin - Sun Exposed (Lower leg)_504
+TCGA-BQ-5883-01A
+Artery - Tibial_314
+Esophagus - Muscularis_323
+TCGA-2Y-A9GW-01A
+Heart - Atrial Appendage_97
+TARGET-15-PAREAT-09B
+TCGA-EL-A3ZQ-11A
+Colon - Sigmoid_52
+Skin - Not Sun Exposed (Suprapubic)_641
+Pituitary_112
+Colon - Sigmoid_50
+Brain - Anterior cingulate cortex (BA24)_54
+TCGA-37-4130-01A
+Minor Salivary Gland_142
+TCGA-VS-AA62-01A
+Pancreas_168
+TCGA-FG-8191-01A
+TCGA-85-A510-01A
+Brain - Anterior cingulate cortex (BA24)_220
+TCGA-BT-A20O-01A
+Ovary_129
+TCGA-IR-A3L7-01A
+C3N-03837-03
+Thyroid_162
+Cells - Cultured fibroblasts_1
+Muscle - Skeletal_177
+Skin - Sun Exposed (Lower leg)_502
+TCGA-RC-A6M3-01A
+Adipose - Subcutaneous_14
+TCGA-N8-A4PL-01A
+TCGA-DX-AB2H-01A
+TARGET-20-PAWHXI-09A
+TCGA-EO-A3AY-01A
+C3N-01893-10
+C3N-02928-01, C3N-02928-02
+Esophagus - Muscularis_507
+TCGA-ET-A40P-01A
+Brain - Substantia nigra_10
+TCGA-13-0884-01B
+TCGA-EJ-5516-01A
+Pituitary_236
+Thyroid_174
+Colon - Transverse_410
+Artery - Aorta_445
+TCGA-B0-5116-01A
+Colon - Sigmoid_143
+TCGA-GL-8500-01A
+Brain - Substantia nigra_44
+C3N-01261-01
+Stomach_11
+TARGET-20-PAUPSS-09A
+Brain - Hypothalamus_26
+Nerve - Tibial_633
+Ovary_179
+Minor Salivary Gland_129
+BLGSP-71-06-00164-01C
+TARGET-50-CAAAAQ-01A
+Muscle - Skeletal_526
+TCGA-39-5031-01A
+Ovary_60
+TCGA-CC-5263-01A
+Adipose - Subcutaneous_398
+Esophagus - Mucosa_554
+TCGA-CA-5256-01A
+TCGA-4Z-AA7M-01A
+TCGA-EK-A2R9-01A
+Brain - Spinal cord (cervical c-1)_107
+Esophagus - Muscularis_284
+Testis_299
+TCGA-C5-A3HL-01A
+C3L-00446-01
+308ad404-7079-4ff8-8232-12ee2e
+Brain - Hypothalamus_171
+Skin - Sun Exposed (Lower leg)_202
+TCGA-95-7562-01A
+TCGA-A5-A1OJ-01A
+Artery - Tibial_614
+Muscle - Skeletal_171
+Cells - EBV-transformed lymphocytes_213
+C3N-01948-04
+Prostate_161
+Pituitary_262
+TCGA-64-5778-01A
+TCGA-G9-6373-01A
+Colon - Transverse_314
+Thyroid_367
+Colon - Transverse_352
+TARGET-20-PATMDJ-09A
+Esophagus - Mucosa_414
+TCGA-24-1105-01A
+Brain - Hippocampus_142
+TCGA-E7-A6MF-01A
+Esophagus - Gastroesophageal Junction_147
+TCGA-C5-A1BL-01A
+Artery - Tibial_624
+TARGET-20-PAVPED-09A
+C3N-00560-06
+MP2PRT-PAYHJX-TTM2-A
+Artery - Aorta_32
+Heart - Left Ventricle_325
+C3N-03425-05
+Skin - Not Sun Exposed (Suprapubic)_268
+C3N-04124-03
+TCGA-F9-A7VF-01A
+Thyroid_553
+Adipose - Subcutaneous_160
+Whole Blood_326
+Stomach_239
+Adipose - Subcutaneous_243
+Whole Blood_276
+Pituitary_311
+TCGA-J4-A6M7-01A
+TCGA-HR-A5NC-01A
+Esophagus - Muscularis_77
+Brain - Hypothalamus_16
+Adipose - Subcutaneous_583
+TCGA-62-A46S-01A
+Colon - Sigmoid_173
+TCGA-CM-6677-01A
+TCGA-RE-A7BO-01A
+Heart - Left Ventricle_312
+Brain - Hypothalamus_160
+C3N-01415-07
+Skin - Sun Exposed (Lower leg)_259
+TCGA-IA-A40X-01A
+Heart - Left Ventricle_444
+Pituitary_119
+Brain - Caudate (basal ganglia)_68
+Brain - Nucleus accumbens (basal ganglia)_147
+Spleen_122
+TCGA-O2-A5IB-01A
+Whole Blood_558
+Testis_115
+TCGA-A8-A06U-01A
+Cells - Cultured fibroblasts_236
+Artery - Coronary_120
+Esophagus - Gastroesophageal Junction_29
+Testis_232
+Breast - Mammary Tissue_216
+TCGA-D5-6539-01A
+Brain - Nucleus accumbens (basal ganglia)_120
+C3N-01085-02
+TCGA-BP-4977-01A
+Cells - EBV-transformed lymphocytes_233
+Ovary_141
+TCGA-EY-A215-01A
+TCGA-A2-A0YT-01A
+Brain - Nucleus accumbens (basal ganglia)_182
+TARGET-20-PAVRJP-09A
+Adipose - Visceral (Omentum)_546
+TARGET-20-PAXHTS-03A
+TCGA-DX-AB2T-01A
+Thyroid_309
+Esophagus - Gastroesophageal Junction_375
+Nerve - Tibial_92
+TCGA-56-8626-01A
+Heart - Left Ventricle_6
+TARGET-20-PANSDI-09A
+TCGA-BR-A4J4-01A
+Pancreas_67
+Minor Salivary Gland_148
+Artery - Aorta_14
+C3N-00167-06
+TCGA-ET-A2MX-01A
+Esophagus - Muscularis_159
+BLGSP-71-19-00107-01A
+Heart - Left Ventricle_31
+Stomach_189
+Brain - Putamen (basal ganglia)_214
+TCGA-GR-7353-01A
+TCGA-25-2392-01A
+TCGA-AB-2853-03A
+Colon - Sigmoid_176
+Esophagus - Gastroesophageal Junction_400
+Muscle - Skeletal_137
+Testis_269
+Breast - Mammary Tissue_77
+TARGET-21-PASVJS-41A
+TCGA-HF-7132-01A
+TCGA-IP-7968-11A
+Heart - Left Ventricle_205
+Artery - Tibial_513
+Heart - Left Ventricle_395
+Esophagus - Gastroesophageal Junction_200
+Heart - Left Ventricle_283
+743c74e4-cd76-4f38-8cb4-3c9107
+Brain - Cerebellum_146
+C3N-00848-02
+Heart - Left Ventricle_372
+Whole Blood_198
+TCGA-BG-A2AD-01A
+TARGET-20-PAWPDC-09A
+Colon - Transverse_383
+TCGA-AO-A12B-01A
+Heart - Left Ventricle_441
+Breast - Mammary Tissue_316
+Nerve - Tibial_643
+Esophagus - Gastroesophageal Junction_248
+Esophagus - Gastroesophageal Junction_273
+TCGA-RW-A68A-01A
+TCGA-MI-A75E-01A
+TCGA-A6-2684-01A
+TCGA-A8-A09X-01A
+Nerve - Tibial_134
+TARGET-20-PAMYGX-09A
+TCGA-04-1356-01A
+C3L-01277-01
+TCGA-BP-4169-01A
+TCGA-3H-AB3U-01A
+TCGA-CL-4957-01A
+Pancreas_353
+C3L-01328-01
+Esophagus - Mucosa_122
+TCGA-24-1471-01A
+TCGA-78-7155-01A
+Adipose - Subcutaneous_124
+Heart - Left Ventricle_201
+Artery - Coronary_243
+Esophagus - Mucosa_196
+TCGA-ER-A3PL-06A
+TCGA-CQ-5329-01A
+Lung_242
+Ovary_176
+C3N-01754-03, C3N-01754-02, C3N-01754-04
+C3L-00814-02
+TCGA-A2-A0CZ-01A
+Esophagus - Mucosa_334
+C3L-01840-02
+TCGA-DX-A3LY-01B
+TCGA-25-1635-01A
+Prostate_247
+Esophagus - Mucosa_177
+Esophagus - Mucosa_228
+Lung_442
+Artery - Tibial_47
+Thyroid_375
+C3L-01458-01
+Cells - Cultured fibroblasts_140
+TCGA-AK-3436-01A
+Breast - Mammary Tissue_148
+Testis_316
+Artery - Tibial_208
+Pancreas_226
+TCGA-EM-A3AN-01A
+Uterus_96
+TCGA-LP-A4AU-01A
+Nerve - Tibial_628
+TARGET-20-PASLTS-09A
+Brain - Cortex_251
+C3L-03356-02
+Muscle - Skeletal_768
+Brain - Putamen (basal ganglia)_185
+Stomach_248
+Esophagus - Gastroesophageal Junction_335
+Adipose - Subcutaneous_455
+C3N-01200-02
+C3L-02741-01
+TCGA-13-0799-01A
+Colon - Transverse_4
+TCGA-ZH-A8Y1-01A
+HTMCP-03-06-02012-01B
+TCGA-49-AARO-01A
+Thyroid_683
+Thyroid_66
+TARGET-20-PAKIWK-09A
+Pituitary_4
+Esophagus - Mucosa_325
+TCGA-CV-5966-01A
+TCGA-AA-3489-01A
+TARGET-21-PARXYR-41A
+Kidney - Cortex_78
+BLGSP-71-06-00180-01A
+Adipose - Subcutaneous_369
+TCGA-AC-A2QH-01A
+Brain - Putamen (basal ganglia)_202
+Esophagus - Mucosa_130
+TCGA-YZ-A984-01A
+TCGA-DG-A2KM-01A
+Breast - Mammary Tissue_152
+Testis_289
+TARGET-20-PAWWFF-09A
+Artery - Coronary_191
+Brain - Hippocampus_123
+TCGA-3A-A9I9-01A
+TCGA-29-1769-01A
+Breast - Mammary Tissue_485
+Lung_275
+27f3ca2d-a86f-479d-8e7e-5307c7
+TCGA-D3-A2JC-06A
+Nerve - Tibial_149
+TCGA-UF-A71A-01A
+Whole Blood_318
+Nerve - Tibial_111
+Thyroid_135
+TCGA-DD-A11D-11A
+Skin - Not Sun Exposed (Suprapubic)_246
+TCGA-V1-A8MG-01A
+Esophagus - Muscularis_317
+C3N-03225-01
+MP2PRT-PAZEPC-TTR1-A
+Brain - Spinal cord (cervical c-1)_71
+Artery - Aorta_101
+TARGET-20-PAUWYG-09A
+TCGA-05-4425-01A
+Brain - Hypothalamus_150
+TCGA-EE-A2GE-06A
+TCGA-13-1501-01A
+Esophagus - Muscularis_337
+Skin - Sun Exposed (Lower leg)_677
+TARGET-20-PAUUHV-09A
+TCGA-RC-A6M6-01A
+Skin - Not Sun Exposed (Suprapubic)_456
+TCGA-BA-5557-01A
+TCGA-99-7458-01A
+Testis_132
+TARGET-20-PANBYS-09A
+Artery - Aorta_342
+Skin - Not Sun Exposed (Suprapubic)_250
+Breast - Mammary Tissue_427
+TCGA-BS-A0UJ-01A
+Artery - Coronary_166
+C3N-01652-05
+TCGA-A8-A081-01A
+TCGA-DD-A11B-11A
+C3L-01603-01
+TCGA-B2-5633-01A
+Heart - Left Ventricle_358
+Small Intestine - Terminal Ileum_144
+TCGA-L5-A8NK-01A
+Nerve - Tibial_201
+Colon - Sigmoid_1
+Brain - Cerebellar Hemisphere_210
+C3N-03848-01, C3N-03848-02
+Cells - Cultured fibroblasts_123
+Brain - Hypothalamus_67
+TCGA-E2-A1IL-01A
+TCGA-A2-A0CR-01A
+TCGA-CV-6936-01A
+Heart - Atrial Appendage_30
+TCGA-ZF-A9R2-01A
+Artery - Tibial_543
+TCGA-05-4402-01A
+Liver_183
+Spleen_86
+C3L-00969-01
+TCGA-XK-AAIR-01A
+TCGA-2G-AAL7-01A
+Adipose - Visceral (Omentum)_494
+Brain - Hypothalamus_87
+Nerve - Tibial_565
+Bladder_12
+TARGET-20-PATGUB-09A
+TCGA-A4-7997-01A
+TCGA-EY-A1H0-01A
+Lung_414
+Skin - Not Sun Exposed (Suprapubic)_429
+Colon - Transverse_255
+TCGA-3A-A9IZ-01A
+Brain - Spinal cord (cervical c-1)_106
+Brain - Cortex_72
+Brain - Cerebellar Hemisphere_11
+Testis_254
+Brain - Frontal Cortex (BA9)_9
+TARGET-20-PAVKFD-09A
+Cells - EBV-transformed lymphocytes_240
+Testis_208
+TCGA-AX-A060-01A
+Lung_581
+Muscle - Skeletal_169
+Lung_558
+Testis_176
+TCGA-S7-A7X2-01A
+Esophagus - Gastroesophageal Junction_250
+TARGET-20-PARZMZ-03A
+TCGA-E2-A15P-01A
+TCGA-5P-A9JW-01A
+TCGA-AG-4001-01A
+TCGA-ER-A19H-06A
+Lung_518
+Muscle - Skeletal_628
+TCGA-B2-5633-01B
+Muscle - Skeletal_109
+Muscle - Skeletal_735
+TCGA-ET-A3BQ-01B
+BLGSP-71-06-00098-01A
+Cells - Cultured fibroblasts_32
+TCGA-50-6590-01A
+Heart - Atrial Appendage_237
+C3L-02179-01
+Pituitary_76
+Whole Blood_501
+Heart - Left Ventricle_256
+C3L-01247-01
+Muscle - Skeletal_111
+TCGA-EL-A3CS-01A
+Brain - Cerebellar Hemisphere_206
+TCGA-A8-A0AB-01A
+Brain - Cerebellum_14
+TCGA-BH-A6R9-01A
+TCGA-E9-A1N6-01A
+Adipose - Visceral (Omentum)_220
+Adipose - Subcutaneous_149
+TARGET-20-PAVVAB-09A
+TCGA-R8-A6ML-01A
+TCGA-XF-AAME-01A
+TCGA-AB-2971-03A
+Brain - Nucleus accumbens (basal ganglia)_9
+Cells - Cultured fibroblasts_187
+Vagina_83
+TARGET-20-PARJWH-09A
+TCGA-DA-A3F5-06A
+Colon - Transverse_261
+TCGA-AX-A1CF-11A
+TCGA-DD-A39W-11A
+Whole Blood_348
+Colon - Transverse_299
+TCGA-85-7696-01A
+Prostate_116
+Esophagus - Muscularis_194
+TCGA-22-5491-01A
+C3L-01064-02, C3L-01064-01
+Muscle - Skeletal_379
+TARGET-20-PAWUMM-09A
+TARGET-20-PASUUD-09A
+Breast - Mammary Tissue_263
+Nerve - Tibial_369
+Skin - Not Sun Exposed (Suprapubic)_292
+TCGA-CW-5581-11A
+Muscle - Skeletal_294
+TARGET-20-PASYJI-09A
+TARGET-10-PAPPGN-04A
+TCGA-97-7941-01A
+TCGA-ET-A25O-01A
+Uterus_12
+Cells - Cultured fibroblasts_295
+Lung_311
+Small Intestine - Terminal Ileum_164
+TCGA-EK-A3GN-01A
+Brain - Cerebellum_261
+Skin - Sun Exposed (Lower leg)_459
+TCGA-2Y-A9GU-01A
+C3N-02261-06
+TARGET-10-PASCIU-03A
+Lung_36
+Breast - Mammary Tissue_473
+Vagina_139
+Brain - Anterior cingulate cortex (BA24)_80
+MP2PRT-PAWARG-TTM2-A
+Brain - Hypothalamus_109
+Brain - Nucleus accumbens (basal ganglia)_123
+Colon - Transverse_280
+Lung_421
+TCGA-BJ-A28W-11A
+TCGA-77-8133-01A
+TCGA-2G-AAFM-01A
+Whole Blood_283
+TARGET-10-PASXFY-09B
+Cells - Cultured fibroblasts_311
+Heart - Left Ventricle_159
+TCGA-BH-A0HA-11A
+TCGA-DW-5560-01A
+Esophagus - Mucosa_29
+Thyroid_627
+TARGET-20-PAWYEM-09A
+Nerve - Tibial_86
+TCGA-DJ-A1QE-01A
+Brain - Hypothalamus_123
+Colon - Sigmoid_213
+Muscle - Skeletal_124
+Brain - Nucleus accumbens (basal ganglia)_265
+TCGA-2A-AAYU-01A
+Brain - Substantia nigra_74
+TCGA-L5-A43E-01A
+Lung_432
+Muscle - Skeletal_98
+Esophagus - Muscularis_254
+Heart - Left Ventricle_305
+Brain - Hippocampus_95
+Prostate_141
+TCGA-SH-A7BH-01A
+Lung_32
+Cells - Cultured fibroblasts_328
+Esophagus - Muscularis_14
+Lung_523
+Brain - Cerebellar Hemisphere_202
+Heart - Left Ventricle_95
+Esophagus - Muscularis_261
+Adipose - Subcutaneous_338
+Heart - Atrial Appendage_187
+Brain - Caudate (basal ganglia)_213
+Whole Blood_106
+C3N-00312-02
+TCGA-BP-4761-01A
+Cells - EBV-transformed lymphocytes_32
+Brain - Anterior cingulate cortex (BA24)_37
+C3N-02925-03
+TARGET-20-PAWLAJ-09A
+TARGET-10-PARXCD-09B
+Heart - Atrial Appendage_445
+Pancreas_90
+Whole Blood_371
+TCGA-XU-AAXX-01A
+Nerve - Tibial_160
+TCGA-E9-A249-01A
+Whole Blood_720
+Thyroid_300
+TCGA-N5-A4RM-01A
+TCGA-YU-A90S-01A
+Brain - Frontal Cortex (BA9)_203
+TCGA-D7-8578-01A
+TCGA-BH-A0B7-01A
+TARGET-52-PASILR-01A
+Brain - Nucleus accumbens (basal ganglia)_196
+TCGA-DJ-A3UO-01A
+Brain - Nucleus accumbens (basal ganglia)_115
+Cells - Cultured fibroblasts_556
+Brain - Hypothalamus_179
+TCGA-TS-A8AF-01A
+C3L-01470-01
+Brain - Caudate (basal ganglia)_243
+TARGET-20-PAXMLI-09A
+TARGET-20-PAVTMY-09A
+TCGA-B0-4816-01A
+Testis_88
+Artery - Tibial_157
+Lung_314
+TCGA-57-1586-01A
+Whole Blood_652
+Artery - Coronary_89
+TCGA-DD-AAEE-01A
+Bladder_15
+Muscle - Skeletal_753
+Lung_265
+Testis_70
+Colon - Transverse_328
+Adipose - Subcutaneous_393
+Cells - Cultured fibroblasts_55
+BLGSP-71-06-00076-01A
+Esophagus - Mucosa_23
+Artery - Aorta_112
+Small Intestine - Terminal Ileum_152
+TARGET-20-PAWSTK-03A
+TARGET-20-PATGIG-03A
+Esophagus - Mucosa_129
+TCGA-CN-5358-01A
+TCGA-J2-8192-01A
+TARGET-20-PANLKB-09A
+TCGA-ET-A39M-01A
+Muscle - Skeletal_430
+Colon - Transverse_472
+Brain - Caudate (basal ganglia)_202
+TCGA-13-0923-01A
+TCGA-A2-A04V-01A
+Prostate_0
+TCGA-UY-A78K-01A
+TCGA-AN-A049-01A
+TCGA-BH-A0B9-01A
+Nerve - Tibial_40
+Thyroid_301
+TCGA-MH-A55W-01A
+Brain - Cortex_207
+TCGA-2G-AAGZ-01A
+Artery - Tibial_338
+Breast - Mammary Tissue_212
+TCGA-B2-5641-01A
+C3L-03743-01
+Artery - Tibial_201
+BLGSP-71-06-00283-01A
+Brain - Putamen (basal ganglia)_198
+Esophagus - Muscularis_318
+Esophagus - Mucosa_558
+Uterus_81
+Artery - Coronary_100
+Artery - Aorta_407
+Brain - Amygdala_143
+C3N-01719-01
+TCGA-G4-6309-01A
+TCGA-ED-A7XO-01A
+TARGET-20-PAWBYK-09A
+Brain - Substantia nigra_77
+TCGA-A7-A26I-01B
+TCGA-BJ-A2NA-11A
+Pituitary_55
+Thyroid_304
+TCGA-58-8391-01A
+Small Intestine - Terminal Ileum_87
+Small Intestine - Terminal Ileum_57
+TCGA-EB-A42Y-01A
+BLGSP-71-30-00666-01A
+TCGA-GM-A2DD-01A
+C3L-01302-03
+Skin - Not Sun Exposed (Suprapubic)_562
+Artery - Aorta_423
+C3N-00721-06
+Brain - Frontal Cortex (BA9)_69
+Pituitary_103
+Skin - Sun Exposed (Lower leg)_54
+HTMCP-03-06-02322-01A
+TCGA-UY-A9PD-01A
+TCGA-C5-A1BM-01A
+Small Intestine - Terminal Ileum_125
+Skin - Not Sun Exposed (Suprapubic)_73
+Thyroid_549
+C3N-01030-03
+Whole Blood_82
+Skin - Not Sun Exposed (Suprapubic)_509
+Thyroid_618
+Whole Blood_120
+Thyroid_427
+Artery - Aorta_327
+TARGET-20-PATEUF-03A
+Adipose - Subcutaneous_552
+TCGA-AX-A06B-01A
+e7b656bf-3c34-4ba1-bdf3-c7eefe
+Brain - Putamen (basal ganglia)_181
+Uterus_67
+Artery - Aorta_129
+Testis_43
+Thyroid_27
+Artery - Coronary_137
+Lung_497
+Whole Blood_613
+Colon - Sigmoid_299
+TCGA-EJ-7791-01A
+Kidney - Cortex_79
+Esophagus - Muscularis_95
+TCGA-XA-A8JR-01A
+Nerve - Tibial_527
+Esophagus - Mucosa_51
+Esophagus - Mucosa_354
+Skin - Sun Exposed (Lower leg)_595
+Heart - Atrial Appendage_115
+Brain - Anterior cingulate cortex (BA24)_52
+Cells - Cultured fibroblasts_392
+TCGA-22-4595-01A
+TCGA-B6-A402-01A
+d154d194-2b08-46d4-a199-84cfb8
+TCGA-2G-AAKH-01A
+TCGA-A2-A0D1-01A
+C3N-02729-03
+BLGSP-71-06-00149-01B
+Prostate_142
+Lung_162
+TARGET-20-PAWHJI-09A
+Skin - Not Sun Exposed (Suprapubic)_391
+Breast - Mammary Tissue_306
+TCGA-A2-A4RY-01A
+TCGA-BQ-5890-11A
+Artery - Aorta_119
+TCGA-L5-A4OM-11A
+Skin - Sun Exposed (Lower leg)_275
+TCGA-BH-A18M-11A
+Skin - Not Sun Exposed (Suprapubic)_504
+TCGA-97-8174-01A
+Brain - Substantia nigra_59
+TCGA-BW-A5NP-01A
+TARGET-50-PAECJB-01A
+Brain - Cerebellum_232
+TCGA-B0-5106-01A
+TCGA-09-2048-01A
+TCGA-CM-6170-01A
+Liver_20
+Skin - Not Sun Exposed (Suprapubic)_184
+Cells - Cultured fibroblasts_34
+Esophagus - Muscularis_447
+TARGET-20-PAUJMC-09A
+Heart - Left Ventricle_226
+TCGA-24-1930-01A
+TCGA-EL-A3ZO-11A
+Heart - Atrial Appendage_446
+Adipose - Visceral (Omentum)_532
+TCGA-CQ-A4CD-01A
+Brain - Cerebellum_40
+Brain - Cerebellar Hemisphere_238
+TCGA-EA-A3HS-01A
+Colon - Transverse_373
+TCGA-YY-A8LH-01A
+TCGA-Z4-AAPG-01A
+Pancreas_113
+TCGA-KS-A41I-11A
+C3N-02149-06
+Brain - Amygdala_67
+Artery - Aorta_349
+Cells - EBV-transformed lymphocytes_300
+TCGA-91-8497-01A
+TCGA-CM-4751-01A
+Stomach_106
+TCGA-A3-3376-01A
+Lung_199
+Colon - Transverse_423
+C3N-01537-01
+Spleen_274
+TCGA-BA-6871-01A
+TCGA-FY-A3R9-01A
+Thyroid_284
+TCGA-J4-AAU2-01A
+Brain - Frontal Cortex (BA9)_123
+TARGET-20-PAWAFE-09A
+Brain - Caudate (basal ganglia)_117
+Heart - Left Ventricle_434
+TCGA-FG-A4MT-02A
+Artery - Tibial_655
+C3N-02923-06
+TCGA-QR-A70P-01A
+Stomach_57
+HTMCP-03-06-02335-01A
+Adrenal Gland_114
+Pancreas_263
+Adrenal Gland_96
+fd4edc52-09ef-4b01-be7c-f23f05
+Stomach_172
+Lung_595
+TCGA-91-8496-01A
+Artery - Tibial_470
+TCGA-B8-4622-01A
+TCGA-75-5126-01A
+Stomach_232
+TCGA-AK-3427-01A
+TARGET-20-PATMFM-03A
+TCGA-EE-A2MT-06A
+Adipose - Subcutaneous_119
+Nerve - Tibial_52
+a2f03d85-5f1a-4b3e-9dbf-74e67e
+TARGET-20-PAVKAH-09A
+TCGA-HD-7754-01A
+Stomach_153
+TCGA-AR-A2LN-01A
+Artery - Tibial_573
+C3N-02694-03, C3N-02694-02
+TCGA-Q1-A6DT-01A
+Lung_167
+TCGA-BQ-5890-01A
+TCGA-BH-A208-11A
+TARGET-20-PAVIXV-09A
+Whole Blood_749
+TCGA-DD-A4NV-01A
+TCGA-AB-2815-03A
+Esophagus - Muscularis_90
+TCGA-AB-2986-03A
+C3N-04180-01
+TCGA-25-2399-01A
+TCGA-DX-A1L3-01A
+Nerve - Tibial_432
+Brain - Cortex_71
+TCGA-EA-A78R-01A
+Lung_239
+Muscle - Skeletal_477
+Pancreas_116
+Esophagus - Mucosa_400
+TCGA-56-7580-01A
+TARGET-20-PAXIEG-09A
+C3L-02112-04
+TARGET-10-PANSBR-09A
+Cells - Cultured fibroblasts_220
+TCGA-A4-7287-01A
+TARGET-20-PAWGRP-09A
+TCGA-E9-A6HE-01A
+Esophagus - Gastroesophageal Junction_369
+Cells - Cultured fibroblasts_393
+2dc74c29-2e89-4600-80bf-1e3637
+TARGET-20-PAVGDM-09A
+Testis_228
+Cells - Cultured fibroblasts_8
+Pancreas_14
+Muscle - Skeletal_78
+TCGA-2X-A9D5-01A
+TCGA-18-3415-01A
+TCGA-EY-A2OM-01A
+TCGA-DU-6399-01A
+Cells - Cultured fibroblasts_118
+Esophagus - Muscularis_549
+TCGA-MS-A51U-01A
+Brain - Putamen (basal ganglia)_176
+TCGA-FG-8186-01A
+Whole Blood_307
+C3L-03463-02
+TCGA-D8-A27L-01A
+Colon - Transverse_150
+Esophagus - Muscularis_488
+C3L-00026-06
+TCGA-RT-A6Y9-01A
+TARGET-10-PASDYM-09B
+Prostate_124
+TARGET-20-PASUVD-09A
+Pituitary_123
+TCGA-EE-A2MI-06A
+Whole Blood_582
+Adrenal Gland_285
+Brain - Frontal Cortex (BA9)_227
+TCGA-HC-7748-01A
+TCGA-DS-A1O9-01A
+Cells - Cultured fibroblasts_81
+Brain - Cerebellar Hemisphere_149
+TCGA-AX-A3FZ-01A
+Whole Blood_776
+TCGA-DM-A28E-01A
+TCGA-EM-A1YE-01A
+Nerve - Tibial_342
+Colon - Sigmoid_398
+Colon - Transverse_10
+TARGET-50-PAKULH-01A
+TCGA-PN-A8MA-01A
+Heart - Atrial Appendage_260
+TARGET-20-PARWDZ-09A
+TARGET-20-PAVCFR-09A
+TCGA-B6-A0IH-01A
+TCGA-A7-A26H-01A
+Liver_24
+TCGA-HC-7742-01A
+MP2PRT-PARSKN-TTM2-A
+Thyroid_172
+Thyroid_397
+TCGA-G4-6307-01A
+Brain - Cerebellar Hemisphere_12
+TCGA-B5-A11F-01A
+Cells - Cultured fibroblasts_242
+Cells - Cultured fibroblasts_481
+Nerve - Tibial_482
+Colon - Transverse_78
+TCGA-80-5608-01A
+TARGET-00-RO02213-14A
+Heart - Left Ventricle_435
+TCGA-BH-A18R-01A
+Colon - Sigmoid_134
+TCGA-C8-A1HL-01A
+Brain - Frontal Cortex (BA9)_189
+Skin - Not Sun Exposed (Suprapubic)_220
+Heart - Atrial Appendage_372
+Thyroid_368
+TCGA-A8-A08S-01A
+Muscle - Skeletal_480
+Brain - Anterior cingulate cortex (BA24)_200
+Whole Blood_541
+TCGA-AO-A03L-01A
+TCGA-E9-A5UP-01A
+BLGSP-71-21-00187-01A
+Breast - Mammary Tissue_282
+Adrenal Gland_124
+Skin - Sun Exposed (Lower leg)_274
+C3N-04611-06
+TCGA-DX-A6BB-01A
+TCGA-QR-A70V-01A
+Skin - Not Sun Exposed (Suprapubic)_531
+Skin - Not Sun Exposed (Suprapubic)_212
+TCGA-AL-3471-01A
+TARGET-20-PAXBPF-09A
+Muscle - Skeletal_565
+Artery - Aorta_312
+BLGSP-71-06-00090-01A
+Stomach_269
+TCGA-5P-A9K3-01A
+TARGET-20-PAVPCA-09A
+TCGA-CJ-4887-01A
+TCGA-BJ-A4O9-01A
+Adipose - Subcutaneous_29
+TARGET-20-PASNKC-09A
+Brain - Frontal Cortex (BA9)_199
+Adipose - Subcutaneous_182
+TARGET-20-PAXCZX-09A
+Esophagus - Muscularis_222
+Heart - Atrial Appendage_321
+Cells - Cultured fibroblasts_341
+Minor Salivary Gland_154
+Brain - Hippocampus_114
+TCGA-XU-A92X-01A
+Skin - Not Sun Exposed (Suprapubic)_7
+Muscle - Skeletal_727
+Skin - Sun Exposed (Lower leg)_637
+C3N-01219-03
+TCGA-37-4141-01A
+TCGA-MO-A47P-01A
+TCGA-BR-4280-01A
+Muscle - Skeletal_738
+TCGA-EJ-A8FP-01A
+Bladder_66
+Stomach_387
+Nerve - Tibial_546
+Artery - Tibial_478
+BLGSP-71-30-00649-01A
+Artery - Aorta_292
+Cells - EBV-transformed lymphocytes_189
+TCGA-S9-A6TW-01A
+Esophagus - Gastroesophageal Junction_387
+Brain - Putamen (basal ganglia)_226
+Adrenal Gland_123
+TCGA-WN-A9G9-01A
+TCGA-D5-6923-01A
+Spleen_91
+Brain - Hypothalamus_99
+Skin - Sun Exposed (Lower leg)_503
+Minor Salivary Gland_173
+Thyroid_324
+TARGET-20-PASSDX-09A
+C3N-00556-06
+Brain - Caudate (basal ganglia)_237
+TCGA-CU-A3QU-01A
+Adipose - Visceral (Omentum)_491
+TCGA-AG-3999-01A
+Thyroid_75
+TCGA-OR-A5LN-01A
+Whole Blood_229
+Artery - Aorta_36
+C3L-04037-06
+Vagina_111
+Brain - Cerebellar Hemisphere_39
+Lung_320
+C3N-02715-06
+Whole Blood_624
+Pituitary_229
+Nerve - Tibial_337
+Skin - Sun Exposed (Lower leg)_83
+TCGA-HC-A6AS-01A
+TCGA-J4-A83J-01A
+Spleen_82
+Minor Salivary Gland_39
+Esophagus - Mucosa_214
+TCGA-VS-A9UY-01A
+Minor Salivary Gland_36
+C3N-00243-07
+Adrenal Gland_269
+TCGA-F1-A72C-01A
+TCGA-EM-A3SU-01A
+Colon - Transverse_278
+Muscle - Skeletal_815
+Skin - Not Sun Exposed (Suprapubic)_493
+Skin - Sun Exposed (Lower leg)_696
+Brain - Frontal Cortex (BA9)_72
+Brain - Cortex_260
+Artery - Aorta_418
+TCGA-55-A4DF-01A
+Prostate_257
+Adipose - Subcutaneous_344
+TARGET-20-PASTTJ-03A
+TCGA-D1-A3DG-01A
+Artery - Tibial_101
+Thyroid_380
+Brain - Cerebellum_13
+TCGA-BR-6802-11A
+Brain - Cerebellum_28
+Brain - Hippocampus_100
+Artery - Tibial_155
+HTMCP-03-06-02202-01B
+TCGA-QK-A8Z9-01B
+Brain - Caudate (basal ganglia)_200
+Brain - Cortex_128
+Muscle - Skeletal_402
+Heart - Atrial Appendage_423
+Colon - Sigmoid_368
+Testis_31
+Skin - Sun Exposed (Lower leg)_65
+TCGA-XF-A9T3-01A
+Small Intestine - Terminal Ileum_188
+TCGA-HT-7483-01A
+Pancreas_112
+Vagina_14
+Skin - Sun Exposed (Lower leg)_736
+TCGA-BH-A0BR-01A
+TCGA-X6-A7WB-01A
+Thyroid_400
+Lung_549
+Brain - Hypothalamus_13
+Brain - Cerebellar Hemisphere_188
+Esophagus - Mucosa_155
+Brain - Anterior cingulate cortex (BA24)_43
+TCGA-BS-A0V6-01A
+Cells - Cultured fibroblasts_395
+C3N-03662-01
+TCGA-CH-5761-01A
+Whole Blood_351
+Brain - Substantia nigra_6
+Whole Blood_319
+Skin - Sun Exposed (Lower leg)_657
+TCGA-ET-A2MY-01A
+TCGA-TQ-A7RJ-01A
+TCGA-R5-A7ZI-01A
+TARGET-10-PAPLDL-04A
+Testis_242
+TARGET-50-PAJNSL-01A
+Kidney - Cortex_59
+TCGA-BR-A4IY-01A
+Adipose - Visceral (Omentum)_419
+Skin - Not Sun Exposed (Suprapubic)_82
+TCGA-BL-A0C8-01A
+TCGA-CZ-4858-01A
+Adipose - Visceral (Omentum)_459
+Small Intestine - Terminal Ileum_157
+TARGET-20-PAWANV-09A
+TARGET-20-PAUURD-09A
+Colon - Sigmoid_227
+Heart - Atrial Appendage_312
+Thyroid_353
+Brain - Frontal Cortex (BA9)_156
+Thyroid_449
+Skin - Not Sun Exposed (Suprapubic)_222
+Heart - Atrial Appendage_400
+Muscle - Skeletal_651
+TCGA-A4-7583-01A
+TCGA-99-8032-01A
+TARGET-20-PATKEA-09A
+C3L-00605-01
+Colon - Transverse_185
+Nerve - Tibial_578
+Nerve - Tibial_361
+Whole Blood_107
+TCGA-AN-A0FD-01A
+Artery - Aorta_447
+Whole Blood_570
+TCGA-IG-A8O2-01A
+TCGA-CQ-6221-01A
+TCGA-BH-A1ET-01A
+Skin - Sun Exposed (Lower leg)_510
+Thyroid_531
+C3L-01279-03
+Liver_221
+TCGA-D1-A179-01A
+Artery - Tibial_496
+Liver_18
+Brain - Hypothalamus_174
+Adipose - Visceral (Omentum)_155
+TCGA-AX-A2H8-11A
+Brain - Substantia nigra_111
+TCGA-OR-A5JV-01A
+Artery - Coronary_40
+TCGA-61-1737-01A
+Skin - Sun Exposed (Lower leg)_441
+Whole Blood_718
+Adipose - Visceral (Omentum)_160
+Brain - Cortex_253
+TCGA-IB-7647-01A
+TCGA-BG-A222-01A
+C3L-00792-01
+Esophagus - Gastroesophageal Junction_390
+TCGA-DC-4745-01A
+TCGA-AA-3522-01A
+Skin - Not Sun Exposed (Suprapubic)_322
+Thyroid_231
+Spleen_124
+TCGA-LP-A4AW-01A
+Brain - Cerebellum_105
+HTMCP-01-01-00002-01A
+Prostate_31
+Adipose - Visceral (Omentum)_323
+Whole Blood_466
+Brain - Cerebellum_180
+TARGET-20-PANJIM-09A
+Colon - Transverse_312
+Brain - Frontal Cortex (BA9)_193
+Lung_478
+Esophagus - Gastroesophageal Junction_348
+Adipose - Visceral (Omentum)_83
+Adipose - Visceral (Omentum)_63
+Thyroid_439
+Brain - Cerebellar Hemisphere_31
+TCGA-MX-A666-01A
+BLGSP-71-19-00122-09A.1
+TCGA-DK-A6B0-01A
+Brain - Frontal Cortex (BA9)_114
+HTMCP-01-05-00025-01E
+TCGA-DD-A4NO-01A
+TCGA-DJ-A4V5-01A
+Artery - Coronary_51
+Nerve - Tibial_90
+Cells - EBV-transformed lymphocytes_316
+Colon - Transverse_457
+TCGA-E2-A14S-01A
+Skin - Sun Exposed (Lower leg)_212
+Esophagus - Muscularis_27
+Whole Blood_682
+Whole Blood_243
+Artery - Aorta_99
+Skin - Not Sun Exposed (Suprapubic)_392
+Artery - Tibial_216
+Pancreas_321
+Skin - Not Sun Exposed (Suprapubic)_269
+TCGA-X6-A7WA-01A
+Prostate_73
+Thyroid_249
+TCGA-43-7656-01A
+TCGA-FI-A2EW-01A
+Artery - Coronary_147
+TCGA-OL-A5RV-01A
+C3N-02948-02, C3N-02948-01
+Breast - Mammary Tissue_288
+Brain - Caudate (basal ganglia)_238
+Adrenal Gland_119
+TARGET-20-PAXEES-09A
+Adipose - Visceral (Omentum)_8
+Thyroid_296
+TCGA-G7-6796-01A
+TCGA-AA-3855-01A
+TCGA-SX-A7SM-01A
+Lung_89
+Uterus_34
+Breast - Mammary Tissue_432
+Brain - Substantia nigra_152
+TCGA-DD-AAE4-01A
+TCGA-C5-A1MJ-01A
+TCGA-CJ-5679-11A
+Breast - Mammary Tissue_225
+Skin - Not Sun Exposed (Suprapubic)_389
+Pituitary_201
+Stomach_324
+TARGET-20-PASLGD-09A
+Brain - Substantia nigra_78
+TCGA-B0-4714-01A
+Breast - Mammary Tissue_26
+Heart - Atrial Appendage_332
+Brain - Amygdala_95
+Pituitary_90
+C3L-04025-03
+Adipose - Visceral (Omentum)_149
+TARGET-50-PAKSDG-01A
+Uterus_38
+TCGA-67-3774-01A
+MP2PRT-PAWDBN-TTM2-A
+Artery - Tibial_18
+Heart - Atrial Appendage_419
+TCGA-D3-A2JF-06A
+TCGA-09-0364-01A
+TARGET-20-PAVGEV-09A
+BLGSP-71-06-00084-01A
+TCGA-W5-AA2T-01A
+TARGET-20-PAWRUF-09A
+Colon - Sigmoid_43
+TCGA-GK-A6C7-01A
+TARGET-20-PARUWX-09A
+TCGA-YU-A90W-01A
+C3N-02925-01
+Skin - Not Sun Exposed (Suprapubic)_226
+Lung_282
+TCGA-YR-A95A-01A
+Brain - Cerebellar Hemisphere_84
+TCGA-KN-8436-01A
+68ef4aa9-00b0-4528-8828-4d3e43
+Esophagus - Muscularis_474
+TCGA-A3-A6NI-01A
+Skin - Not Sun Exposed (Suprapubic)_294
+Uterus_112
+Brain - Anterior cingulate cortex (BA24)_126
+TARGET-52-PAKTCT-01A
+Adipose - Subcutaneous_51
+C3L-02951-02
+TCGA-FG-8187-01A
+TARGET-20-PASVPC-09A
+TCGA-K1-A3PO-01A
+TCGA-DD-AAVS-01A
+Brain - Cortex_30
+Pancreas_215
+Artery - Aorta_178
+Cells - Cultured fibroblasts_448
+TCGA-S9-A7R7-01A
+Skin - Not Sun Exposed (Suprapubic)_385
+Esophagus - Mucosa_426
+TCGA-EJ-AB27-01A
+Skin - Not Sun Exposed (Suprapubic)_172
+TCGA-67-4679-01B
+Lung_115
+TCGA-BR-6564-11A
+b27211b5-7ee1-4e3a-af73-e227b1
+TCGA-LN-A9FR-01A
+Brain - Cortex_15
+TCGA-HZ-A4BK-01A
+Skin - Not Sun Exposed (Suprapubic)_211
+TCGA-4Z-AA82-01A
+Brain - Nucleus accumbens (basal ganglia)_130
+Brain - Cerebellum_86
+TCGA-BR-A4QI-01A
+Brain - Anterior cingulate cortex (BA24)_218
+Adrenal Gland_199
+Brain - Nucleus accumbens (basal ganglia)_273
+Lung_525
+C3N-00148-06
+TCGA-BR-8487-01A
+TCGA-HT-A619-01A
+Lung_366
+TARGET-20-PATIAB-09A
+TARGET-20-PAUWKY-09A
+Nerve - Tibial_11
+TCGA-D1-A1NY-01A
+TCGA-55-6971-01A
+TARGET-20-PAWLHJ-09A
+Nerve - Tibial_68
+Thyroid_102
+Whole Blood_656
+TARGET-20-PAUZXP-09A
+TARGET-10-PARJZZ-04A
+TCGA-BH-A0W4-01A
+Colon - Sigmoid_356
+Vagina_65
+TCGA-A5-A0GX-01A
+Brain - Amygdala_33
+TARGET-20-PAVCJW-09A
+BLGSP-71-19-00102-01A
+Testis_119
+Esophagus - Muscularis_557
+Lung_418
+TCGA-A6-2675-01A
+Brain - Spinal cord (cervical c-1)_180
+MP2PRT-PAWHSE-TTP1-A
+Whole Blood_458
+Skin - Not Sun Exposed (Suprapubic)_110
+Cells - Cultured fibroblasts_343
+Pituitary_292
+Brain - Hypothalamus_88
+TCGA-LL-A6FR-01A
+Thyroid_465
+Spleen_219
+Adipose - Visceral (Omentum)_540
+Stomach_98
+Breast - Mammary Tissue_378
+Brain - Substantia nigra_2
+C3L-00362-02
+Brain - Nucleus accumbens (basal ganglia)_90
+Brain - Hippocampus_129
+TCGA-DW-7842-01A
+TCGA-SN-A84X-01A
+Esophagus - Gastroesophageal Junction_52
+Brain - Hypothalamus_172
+PT-WVLH-01
+C3N-00390-03
+Cervix - Endocervix_3
+TCGA-R5-A7ZF-01A
+TCGA-DY-A1DD-01A
+Spleen_70
+Brain - Putamen (basal ganglia)_205
+Esophagus - Muscularis_343
+TCGA-DQ-7592-01A
+C3L-02809-06
+TCGA-BL-A0C8-01B
+TCGA-W5-AA34-01A
+Muscle - Skeletal_614
+TCGA-AP-A1E3-01A
+Cells - Cultured fibroblasts_282
+Brain - Hippocampus_48
+Artery - Coronary_203
+TCGA-X7-A8D6-01A
+Adipose - Subcutaneous_5
+TCGA-YS-A95B-01A
+Thyroid_6
+Muscle - Skeletal_53
+Adrenal Gland_226
+C3N-01989-02
+Heart - Atrial Appendage_118
+C3N-00180-02
+Brain - Amygdala_127
+Artery - Tibial_37
+TCGA-X7-A8DF-01A
+Lung_138
+TCGA-XF-AAMT-01A
+Lung_94
+TCGA-66-2753-01A
+TARGET-15-SJMPAL041120-09B
+Breast - Mammary Tissue_353
+Heart - Atrial Appendage_218
+TCGA-QK-A6IG-01A
+Nerve - Tibial_243
+Colon - Sigmoid_204
+TCGA-J4-8198-01A
+TCGA-DB-5279-01A
+Spleen_103
+TCGA-HC-A8D1-01A
+Ovary_72
+Brain - Putamen (basal ganglia)_29
+TCGA-PL-A8LX-01A
+Artery - Aorta_343
+Esophagus - Mucosa_151
+BLGSP-71-06-00072-01A
+TCGA-A2-A0YK-01A
+Brain - Caudate (basal ganglia)_1
+Stomach_61
+TCGA-AO-A1KP-01A
+Esophagus - Mucosa_405
+Artery - Tibial_315
+TCGA-CD-A487-01A
+C3L-00935-01
+TARGET-20-PAKVGI-09A
+Brain - Cerebellar Hemisphere_148
+TCGA-ZP-A9D2-01A
+TCGA-BH-A18S-01A
+TCGA-18-3412-01A
+Brain - Frontal Cortex (BA9)_248
+Brain - Frontal Cortex (BA9)_225
+Spleen_134
+Lung_382
+Esophagus - Muscularis_353
+Breast - Mammary Tissue_247
+Brain - Cerebellar Hemisphere_86
+Prostate_4
+Cells - Cultured fibroblasts_284
+TARGET-20-PAVMNK-09A
+Skin - Sun Exposed (Lower leg)_208
+TCGA-B1-A47O-01A
+Adipose - Subcutaneous_96
+Heart - Atrial Appendage_47
+Nerve - Tibial_288
+TCGA-DX-A8BN-01A
+TCGA-3A-A9IL-01A
+TCGA-B5-A3S1-01A
+Nerve - Tibial_170
+Adipose - Subcutaneous_76
+C3N-03092-01
+HTMCP-03-06-02326-01A
+Esophagus - Muscularis_445
+Brain - Cortex_193
+Brain - Cortex_254
+Cells - EBV-transformed lymphocytes_30
+Skin - Sun Exposed (Lower leg)_703
+Uterus_131
+Adipose - Visceral (Omentum)_533
+Thyroid_210
+Artery - Aorta_399
+C3L-03462-01
+TCGA-61-1725-01A
+TCGA-AB-2823-03A
+Artery - Aorta_133
+Artery - Tibial_402
+TARGET-20-PAVFYL-09A
+Skin - Sun Exposed (Lower leg)_364
+Spleen_182
+Adipose - Subcutaneous_375
+Testis_364
+Brain - Cerebellar Hemisphere_186
+Brain - Cerebellum_158
+TCGA-10-0931-01A
+Brain - Nucleus accumbens (basal ganglia)_98
+Brain - Frontal Cortex (BA9)_253
+TCGA-DS-A0VK-01A
+TCGA-A3-3370-01A
+TARGET-20-PAXJYU-09A
+Esophagus - Muscularis_437
+Breast - Mammary Tissue_405
+TCGA-B5-A0K0-01A
+MP2PRT-PASYKN-TTM2-A
+Whole Blood_711
+HTMCP-03-06-02392-01A
+Muscle - Skeletal_484
+Nerve - Tibial_155
+Breast - Mammary Tissue_504
+Artery - Aorta_308
+TCGA-AK-3458-01A
+TCGA-78-7160-01A
+Esophagus - Muscularis_406
+Cells - EBV-transformed lymphocytes_66
+TCGA-GJ-A9DB-01A
+TCGA-BQ-7045-01A
+TCGA-EL-A3CV-01A
+Pituitary_11
+TCGA-CN-6016-01A
+Thyroid_670
+Artery - Aorta_309
+TARGET-20-PARSHM-03A
+TCGA-97-7552-01A
+Brain - Hippocampus_8
+Adipose - Visceral (Omentum)_263
+Muscle - Skeletal_436
+Brain - Anterior cingulate cortex (BA24)_31
+Adipose - Visceral (Omentum)_152
+Heart - Atrial Appendage_56
+TARGET-20-PAWBSE-09A
+Muscle - Skeletal_372
+Thyroid_241
+Colon - Transverse_371
+bebb15ad-03f1-4773-b3d4-2f78e3
+Pituitary_286
+Adrenal Gland_162
+Brain - Amygdala_8
+TCGA-E2-A1B5-01A
+Minor Salivary Gland_112
+Kidney - Cortex_62
+C3N-00646-04
+Artery - Tibial_320
+Spleen_4
+Adipose - Subcutaneous_388
+Skin - Sun Exposed (Lower leg)_498
+Kidney - Cortex_55
+TARGET-10-PASRYW-03B
+Breast - Mammary Tissue_44
+Minor Salivary Gland_23
+Pituitary_24
+Heart - Left Ventricle_322
+TARGET-10-PANYZE-09A
+TCGA-MK-A4N6-01A
+TARGET-20-PAUZTM-09A
+Artery - Aorta_78
+C3N-03620-06
+Skin - Sun Exposed (Lower leg)_672
+TCGA-GN-A4U5-01A
+C3L-00927-02
+Esophagus - Mucosa_112
+TCGA-HC-A9TH-01A
+Nerve - Tibial_154
+Adipose - Subcutaneous_63
+Colon - Sigmoid_107
+TCGA-34-5236-01A
+Artery - Tibial_415
+Brain - Hippocampus_26
+Brain - Cortex_217
+Muscle - Skeletal_688
+TCGA-ET-A25N-01A
+TCGA-B6-A0RO-01A
+TCGA-CH-5789-01A
+BLGSP-71-06-00253-01A
+TCGA-D8-A1XY-01A
+Brain - Anterior cingulate cortex (BA24)_206
+HTMCP-03-06-02411-01A
+TCGA-25-1877-01A
+Brain - Hypothalamus_52
+Uterus_2
+Esophagus - Mucosa_556
+Heart - Left Ventricle_56
+Whole Blood_180
+TCGA-CS-4944-01A
+Prostate_144
+Brain - Hypothalamus_231
+Liver_166
+Adipose - Visceral (Omentum)_427
+C3N-04273-01, C3N-04273-03
+Spleen_232
+TCGA-RW-A7D0-01A
+TCGA-FF-A7CX-01A
+Vagina_47
+Skin - Not Sun Exposed (Suprapubic)_44
+Pituitary_193
+Adipose - Visceral (Omentum)_334
+Bladder_65
+Colon - Transverse_143
+Pituitary_195
+TARGET-20-PAWFMF-09A
+Muscle - Skeletal_174
+Nerve - Tibial_286
+Artery - Coronary_155
+C3L-03262-01, C3L-03262-03
+Esophagus - Gastroesophageal Junction_318
+HTMCP-03-06-02148-01A
+Whole Blood_80
+Bladder_56
+Skin - Not Sun Exposed (Suprapubic)_629
+C3N-01334-03
+Whole Blood_386
+Brain - Amygdala_132
+Esophagus - Muscularis_143
+C3L-02399-01
+TCGA-33-A4WN-01A
+Pancreas_232
+TARGET-20-PASURM-09A
+TCGA-3C-AAAU-01A
+Spleen_269
+Skin - Sun Exposed (Lower leg)_425
+Skin - Not Sun Exposed (Suprapubic)_578
+Brain - Spinal cord (cervical c-1)_146
+C3L-00415-06
+C3N-00959-06
+Liver_246
+Artery - Aorta_169
+TCGA-SP-A6QF-01A
+Brain - Putamen (basal ganglia)_80
+Esophagus - Mucosa_440
+Muscle - Skeletal_790
+TARGET-15-SJMPAL043511-09B
+Muscle - Skeletal_75
+Brain - Cortex_162
+3a380577-c134-47ba-a1ce-988d7c
+Thyroid_230
+TCGA-NC-A5HJ-01A
+TCGA-V4-A9EZ-01A
+TCGA-A3-3316-01A
+Breast - Mammary Tissue_348
+TCGA-BP-4334-01A
+Brain - Caudate (basal ganglia)_244
+Testis_193
+Skin - Sun Exposed (Lower leg)_297
+Adipose - Visceral (Omentum)_453
+Uterus_120
+Esophagus - Mucosa_58
+TCGA-HT-A5RC-01A
+Skin - Not Sun Exposed (Suprapubic)_577
+Adipose - Visceral (Omentum)_198
+TCGA-E2-A1B0-01A
+C3N-00295-04, C3N-00295-03, C3N-00295-01, C3N-00295-02
+Brain - Hypothalamus_127
+Esophagus - Mucosa_403
+2f2e5477-42a4-4906-a943-bf7f80
+TCGA-CQ-5333-01A
+Uterus_70
+C3N-00320-02
+Muscle - Skeletal_175
+TCGA-B0-4691-01A
+TCGA-A6-5662-01A
+TCGA-TS-A7PB-01A
+Skin - Sun Exposed (Lower leg)_515
+TCGA-MO-A47R-01A
+Liver_82
+TCGA-G3-A7M5-01A
+TCGA-ZJ-A8QR-01A
+Spleen_123
+Testis_129
+Adipose - Visceral (Omentum)_311
+Cells - Cultured fibroblasts_333
+Adrenal Gland_268
+77c493b1-34ba-4efc-8def-987116
+3d3e1888-d67e-4c69-ba83-112d0f
+TCGA-AP-A05O-01A
+TCGA-AA-3815-01A
+Lung_449
+C3N-00732-01
+Uterus_125
+TCGA-IB-AAUU-01A
+C3L-00360-01
+Thyroid_181
+TCGA-AC-A62V-01A
+Muscle - Skeletal_51
+Adrenal Gland_271
+TARGET-20-PAVWZV-09A
+TCGA-EW-A3U0-01A
+TCGA-S9-A6TU-01A
+TARGET-20-PAUPPD-03A
+TCGA-3U-A98D-01A
+Lung_509
+TCGA-IS-A3KA-01A
+Adipose - Visceral (Omentum)_171
+Skin - Not Sun Exposed (Suprapubic)_349
+Whole Blood_548
+TCGA-ZQ-A9CR-01A
+Nerve - Tibial_345
+TARGET-20-PANTRL-09A
+Nerve - Tibial_57
+Adrenal Gland_257
+Stomach_36
+Brain - Hypothalamus_224
+Stomach_357
+Heart - Atrial Appendage_261
+Artery - Tibial_299
+Testis_308
+Breast - Mammary Tissue_358
+407c600a-c0ac-41a6-8d87-fd8a3c
+Heart - Left Ventricle_373
+TCGA-XK-AAK1-01A
+Adipose - Visceral (Omentum)_477
+Cells - EBV-transformed lymphocytes_208
+Brain - Nucleus accumbens (basal ganglia)_189
+Cells - EBV-transformed lymphocytes_179
+Brain - Substantia nigra_168
+Brain - Hippocampus_169
+TCGA-4Z-AA83-01A
+Thyroid_450
+Brain - Frontal Cortex (BA9)_44
+TARGET-20-PASVWK-03A
+TCGA-B6-A409-01A
+Skin - Sun Exposed (Lower leg)_579
+C3N-01082-06
+Brain - Substantia nigra_27
+Brain - Frontal Cortex (BA9)_4
+Artery - Tibial_491
+Small Intestine - Terminal Ileum_197
+C3L-00445-01
+Esophagus - Mucosa_14
+Pancreas_107
+Adipose - Subcutaneous_227
+Prostate_35
+TARGET-10-PATCTI-04A
+Lung_506
+TARGET-20-PAWZAW-09A
+TCGA-2H-A9GH-01A
+TCGA-CV-7410-01A
+Muscle - Skeletal_620
+Cells - EBV-transformed lymphocytes_118
+Brain - Cortex_188
+TCGA-QH-A6CV-01A
+Skin - Sun Exposed (Lower leg)_235
+Artery - Tibial_377
+TCGA-EL-A4K1-01A
+Adipose - Visceral (Omentum)_301
+Nerve - Tibial_596
+TCGA-GS-A9TX-01A
+TCGA-CV-7438-11A
+C3N-02282-10
+TCGA-CM-4750-01A
+TCGA-B9-5155-01A
+TCGA-85-8580-01A
+TCGA-CQ-7067-01A
+Brain - Cerebellum_74
+Esophagus - Muscularis_391
+Cells - EBV-transformed lymphocytes_269
+Cells - EBV-transformed lymphocytes_65
+C3N-02249-71
+TCGA-EL-A3ZH-11A
+TCGA-G7-A8LC-01A
+TCGA-W5-AA2X-01A
+C3N-02715-02
+Cells - Cultured fibroblasts_314
+TCGA-VS-A8QF-01A
+TCGA-AB-3008-03A
+TCGA-04-1341-01A
+Skin - Sun Exposed (Lower leg)_94
+C3L-00581-01
+Whole Blood_149
+e5e1306b-719e-4c3e-b85b-fd1231
+Pituitary_22
+TARGET-20-PAUTWE-09A
+C3L-01054-04
+TCGA-3A-A9J0-01A
+Artery - Coronary_153
+Pancreas_222
+TCGA-P5-A731-01A
+Adipose - Subcutaneous_664
+Breast - Mammary Tissue_261
+Artery - Aorta_7
+TCGA-IB-8127-01A
+Brain - Caudate (basal ganglia)_172
+Esophagus - Muscularis_57
+Colon - Sigmoid_214
+Artery - Tibial_440
+Testis_335
+TCGA-ET-A40R-01A
+TCGA-G4-6627-01A
+TCGA-AH-6549-01A
+Esophagus - Muscularis_88
+Liver_201
+Breast - Mammary Tissue_178
+TCGA-A5-A2K4-01A
+Colon - Transverse_427
+Skin - Sun Exposed (Lower leg)_42
+Brain - Hippocampus_135
+TCGA-BA-A4IG-01A
+TCGA-QN-A5NN-01A
+TCGA-CG-5721-01A
+TCGA-AR-A1AR-01A
+TCGA-ZC-AAAF-01A
+Esophagus - Gastroesophageal Junction_0
+C3L-00447-01
+Adrenal Gland_98
+TCGA-DI-A2QY-11A
+Pancreas_43
+C3N-02421-01, C3N-02421-02
+TCGA-C5-A902-01A
+TCGA-HC-8264-01B
+Adrenal Gland_67
+Esophagus - Mucosa_59
+Cells - EBV-transformed lymphocytes_297
+C3N-02768-03
+Brain - Hypothalamus_163
+TARGET-20-PAVCMR-09A
+Minor Salivary Gland_50
+Skin - Not Sun Exposed (Suprapubic)_120
+Stomach_339
+Brain - Spinal cord (cervical c-1)_160
+TCGA-EJ-A46F-01A
+TCGA-BR-A4J6-01A
+Artery - Tibial_296
+TCGA-B6-A0IB-01A
+C3N-00559-06
+TCGA-A3-3313-01A
+Skin - Sun Exposed (Lower leg)_43
+TCGA-WB-A81W-01A
+Stomach_267
+Colon - Transverse_302
+TCGA-33-4586-01A
+Liver_17
+Brain - Spinal cord (cervical c-1)_157
+BLGSP-71-06-00090-01B
+TCGA-KN-8426-11A
+TCGA-QC-AA9N-01A
+TCGA-XU-A92T-01A
+TCGA-DB-A75L-01A
+TCGA-DC-6683-01A
+TCGA-DK-AA6T-01A
+Cells - Cultured fibroblasts_216
+Adipose - Visceral (Omentum)_268
+Whole Blood_527
+TARGET-20-PARXJW-03A
+TARGET-20-PAVTKK-09A
+Brain - Anterior cingulate cortex (BA24)_202
+Breast - Mammary Tissue_191
+Skin - Not Sun Exposed (Suprapubic)_521
+TARGET-20-PAVSEJ-09A
+TCGA-CM-5863-01A
+Lung_393
+Lung_235
+Prostate_276
+Heart - Left Ventricle_285
+TARGET-50-CAAAAH-01A
+TARGET-20-PATILU-09A
+TCGA-SW-A7EB-01A
+Liver_12
+Cells - Cultured fibroblasts_552
+TCGA-IN-8462-01A
+TCGA-FS-A1ZM-06A
+Muscle - Skeletal_798
+TARGET-10-PARXMC-09A
+Colon - Transverse_292
+TCGA-24-1928-01A
+Brain - Substantia nigra_161
+Fallopian Tube_20
+TCGA-21-1079-01A
+C3L-01681-04
+Brain - Anterior cingulate cortex (BA24)_173
+TCGA-HT-7609-01A
+TCGA-V1-A9OF-01A
+C3L-02468-03
+Brain - Hippocampus_33
+Adipose - Subcutaneous_527
+Testis_201
+Vagina_124
+TCGA-B0-5705-11A
+Nerve - Tibial_441
+Skin - Sun Exposed (Lower leg)_429
+Adipose - Subcutaneous_85
+Adipose - Subcutaneous_152
+Esophagus - Gastroesophageal Junction_116
+Muscle - Skeletal_718
+Skin - Sun Exposed (Lower leg)_300
+Testis_117
+Thyroid_259
+Skin - Not Sun Exposed (Suprapubic)_579
+TCGA-CN-A6V1-01A
+TCGA-BH-A0DZ-01A
+BLGSP-71-06-00081-01D
+Adipose - Visceral (Omentum)_490
+Minor Salivary Gland_76
+Brain - Cerebellum_30
+Brain - Anterior cingulate cortex (BA24)_98
+TARGET-20-PAWYEP-09A
+Small Intestine - Terminal Ileum_80
+Colon - Transverse_172
+TCGA-A7-A26E-01A
+TCGA-WP-A9GB-01A
+TCGA-BP-4970-01A
+TCGA-DA-A1I7-06A
+Artery - Aorta_193
+Whole Blood_372
+TCGA-AO-A0J8-01A
+Esophagus - Mucosa_544
+Esophagus - Mucosa_0
+Pituitary_214
+Brain - Hippocampus_87
+Brain - Substantia nigra_30
+TCGA-23-1122-01A
+Heart - Atrial Appendage_89
+Skin - Sun Exposed (Lower leg)_587
+Nerve - Tibial_383
+Vagina_135
+TCGA-EE-A2M8-06A
+Breast - Mammary Tissue_416
+Esophagus - Muscularis_208
+TARGET-20-PAWMRJ-09A
+Brain - Caudate (basal ganglia)_280
+TCGA-AA-A01F-01A
+Colon - Transverse_17
+Nerve - Tibial_385
+Nerve - Tibial_641
+Breast - Mammary Tissue_107
+Thyroid_24
+TCGA-DJ-A2Q0-01A
+Uterus_103
+Brain - Caudate (basal ganglia)_299
+Brain - Nucleus accumbens (basal ganglia)_72
+Adipose - Subcutaneous_92
+TCGA-PK-A5HB-01A
+C3L-02893-02
+TARGET-50-PAKXWB-01A
+TCGA-CD-8531-01A
+Adipose - Subcutaneous_501
+Adipose - Subcutaneous_156
+Skin - Sun Exposed (Lower leg)_153
+Breast - Mammary Tissue_387
+TCGA-DX-A3UC-01A
+TCGA-78-7542-01A
+Lung_72
+Minor Salivary Gland_121
+Artery - Aorta_111
+TCGA-AA-3678-01A
+Artery - Tibial_400
+Artery - Coronary_216
+TCGA-FG-6689-01A
+Esophagus - Muscularis_96
+Thyroid_107
+Brain - Putamen (basal ganglia)_153
+TCGA-SP-A6QD-01A
+Lung_438
+TCGA-DV-5565-01A
+TCGA-A3-3387-11A
+Esophagus - Muscularis_484
+TARGET-20-PATAIY-09A
+C3N-01382-01
+TCGA-CG-4442-01A
+TCGA-BR-8384-01A
+TARGET-10-PARWVN-03A
+C3N-01416-03
+C3N-01080-06
+Cells - Cultured fibroblasts_590
+TARGET-10-PAPZNK-04A
+Brain - Nucleus accumbens (basal ganglia)_153
+Stomach_143
+Colon - Sigmoid_152
+Breast - Mammary Tissue_289
+TCGA-EX-A449-01A
+Adipose - Visceral (Omentum)_451
+Esophagus - Mucosa_247
+Esophagus - Muscularis_137
+Stomach_362
+Adipose - Subcutaneous_18
+Vagina_158
+Colon - Sigmoid_380
+TCGA-IB-7889-01A
+Cells - EBV-transformed lymphocytes_72
+Liver_122
+TCGA-CV-6959-11A
+TARGET-20-PAWEFF-03A
+TCGA-VD-AA8R-01A
+TARGET-20-PAXIIP-09A
+Lung_78
+TCGA-JV-A75J-01A
+TCGA-P4-A5E8-11A
+Brain - Hypothalamus_227
+Whole Blood_530
+Skin - Not Sun Exposed (Suprapubic)_406
+TCGA-CV-6953-01A
+C3N-00646-01
+Heart - Atrial Appendage_92
+Artery - Coronary_244
+Breast - Mammary Tissue_249
+TCGA-EE-A2MQ-06A
+Cells - Cultured fibroblasts_386
+Brain - Cerebellum_110
+TCGA-CJ-4871-01A
+TARGET-52-PAJMBW-01A
+C3L-02627-04, C3L-02627-05
+Brain - Cerebellar Hemisphere_142
+Artery - Tibial_467
+C3N-04382-02
+TARGET-20-PAUSXS-09A
+Esophagus - Muscularis_218
+Brain - Cerebellum_97
+Adipose - Visceral (Omentum)_329
+TCGA-AB-2840-03A
+TCGA-04-1364-01A
+Brain - Cerebellar Hemisphere_272
+Brain - Cortex_244
+Lung_428
+Breast - Mammary Tissue_194
+Artery - Tibial_294
+C3L-01836-03
+Brain - Caudate (basal ganglia)_261
+TCGA-GJ-A3OU-01A
+Lung_126
+TCGA-66-2768-01A
+Adipose - Subcutaneous_116
+Brain - Spinal cord (cervical c-1)_198
+Brain - Hippocampus_168
+Artery - Aorta_413
+Cells - Cultured fibroblasts_630
+Whole Blood_415
+Adrenal Gland_159
+Heart - Left Ventricle_332
+TARGET-52-PAWFWK-01A
+Breast - Mammary Tissue_258
+TCGA-BH-A0HL-01A
+TCGA-DD-AACI-01A
+Spleen_263
+Cells - Cultured fibroblasts_596
+Spleen_79
+Skin - Sun Exposed (Lower leg)_171
+Adrenal Gland_265
+TCGA-QA-A7B7-01A
+TCGA-WE-A8ZY-06A
+C3N-02339-02
+TCGA-WX-AA46-01A
+C3L-00898-02
+Brain - Anterior cingulate cortex (BA24)_36
+Brain - Cortex_158
+Skin - Sun Exposed (Lower leg)_514
+Whole Blood_494
+Thyroid_415
+TCGA-BR-A4J8-01A
+TARGET-20-PAVTBA-09A
+TCGA-A8-A07C-01A
+TARGET-20-PAVDFC-09A
+TARGET-20-PAPWHS-09A
+Adipose - Visceral (Omentum)_233
+Nerve - Tibial_356
+Skin - Not Sun Exposed (Suprapubic)_603
+Stomach_95
+Prostate_111
+Skin - Not Sun Exposed (Suprapubic)_265
+Minor Salivary Gland_130
+Adipose - Visceral (Omentum)_570
+Esophagus - Gastroesophageal Junction_392
+Lung_193
+TCGA-AA-3502-01A
+TCGA-FU-A3HY-01A
+TARGET-20-PAKSMZ-03A
+Whole Blood_498
+Cells - EBV-transformed lymphocytes_310
+TCGA-LD-A9QF-01A
+TARGET-20-PAWJDM-09A
+Prostate_108
+TCGA-KS-A4IB-01A
+Esophagus - Mucosa_412
+TCGA-AQ-A54O-01A
+TCGA-66-2781-01A
+Esophagus - Mucosa_27
+TCGA-2Z-A9J3-01A
+TCGA-BQ-7050-01A
+TARGET-20-PAVDGM-09A
+TARGET-10-PARUNW-09B
+Adrenal Gland_23
+TCGA-N5-A4RJ-01A
+Artery - Coronary_200
+TCGA-G7-6792-01A
+TARGET-20-PARXVI-09A
+Skin - Sun Exposed (Lower leg)_98
+C3N-03877-03
+C3L-03394-03
+C3L-02802-02
+TCGA-WE-AAA3-06A
+C3N-00547-01
+TCGA-DS-A1OD-01A
+TCGA-MQ-A4LJ-01A
+TCGA-BP-5198-01A
+Muscle - Skeletal_433
+TCGA-GM-A2DL-01A
+Artery - Coronary_34
+Artery - Tibial_180
+Lung_284
+TCGA-BG-A0LW-01A
+Stomach_351
+Testis_146
+722378ea-d1a7-4cfc-aca5-ba45f9
+TCGA-3B-A9HR-01A
+C3L-03143-01
+Nerve - Tibial_371
+Thyroid_14
+Esophagus - Gastroesophageal Junction_391
+Adrenal Gland_25
+Spleen_158
+TCGA-EJ-7115-01A
+Lung_361
+Esophagus - Gastroesophageal Junction_389
+HTMCP-03-06-02012-01A
+Brain - Frontal Cortex (BA9)_87
+Brain - Putamen (basal ganglia)_41
+Stomach_242
+TCGA-ZB-A96D-01A
+TCGA-AA-3930-01A
+TCGA-4L-AA1F-01A
+Artery - Coronary_69
+Cells - Cultured fibroblasts_144
+Uterus_35
+TCGA-K7-A5RG-01A
+Muscle - Skeletal_46
+TCGA-A7-A26E-01B
+Esophagus - Muscularis_215
+Skin - Sun Exposed (Lower leg)_381
+TCGA-CF-A47S-01A
+Cells - Cultured fibroblasts_580
+Brain - Nucleus accumbens (basal ganglia)_210
+TCGA-AA-A00Q-01A
+C3N-00390-04
+TARGET-10-PAPEJN-04A
+BLGSP-71-06-00254-01A
+TCGA-56-7582-01A
+Esophagus - Gastroesophageal Junction_312
+Lung_307
+C3N-00377-02
+BLGSP-71-06-00008-01A
+TCGA-A8-A06Z-01A
+C3L-02365-05
+Pancreas_142
+C3L-01607-03
+C3L-02403-01
+Esophagus - Gastroesophageal Junction_124
+TARGET-20-PAXFDN-09A
+TCGA-NA-A4R1-01A
+Stomach_300
+Brain - Putamen (basal ganglia)_162
+Brain - Nucleus accumbens (basal ganglia)_138
+TCGA-A8-A096-01A
+Breast - Mammary Tissue_209
+Brain - Cerebellum_8
+TCGA-UE-A6QU-01A
+TCGA-EJ-7123-01A
+Thyroid_180
+Brain - Anterior cingulate cortex (BA24)_51
+Nerve - Tibial_594
+Skin - Not Sun Exposed (Suprapubic)_165
+Breast - Mammary Tissue_67
+TCGA-2G-AAF4-01A
+Nerve - Tibial_36
+TCGA-B0-5400-01A
+Brain - Putamen (basal ganglia)_113
+TARGET-10-PANSUL-09A
+Skin - Not Sun Exposed (Suprapubic)_320
+Esophagus - Mucosa_213
+Cervix - Ectocervix_2
+TCGA-VS-A9UC-01A
+Whole Blood_131
+TCGA-78-7152-01A
+TCGA-DD-AACS-01A
+Brain - Anterior cingulate cortex (BA24)_95
+Cells - EBV-transformed lymphocytes_167
+Skin - Sun Exposed (Lower leg)_309
+C3N-03210-02
+Cells - Cultured fibroblasts_362
+TCGA-GM-A3NY-01A
+TCGA-CZ-5469-01A
+Esophagus - Gastroesophageal Junction_58
+C3N-02672-08
+C3L-01146-05, C3L-01146-02
+Heart - Atrial Appendage_448
+TCGA-ET-A3DU-01A
+Pituitary_248
+Colon - Sigmoid_128
+TCGA-BP-4164-01A
+TCGA-AA-3520-11A
+Artery - Tibial_576
+Brain - Caudate (basal ganglia)_87
+Cells - Cultured fibroblasts_651
+TCGA-HT-8558-01A
+Esophagus - Muscularis_132
+TCGA-HI-7170-01A
+C3N-04275-04
+TCGA-C8-A26V-01A
+TCGA-N1-A6IA-01A
+TCGA-ER-A3ES-06A
+TCGA-RY-A83Y-01A
+C3N-02421-03
+TCGA-QR-A70Q-01A
+Fallopian Tube_21
+Heart - Left Ventricle_193
+Brain - Amygdala_63
+Thyroid_563
+Brain - Anterior cingulate cortex (BA24)_169
+Testis_388
+Adipose - Visceral (Omentum)_538
+TCGA-OL-A66K-01A
+b292e992-0611-4254-872f-af8275
+TCGA-DX-A1KU-01A
+TCGA-EJ-7797-11A
+TCGA-NC-A5HO-01A
+C3L-02551-06
+TARGET-20-PAXGXR-09A
+Breast - Mammary Tissue_213
+TCGA-AA-3532-01A
+TCGA-EM-A2P2-01A
+Colon - Transverse_338
+TCGA-24-2254-01A
+Brain - Caudate (basal ganglia)_265
+C3L-01913-01
+C3N-01828-06
+Skin - Sun Exposed (Lower leg)_245
+TCGA-EY-A1GX-01A
+Breast - Mammary Tissue_309
+Brain - Cortex_44
+Pituitary_220
+Whole Blood_793
+TCGA-E5-A4TZ-01A
+TCGA-A2-A25F-01A
+Muscle - Skeletal_645
+Artery - Tibial_182
+Esophagus - Muscularis_526
+TCGA-BP-4983-01A
+Muscle - Skeletal_363
+Nerve - Tibial_261
+Adipose - Subcutaneous_79
+TCGA-E2-A15S-01A
+Brain - Hypothalamus_63
+Esophagus - Mucosa_427
+TCGA-B0-5709-11A
+TCGA-55-6972-01A
+C3N-00310-02
+Adrenal Gland_198
+Cells - Cultured fibroblasts_179
+Colon - Sigmoid_388
+C3N-00168-02
+Esophagus - Gastroesophageal Junction_349
+2224c03f-b7b1-4368-887e-2b4cdf
+TCGA-JW-A5VJ-01A
+Kidney - Cortex_51
+Esophagus - Gastroesophageal Junction_316
+Adipose - Subcutaneous_511
+Artery - Tibial_661
+TCGA-F7-A622-01A
+TCGA-OR-A5LS-01A
+TCGA-QQ-A8VG-01A
+TARGET-20-PAULRS-09A
+C3N-00203-03
+Stomach_104
+TCGA-EO-A2CH-01A
+TARGET-20-PAVANT-09A
+TCGA-BH-A1F2-01A
+Brain - Substantia nigra_20
+TCGA-13-1505-01A
+Esophagus - Mucosa_453
+TCGA-24-1544-01A
+Colon - Transverse_349
+Nerve - Tibial_230
+Adrenal Gland_85
+BLGSP-71-23-00468-01A
+Heart - Atrial Appendage_410
+TCGA-HC-8265-01A
+TCGA-HW-7495-01A
+Adipose - Visceral (Omentum)_62
+Esophagus - Muscularis_414
+TCGA-A2-A3XX-01A
+TCGA-B6-A0IN-01A
+Brain - Anterior cingulate cortex (BA24)_196
+C3L-00418-03
+C3N-01016-06
+TCGA-29-1778-01A
+TCGA-W5-AA31-11A
+TARGET-20-PATBXU-09A
+Lung_594
+Cells - Cultured fibroblasts_407
+Thyroid_611
+TCGA-CV-6433-01A
+TCGA-3Z-A93Z-01A
+TCGA-CG-5721-11A
+Brain - Cerebellar Hemisphere_5
+Cells - Cultured fibroblasts_323
+TCGA-V4-A9E9-01A
+Colon - Sigmoid_90
+TCGA-FJ-A871-01A
+TCGA-AP-A054-01A
+TARGET-20-PASSHZ-09A
+TCGA-AC-A5XU-01A
+Pancreas_273
+Skin - Sun Exposed (Lower leg)_126
+TCGA-DX-A7EL-01A
+Artery - Coronary_88
+TCGA-BR-6454-11A
+TCGA-85-8071-01A
+Artery - Aorta_392
+TCGA-BH-A0DZ-11A
+TCGA-G9-6361-01A
+Muscle - Skeletal_291
+TCGA-ED-A97K-01A
+Brain - Frontal Cortex (BA9)_124
+TARGET-20-PAWWUN-09A
+TARGET-20-PASRIN-03A
+TCGA-AP-A0LD-01A
+Pituitary_253
+Cells - Cultured fibroblasts_96
+Fallopian Tube_26
+TARGET-20-PAVSVU-09A
+HTMCP-03-06-02098-01B
+Skin - Sun Exposed (Lower leg)_317
+TCGA-UZ-A9PZ-01A
+Minor Salivary Gland_107
+Brain - Putamen (basal ganglia)_47
+Whole Blood_655
+TCGA-A6-2676-01A
+C3N-00514-01, C3N-00514-02
+Whole Blood_734
+TCGA-13-1509-01A
+TCGA-ZG-A9LB-01A
+Skin - Sun Exposed (Lower leg)_280
+Adipose - Visceral (Omentum)_454
+Cells - EBV-transformed lymphocytes_89
+Pancreas_230
+TCGA-EB-A431-01A
+TCGA-AC-A8OQ-01A
+C3L-01455-01
+Testis_271
+e0068ac5-f557-443a-bd4b-bdfcef
+Cells - Cultured fibroblasts_91
+TCGA-P4-AAVK-01A
+TCGA-DU-A7TC-01A
+TCGA-HT-8012-01A
+Vagina_0
+TARGET-20-PAWRNZ-09A
+TCGA-D7-5578-01A
+Breast - Mammary Tissue_136
+Brain - Anterior cingulate cortex (BA24)_213
+Esophagus - Muscularis_196
+Breast - Mammary Tissue_486
+TCGA-V1-A8WV-01A
+C3L-02348-02
+HTMCP-02-25-01235-01B
+Adrenal Gland_189
+TARGET-50-PAJMEN-01A
+Muscle - Skeletal_86
+Skin - Not Sun Exposed (Suprapubic)_397
+Thyroid_512
+Lung_467
+Brain - Cortex_40
+TCGA-DH-A7UT-01A
+TARGET-20-PAEFHC-09A
+Testis_1
+Brain - Frontal Cortex (BA9)_204
+TCGA-61-1728-01A
+TCGA-EL-A3TB-11A
+Skin - Sun Exposed (Lower leg)_213
+Adipose - Subcutaneous_305
+TARGET-20-PATDIC-09A
+TARGET-20-PAXKAL-09A
+TCGA-DX-A23Y-01A
+TCGA-AR-A0TP-01A
+TCGA-A5-A0GI-01A
+TARGET-20-PAWMJY-09A
+TCGA-DX-A48J-01A
+TCGA-61-2009-01A
+21c6f56a-8881-421b-81fa-c354cb
+TCGA-2Z-A9J2-01A
+Pituitary_232
+TCGA-CK-5912-01A
+Esophagus - Gastroesophageal Junction_236
+Pancreas_306
+Ovary_107
+Brain - Frontal Cortex (BA9)_30
+Brain - Cerebellar Hemisphere_3
+TCGA-CJ-4641-01A
+TCGA-95-7947-01A
+7c7ce2d7-6c8a-424e-8e6c-d14ad1
+TCGA-CZ-5466-01A
+HTMCP-03-06-02036-01A
+Brain - Anterior cingulate cortex (BA24)_3
+Cells - Cultured fibroblasts_398
+Skin - Not Sun Exposed (Suprapubic)_328
+Artery - Tibial_502
+TARGET-20-PAXKKC-09A
+d1e36453-8d78-4247-8c3c-3b2a6f
+TCGA-A4-8310-01A
+C3N-04127-03
+TCGA-13-0730-01A
+Colon - Sigmoid_232
+TCGA-BH-A1EU-11A
+Adrenal Gland_227
+Brain - Caudate (basal ganglia)_131
+TCGA-CI-6623-01B
+Artery - Aorta_240
+TCGA-MK-A4N7-01A
+Skin - Not Sun Exposed (Suprapubic)_275
+Heart - Atrial Appendage_94
+TCGA-EM-A1YC-11A
+TCGA-EL-A3T8-01A
+BLGSP-71-06-00074-01B
+Heart - Left Ventricle_299
+Muscle - Skeletal_28
+TCGA-GM-A3XN-01A
+TCGA-S5-AA26-01A
+Testis_361
+Uterus_91
+TCGA-UZ-A9Q1-01A
+Ovary_81
+Artery - Aorta_385
+TARGET-20-PAXKKE-09A
+TCGA-BH-A0AY-11A
+C3N-00333-03
+Adipose - Visceral (Omentum)_383
+TCGA-YG-AA3P-06A
+Brain - Nucleus accumbens (basal ganglia)_199
+TCGA-B0-5077-01A
+TCGA-CR-7401-01A
+TCGA-D1-A16J-01A
+TARGET-10-PAPFWH-09A
+Brain - Frontal Cortex (BA9)_139
+Brain - Amygdala_21
+TCGA-56-7731-01A
+TCGA-AA-3529-01A
+TCGA-2Y-A9H8-01A
+Brain - Cerebellar Hemisphere_56
+TCGA-4V-A9QS-01A
+TCGA-CN-4739-01A
+C3L-02619-08
+Adipose - Visceral (Omentum)_176
+C3N-03890-01
+TCGA-E7-A6ME-01A
+TCGA-AO-A0J5-01A
+Artery - Tibial_335
+Brain - Hippocampus_194
+TCGA-EP-A12J-11A
+Cells - Cultured fibroblasts_360
+TCGA-EO-A3L0-01A
+Adrenal Gland_194
+Esophagus - Muscularis_271
+TARGET-20-PAUYIB-09A
+TARGET-20-PAURJK-09A
+Pancreas_161
+TCGA-A6-6138-01A
+Esophagus - Muscularis_500
+TCGA-CC-A7II-01A
+TARGET-50-PAKFYV-01A
+Adipose - Visceral (Omentum)_246
+Brain - Nucleus accumbens (basal ganglia)_226
+Brain - Substantia nigra_140
+TCGA-VQ-A91U-01A
+Thyroid_402
+Esophagus - Muscularis_376
+TCGA-13-0760-01A
+TCGA-BA-A4II-01A
+TCGA-OR-A5LA-01A
+TCGA-3A-A9IC-01A
+Breast - Mammary Tissue_96
+TCGA-WL-A834-01A
+C3L-02747-02
+TCGA-E9-A1R7-01A
+Heart - Left Ventricle_326
+Muscle - Skeletal_364
+TCGA-AB-2861-03A
+Heart - Left Ventricle_219
+Esophagus - Mucosa_258
+Muscle - Skeletal_749
+Cells - Cultured fibroblasts_553
+Skin - Not Sun Exposed (Suprapubic)_218
+Brain - Cerebellum_210
+TCGA-24-1413-01A
+Stomach_173
+Brain - Cerebellar Hemisphere_275
+Brain - Frontal Cortex (BA9)_257
+TARGET-20-PAXACP-09A
+TCGA-EB-A3Y6-01A
+Colon - Sigmoid_74
+TCGA-H7-A6C4-11A
+TCGA-KK-A7B4-01A
+TARGET-20-PAWNHW-09A
+TCGA-66-2763-01A
+Cells - Cultured fibroblasts_367
+TCGA-D1-A15Z-01A
+C3N-02150-04
+TCGA-98-A539-01A
+Brain - Cerebellar Hemisphere_168
+MP2PRT-PAWPXB-TTP1-A
+TCGA-B0-5703-01A
+C3L-00422-05
+Adrenal Gland_193
+TCGA-BR-7196-01A
+Nerve - Tibial_496
+TARGET-20-PAVJIT-09A
+TARGET-00-BM5682-14A
+Uterus_15
+Nerve - Tibial_204
+Cells - EBV-transformed lymphocytes_230
+HTMCP-03-06-02068-01B
+Breast - Mammary Tissue_112
+Esophagus - Mucosa_420
+Esophagus - Muscularis_401
+Uterus_17
+TCGA-BA-6872-01A
+Whole Blood_569
+Skin - Not Sun Exposed (Suprapubic)_273
+TCGA-DJ-A3V3-01A
+Cells - EBV-transformed lymphocytes_322
+Pituitary_132
+Artery - Coronary_227
+Skin - Not Sun Exposed (Suprapubic)_51
+Spleen_202
+Brain - Hypothalamus_199
+Artery - Tibial_674
+TCGA-24-2035-01A
+Esophagus - Gastroesophageal Junction_358
+Esophagus - Mucosa_160
+Esophagus - Mucosa_563
+TCGA-CV-7250-01A
+Artery - Tibial_108
+TCGA-V1-A8MJ-01A
+C3L-01237-06
+TCGA-EL-A3GZ-01A
+Small Intestine - Terminal Ileum_48
+Skin - Sun Exposed (Lower leg)_603
+TCGA-VP-A87J-01A
+Brain - Spinal cord (cervical c-1)_117
+TCGA-EW-A1OZ-01A
+Brain - Caudate (basal ganglia)_111
+Thyroid_184
+TCGA-GN-A266-06A
+Breast - Mammary Tissue_164
+TCGA-CV-5973-01A
+TCGA-LA-A446-01A
+TCGA-LN-A49X-01A
+BLGSP-71-06-00289-01A
+Thyroid_337
+Colon - Sigmoid_172
+TCGA-DW-7963-01B
+TCGA-E3-A3E2-01A
+Heart - Atrial Appendage_434
+Brain - Putamen (basal ganglia)_4
+Liver_70
+Cells - Cultured fibroblasts_241
+TCGA-4G-AAZT-01A
+TARGET-10-PAPIGX-09A
+TCGA-XE-AAO4-01A
+Stomach_220
+C3N-02290-09
+Lung_128
+Breast - Mammary Tissue_436
+TCGA-G2-A2ES-01A
+TCGA-3N-A9WC-06A
+Kidney - Cortex_47
+Adipose - Visceral (Omentum)_257
+Brain - Cerebellar Hemisphere_99
+Pituitary_139
+TCGA-49-6743-01A
+Brain - Nucleus accumbens (basal ganglia)_19
+Spleen_3
+TCGA-DX-AB3B-01A
+Adipose - Subcutaneous_681
+TCGA-85-7699-01A
+TCGA-GC-A3BM-01A
+TARGET-20-PATLXB-03A
+TARGET-20-PASFIT-09A
+Cells - EBV-transformed lymphocytes_254
+C3L-01249-01
+Adipose - Visceral (Omentum)_586
+C3L-02619-01
+Cells - Cultured fibroblasts_105
+TARGET-20-PAVHCV-09A
+Vagina_163
+1104806
+Breast - Mammary Tissue_431
+Colon - Transverse_359
+Thyroid_557
+TARGET-10-PASTLM-03B
+Thyroid_280
+Heart - Atrial Appendage_227
+TCGA-EL-A4JX-01A
+TARGET-00-RO02434-14A
+TCGA-MW-A4EC-01A
+Spleen_275
+Kidney - Cortex_45
+Prostate_245
+Lung_73
+TARGET-20-PAXDBF-09A
+Prostate_23
+Nerve - Tibial_278
+Small Intestine - Terminal Ileum_195
+C3N-03238-01
+Muscle - Skeletal_136
+Esophagus - Gastroesophageal Junction_32
+Esophagus - Gastroesophageal Junction_91
+Brain - Frontal Cortex (BA9)_241
+TCGA-DE-A4M8-01A
+Cells - EBV-transformed lymphocytes_227
+Brain - Putamen (basal ganglia)_79
+TCGA-JY-A93F-01A
+Adipose - Subcutaneous_135
+TCGA-P3-A6T3-01A
+Brain - Putamen (basal ganglia)_11
+TCGA-86-A4P7-01A
+Cells - EBV-transformed lymphocytes_234
+TCGA-D3-A3CC-06A
+TCGA-33-4587-01A
+Liver_219
+TARGET-20-PASTEI-09A
+Lung_192
+Adipose - Subcutaneous_424
+Skin - Sun Exposed (Lower leg)_8
+Whole Blood_736
+TCGA-V9-A7HT-01A
+Adipose - Subcutaneous_231
+C3L-00358-01
+TCGA-E9-A5UO-01A
+Prostate_145
+Brain - Amygdala_154
+Colon - Transverse_339
+Brain - Spinal cord (cervical c-1)_174
+Muscle - Skeletal_595
+TCGA-FK-A3SH-01A
+TCGA-3C-AALI-01A
+TCGA-EE-A2GD-06A
+TCGA-EJ-A8FU-01A
+Skin - Not Sun Exposed (Suprapubic)_337
+Kidney - Cortex_42
+TCGA-AB-2822-03A
+Esophagus - Mucosa_184
+Brain - Spinal cord (cervical c-1)_114
+Whole Blood_543
+Heart - Left Ventricle_122
+Adipose - Visceral (Omentum)_571
+Esophagus - Mucosa_298
+Whole Blood_702
+TCGA-C5-A7CJ-01A
+TCGA-E9-A1NA-01A
+TARGET-20-PAPSCM-09A
+HTMCP-03-06-02089-01B
+TARGET-20-PAXBIE-09A
+Brain - Anterior cingulate cortex (BA24)_75
+Brain - Hippocampus_37
+TCGA-QQ-A8VH-01A
+Esophagus - Muscularis_229
+Thyroid_591
+TCGA-EJ-8469-01A
+Esophagus - Gastroesophageal Junction_278
+TCGA-GS-A9TU-01A
+TCGA-EO-A3KX-01A
+TCGA-CV-7406-11A
+TCGA-L6-A4EU-01A
+Artery - Aorta_304
+TCGA-KS-A4I3-01A
+Esophagus - Mucosa_596
+Artery - Tibial_590
+Nerve - Tibial_435
+Brain - Spinal cord (cervical c-1)_163
+Brain - Hippocampus_153
+Lung_81
+TCGA-60-2719-01A
+TARGET-20-PALVKV-09A
+BLGSP-71-08-00048-01A
+Artery - Tibial_595
+Thyroid_127
+Cells - Cultured fibroblasts_533
+Nerve - Tibial_26
+Brain - Putamen (basal ganglia)_150
+b75e68fd-cfa1-4e9e-b4c1-a57ad8
+TCGA-EL-A3D6-01A
+TCGA-XJ-A9DQ-01A
+TCGA-HU-A4G2-01A
+TARGET-20-PAWUCG-09A
+TCGA-6A-AB49-01A
+Skin - Sun Exposed (Lower leg)_294
+Colon - Transverse_167
+Stomach_0
+Brain - Anterior cingulate cortex (BA24)_136
+Artery - Tibial_499
+Brain - Frontal Cortex (BA9)_1
+Heart - Atrial Appendage_289
+TARGET-20-PASGCB-03A
+Lung_537
+Breast - Mammary Tissue_257
+TCGA-X6-A8C7-01A
+TCGA-DT-5265-01A
+Brain - Anterior cingulate cortex (BA24)_216
+Breast - Mammary Tissue_495
+Cells - Cultured fibroblasts_172
+Brain - Hippocampus_223
+Esophagus - Gastroesophageal Junction_162
+TCGA-DX-A6YV-01A
+TCGA-44-6778-11A
+TCGA-2Z-A9JI-01A
+Whole Blood_75
+Skin - Sun Exposed (Lower leg)_192
+TCGA-P8-A5KD-01A
+Spleen_65
+TCGA-DU-6400-01A
+Lung_487
+Nerve - Tibial_402
+TCGA-FS-A1ZE-06A
+Nerve - Tibial_561
+Lung_423
+Artery - Tibial_257
+Esophagus - Mucosa_43
+Muscle - Skeletal_192
+Heart - Left Ventricle_347
+Kidney - Cortex_54
+TARGET-21-PATAIJ-09A
+TCGA-66-2780-01A
+C3L-00103-06
+TARGET-20-PAVUPS-09A
+TCGA-LN-A4MQ-01A
+TCGA-85-6560-01A
+TCGA-A6-A566-01A
+Small Intestine - Terminal Ileum_122
+Skin - Sun Exposed (Lower leg)_146
+Cervix - Endocervix_5
+Whole Blood_329
+TCGA-CE-A482-01A
+TCGA-KJ-A3U4-01A
+Lung_578
+Brain - Hippocampus_7
+Brain - Hippocampus_165
+Cells - EBV-transformed lymphocytes_181
+Cells - Cultured fibroblasts_492
+Testis_314
+Thyroid_610
+Cells - Cultured fibroblasts_515
+Esophagus - Muscularis_424
+Brain - Hypothalamus_78
+TCGA-ET-A3BN-01A
+TCGA-AX-A3G8-01A
+Heart - Left Ventricle_390
+TCGA-E7-A678-01A
+TCGA-MB-A5Y8-01A
+Brain - Cerebellar Hemisphere_226
+2e700669-85b0-43fa-a9c7-3eaf5a
+Prostate_115
+TCGA-B5-A3FD-01A
+C3L-00770-01
+Brain - Cerebellar Hemisphere_257
+Adrenal Gland_286
+Uterus_48
+TCGA-UY-A78O-01A
+Testis_356
+TCGA-BJ-A3PR-01A
+Heart - Atrial Appendage_79
+Esophagus - Gastroesophageal Junction_160
+C3L-01033-03
+TCGA-MP-A4SW-01A
+TARGET-20-PAWRUK-09A
+Lung_140
+Pancreas_131
+TCGA-09-1673-01A
+TCGA-C5-A2M1-01A
+Whole Blood_484
+TCGA-AN-A0FJ-01A
+Esophagus - Muscularis_230
+Brain - Nucleus accumbens (basal ganglia)_59
+Nerve - Tibial_346
+Cells - Cultured fibroblasts_467
+Adipose - Subcutaneous_288
+C3L-02613-04
+Liver_89
+Skin - Not Sun Exposed (Suprapubic)_564
+BLGSP-71-23-00405-01A
+TARGET-20-PAVSAN-09A
+TCGA-FU-A3NI-01A
+TCGA-EW-A6SD-01A
+C3N-03042-04
+TCGA-AB-2880-03A
+Brain - Nucleus accumbens (basal ganglia)_262
+TARGET-20-PAWMIP-09A
+Spleen_166
+Artery - Tibial_24
+Brain - Cerebellar Hemisphere_136
+Skin - Sun Exposed (Lower leg)_349
+Testis_290
+Artery - Aorta_15
+TCGA-V1-A9Z9-01A
+Esophagus - Mucosa_131
+Pituitary_17
+TCGA-VN-A88R-01A
+TCGA-EP-A12J-01A
+Brain - Nucleus accumbens (basal ganglia)_274
+TARGET-20-PATDMY-09A
+Nerve - Tibial_267
+Uterus_60
+Brain - Nucleus accumbens (basal ganglia)_97
+Breast - Mammary Tissue_362
+Skin - Sun Exposed (Lower leg)_238
+Lung_35
+Stomach_165
+Esophagus - Muscularis_542
+Lung_475
+Brain - Cerebellar Hemisphere_42
+Skin - Sun Exposed (Lower leg)_231
+Heart - Atrial Appendage_285
+TCGA-HT-7480-01A
+Whole Blood_697
+TCGA-KL-8346-01A
+Thyroid_447
+TCGA-CZ-4859-01A
+TCGA-AJ-A2QN-01A
+TCGA-GC-A3YS-01A
+C3L-00140-06
+Brain - Amygdala_90
+TCGA-DM-A28A-01A
+Pancreas_332
+TCGA-G9-6351-01A
+Muscle - Skeletal_393
+TCGA-DU-8161-01A
+Lung_206
+TCGA-CW-6087-01A
+HTMCP-03-06-02219-01A
+Esophagus - Muscularis_525
+Esophagus - Gastroesophageal Junction_109
+Adipose - Visceral (Omentum)_567
+TCGA-L5-A4OF-01A
+TCGA-S9-A6TS-01A
+C3L-02643-02, C3L-02643-01
+Small Intestine - Terminal Ileum_50
+TARGET-20-PASXIS-09A
+TCGA-43-8115-01A
+Muscle - Skeletal_626
+TCGA-BP-4992-01A
+Cells - EBV-transformed lymphocytes_261
+C3L-02957-06
+Brain - Spinal cord (cervical c-1)_84
+Thyroid_211
+Muscle - Skeletal_671
+TCGA-E9-A2JT-01A
+Skin - Sun Exposed (Lower leg)_15
+TCGA-WW-A8ZI-01A
+BLGSP-71-29-00543-50A
+Esophagus - Mucosa_230
+Artery - Tibial_465
+Liver_30
+Adrenal Gland_39
+TCGA-BP-5196-01A
+Lung_358
+Esophagus - Gastroesophageal Junction_216
+Brain - Hypothalamus_80
+Lung_334
+HTMCP-03-06-02109-01A
+Brain - Cortex_16
+TCGA-EJ-7115-11A
+Skin - Not Sun Exposed (Suprapubic)_348
+TARGET-20-PAXIKL-09A
+Brain - Putamen (basal ganglia)_49
+Brain - Frontal Cortex (BA9)_21
+Adipose - Visceral (Omentum)_563
+Brain - Cerebellar Hemisphere_114
+Esophagus - Gastroesophageal Junction_6
+TCGA-BR-8682-01A
+Stomach_166
+TCGA-AZ-4323-01A
+Colon - Transverse_443
+TCGA-B5-A0K3-01A
+Skin - Sun Exposed (Lower leg)_416
+TCGA-EW-A1PC-01B
+Esophagus - Mucosa_73
+Brain - Cerebellum_186
+TARGET-20-PAVAYD-09A
+TCGA-EB-A4IQ-01A
+Skin - Not Sun Exposed (Suprapubic)_151
+Cells - Cultured fibroblasts_566
+TCGA-BR-7707-01A
+TCGA-05-5429-01A
+TCGA-SY-A9G5-01A
+TARGET-50-PAJLIP-01A
+TCGA-AB-2943-03A
+Brain - Hippocampus_55
+TCGA-3X-AAVA-01A
+TCGA-EE-A2GB-06A
+Fallopian Tube_9
+TCGA-97-A4M7-01A
+Brain - Cortex_36
+Spleen_137
+Adipose - Subcutaneous_31
+TCGA-D1-A3JP-01A
+TCGA-B0-5119-01A
+BLGSP-71-30-00663-01A
+TARGET-20-PAXKTY-09A
+TCGA-FE-A232-01A
+Nerve - Tibial_87
+Brain - Amygdala_158
+Brain - Putamen (basal ganglia)_23
+Muscle - Skeletal_213
+TCGA-VS-A950-01A
+TCGA-24-2281-01A
+Esophagus - Mucosa_340
+Skin - Sun Exposed (Lower leg)_713
+Adrenal Gland_45
+TCGA-E8-A419-01A
+C3N-02281-03, C3N-02281-02
+TCGA-44-6147-01A
+TCGA-DD-AACA-02A
+TARGET-00-BM5776-14A
+Adrenal Gland_151
+TCGA-CX-A4AQ-01A
+TCGA-B5-A0K9-01A
+Prostate_51
+C3N-00437-03
+TARGET-21-PANVPB-09A
+TCGA-BJ-A45I-01A
+Brain - Cortex_218
+Brain - Hippocampus_233
+Cells - Cultured fibroblasts_508
+Lung_303
+Esophagus - Mucosa_358
+TARGET-20-PAXHCC-09A
+Esophagus - Gastroesophageal Junction_355
+Brain - Frontal Cortex (BA9)_260
+Lung_565
+TCGA-3E-AAAZ-01A
+TARGET-20-PAWYNC-09A
+TCGA-N5-A4RN-01A
+TCGA-A8-A07I-01A
+C3N-02253-74
+TCGA-EB-A57M-01A
+Whole Blood_259
+TCGA-S5-A6DX-01A
+Skin - Sun Exposed (Lower leg)_693
+Thyroid_94
+C3N-02433-02, C3N-02433-01
+Cervix - Ectocervix_4
+TARGET-10-PAPSPG-04A
+TCGA-AX-A1C4-01A
+Thyroid_271
+Adipose - Subcutaneous_544
+TCGA-85-7844-01A
+C3N-01524-01
+Brain - Spinal cord (cervical c-1)_103
+Artery - Aorta_40
+Brain - Nucleus accumbens (basal ganglia)_62
+TCGA-AG-3605-01A
+TARGET-20-PAUUKZ-03A
+Esophagus - Muscularis_54
+TARGET-20-PAWNIK-09A
+Skin - Sun Exposed (Lower leg)_601
+Brain - Amygdala_26
+TCGA-BT-A42F-01A
+Esophagus - Mucosa_90
+Lung_240
+TARGET-20-PASGZV-09A
+TARGET-20-PATJXZ-03A
+TARGET-20-PAXLGL-09A
+Artery - Tibial_368
+Esophagus - Muscularis_126
+Nerve - Tibial_645
+Whole Blood_355
+Muscle - Skeletal_712
+C3N-01003-05
+TCGA-5U-AB0F-01A
+TCGA-63-5128-01A
+TCGA-OR-A5J9-01A
+Adrenal Gland_192
+Cells - Cultured fibroblasts_92
+Artery - Coronary_247
+TCGA-FG-A87N-01A
+Testis_328
+Spleen_236
+Nerve - Tibial_185
+Adrenal Gland_104
+Skin - Sun Exposed (Lower leg)_479
+Kidney - Cortex_38
+Adipose - Subcutaneous_491
+Muscle - Skeletal_412
+TCGA-AG-3882-01A
+Adipose - Subcutaneous_585
+TCGA-B8-A54I-01A
+Heart - Atrial Appendage_266
+Brain - Substantia nigra_169
+Artery - Tibial_516
+TCGA-E9-A1RB-01A
+Breast - Mammary Tissue_182
+Nerve - Tibial_391
+C3L-03976-06
+Esophagus - Gastroesophageal Junction_195
+TCGA-DD-AACC-01A
+TCGA-A6-5667-01A
+Esophagus - Mucosa_321
+Adrenal Gland_93
+Brain - Anterior cingulate cortex (BA24)_60
+Testis_58
+Skin - Sun Exposed (Lower leg)_453
+Skin - Not Sun Exposed (Suprapubic)_546
+TCGA-QR-A70K-01A
+Muscle - Skeletal_709
+TCGA-CN-4727-01A
+Cells - Cultured fibroblasts_365
+TCGA-AB-2915-03A
+Skin - Sun Exposed (Lower leg)_191
+TCGA-D8-A1XJ-01A
+Heart - Left Ventricle_262
+Pancreas_288
+TCGA-BH-A0B7-11A
+Kidney - Cortex_63
+Small Intestine - Terminal Ileum_20
+Ovary_54
+Breast - Mammary Tissue_402
+Lung_228
+TCGA-FB-AAPZ-01A
+Skin - Not Sun Exposed (Suprapubic)_283
+Esophagus - Mucosa_519
+Esophagus - Mucosa_249
+Stomach_35
+TCGA-TQ-A8XE-01A
+TCGA-A7-A26F-01B
+Esophagus - Gastroesophageal Junction_328
+TCGA-EJ-7321-01A
+Esophagus - Gastroesophageal Junction_259
+TARGET-20-PAUPNN-03A
+TCGA-HT-7855-01A
+Whole Blood_341
+Heart - Left Ventricle_321
+Ovary_53
+Skin - Not Sun Exposed (Suprapubic)_604
+Brain - Caudate (basal ganglia)_210
+TARGET-20-PATLJF-09A
+Skin - Sun Exposed (Lower leg)_481
+C3N-03841-03
+Brain - Hippocampus_32
+TCGA-05-4424-01A
+TCGA-J4-A67L-01A
+TARGET-20-PARMZC-09A
+Adipose - Subcutaneous_562
+Brain - Caudate (basal ganglia)_259
+TCGA-86-7954-01A
+Lung_12
+Adrenal Gland_5
+Heart - Atrial Appendage_28
+Vagina_37
+Skin - Sun Exposed (Lower leg)_256
+TARGET-10-PARARJ-09A
+Brain - Cerebellar Hemisphere_160
+Spleen_251
+Nerve - Tibial_632
+TCGA-A6-2672-01B
+Adipose - Subcutaneous_472
+TCGA-EL-A3T1-01A
+Lung_142
+Nerve - Tibial_448
+Esophagus - Mucosa_281
+Small Intestine - Terminal Ileum_82
+TCGA-ZM-AA0H-01A
+BLGSP-71-19-00125-09A
+TCGA-24-2024-01A
+TCGA-K4-A5RI-01A
+Ovary_112
+TCGA-E2-A15D-01A
+TCGA-FI-A2F9-01A
+Brain - Nucleus accumbens (basal ganglia)_209
+TCGA-VS-A8Q8-01A
+TARGET-15-SJMPAL043769-03B
+Artery - Tibial_237
+Brain - Putamen (basal ganglia)_241
+Adipose - Visceral (Omentum)_482
+TCGA-CD-A4MI-01A
+Brain - Caudate (basal ganglia)_85
+Brain - Caudate (basal ganglia)_101
+C3L-01861-02
+TARGET-20-PAVGXC-09A
+Esophagus - Mucosa_16
+TARGET-20-PAUUXA-09A
+TCGA-ZG-A9L6-01A
+Heart - Left Ventricle_91
+TCGA-AX-A3GI-01A
+Brain - Hippocampus_109
+TCGA-F5-6465-01A
+Heart - Left Ventricle_422
+Artery - Aorta_81
+TARGET-20-PAPXVK-03A
+Breast - Mammary Tissue_313
+Nerve - Tibial_484
+Colon - Transverse_404
+TCGA-AA-3524-01A
+C3L-01955-02
+Adipose - Subcutaneous_626
+0edcba67-0714-4b04-b433-77834e
+Artery - Aorta_272
+Pancreas_314
+TCGA-FW-A3R5-06A
+Brain - Caudate (basal ganglia)_128
+TCGA-OR-A5LB-01A
+Pancreas_154
+TCGA-J2-A4AD-01A
+BLGSP-71-06-00144-01A
+Muscle - Skeletal_588
+Prostate_148
+Adrenal Gland_110
+TCGA-RD-A8N4-01A
+TCGA-HU-A4H2-01A
+Esophagus - Mucosa_382
+TARGET-20-PAWSED-03A
+Brain - Anterior cingulate cortex (BA24)_99
+TCGA-BQ-5877-11A
+Whole Blood_560
+TCGA-ZF-AA4V-01A
+TCGA-D1-A162-01A
+Adipose - Subcutaneous_139
+Skin - Sun Exposed (Lower leg)_517
+HTMCP-03-06-02097-01A
+Esophagus - Mucosa_40
+Muscle - Skeletal_641
+TCGA-QU-A6IN-01A
+Lung_188
+TCGA-K7-A6G5-01A
+Lung_530
+TARGET-20-PARZYF-09A
+Cells - Cultured fibroblasts_649
+Brain - Substantia nigra_141
+Adrenal Gland_109
+Esophagus - Muscularis_107
+Colon - Sigmoid_413
+Brain - Cerebellum_117
+Cells - Cultured fibroblasts_25
+Stomach_271
+C3L-00083-06
+Colon - Sigmoid_281
+TCGA-WB-A816-01A
+Thyroid_408
+Prostate_57
+Brain - Cerebellar Hemisphere_8
+TCGA-22-4609-01A
+TARGET-50-PAEAFB-01A
+TCGA-DJ-A2PS-01A
+Brain - Cerebellum_229
+Small Intestine - Terminal Ileum_161
+Uterus_151
+TARGET-20-PAULDS-09A
+TCGA-44-2657-01A
+Pituitary_233
+TARGET-20-PASWGL-09A
+TCGA-IW-A3M5-01A
+Esophagus - Muscularis_167
+Muscle - Skeletal_320
+Muscle - Skeletal_494
+BLGSP-71-26-00399-01A
+TCGA-F2-6880-01A
+TARGET-20-PASFFS-03A
+TCGA-BG-A0MQ-01A
+TCGA-CV-A6JT-01A
+Whole Blood_664
+Esophagus - Muscularis_555
+Whole Blood_556
+TCGA-B8-5549-11A
+TARGET-20-PASVUI-03A
+Brain - Nucleus accumbens (basal ganglia)_172
+Adrenal Gland_148
+TCGA-99-8025-01A
+Nerve - Tibial_53
+TCGA-BH-A0GZ-01A
+Nerve - Tibial_584
+Brain - Nucleus accumbens (basal ganglia)_67
+Pancreas_188
+Adipose - Visceral (Omentum)_350
+Thyroid_517
+Prostate_64
+Brain - Cerebellar Hemisphere_243
+Brain - Caudate (basal ganglia)_160
+TCGA-J4-A67O-01A
+TCGA-CN-5365-01A
+Colon - Sigmoid_328
+TCGA-DM-A1D8-01A
+Kidney - Cortex_2
+TCGA-EJ-7315-11A
+TCGA-DE-A0Y2-01A
+TARGET-20-PAVJVS-09A
+TCGA-DD-AAVY-01A
+Nerve - Tibial_75
+Lung_281
+Cells - EBV-transformed lymphocytes_210
+Artery - Coronary_131
+TCGA-BL-A13J-01B
+TCGA-DQ-7590-01A
+Cells - EBV-transformed lymphocytes_247
+TCGA-DX-A6BE-01A
+C3N-00440-02
+Esophagus - Gastroesophageal Junction_395
+Muscle - Skeletal_809
+TARGET-20-PASFIE-09A
+Skin - Sun Exposed (Lower leg)_140
+Adipose - Subcutaneous_382
+TCGA-HD-7917-01A
+Brain - Substantia nigra_73
+Pancreas_4
+TCGA-QC-A6FX-01A
+Adipose - Subcutaneous_469
+TCGA-BH-A0DD-11A
+Adipose - Subcutaneous_347
+Nerve - Tibial_271
+Brain - Frontal Cortex (BA9)_197
+Cells - EBV-transformed lymphocytes_178
+C3L-02648-02
+TARGET-20-PAXGGF-09A
+Artery - Tibial_619
+TCGA-KN-8429-11A
+C3L-01124-01
+Artery - Aorta_391
+Uterus_95
+HTMCP-03-06-02180-01A
+Cells - EBV-transformed lymphocytes_281
+TCGA-HT-7860-01A
+Brain - Substantia nigra_19
+BLGSP-71-08-00200-01A
+Cells - Cultured fibroblasts_147
+Brain - Spinal cord (cervical c-1)_148
+Stomach_255
+TCGA-2A-AAYF-01A
+TARGET-20-PANPUR-03A
+TCGA-13-1405-01A
+Esophagus - Gastroesophageal Junction_145
+TARGET-50-PAKNRX-01A
+TCGA-13-0890-01A
+C3N-04173-01
+Brain - Caudate (basal ganglia)_142
+TCGA-A7-A0DA-01A
+TCGA-90-A4EE-01A
+Pituitary_164
+TCGA-W3-AA1V-06B
+Thyroid_565
+TCGA-EM-A2CJ-01A
+Testis_11
+TARGET-20-PANJVI-03A
+Whole Blood_551
+Heart - Left Ventricle_248
+Adipose - Subcutaneous_709
+Skin - Sun Exposed (Lower leg)_707
+Brain - Anterior cingulate cortex (BA24)_210
+TCGA-85-8352-01A
+TCGA-D1-A16R-01A
+TCGA-FK-A3S3-01A
+Testis_294
+Lung_157
+Muscle - Skeletal_129
+TARGET-20-PABLDZ-04A
+Artery - Aorta_246
+TCGA-G3-A7M8-01A
+TCGA-VP-A876-01A
+Brain - Putamen (basal ganglia)_243
+TCGA-A4-A5Y0-01A
+Ovary_189
+Colon - Transverse_468
+Lung_369
+Spleen_126
+Thyroid_145
+Spleen_161
+Esophagus - Muscularis_280
+MP2PRT-PASSUR-TTR1-A
+C3L-01304-01
+Artery - Coronary_28
+TCGA-B5-A5OC-01A
+Testis_302
+TARGET-21-PATJMY-41A
+Colon - Transverse_271
+TCGA-B5-A5OD-01A
+TARGET-20-PASIEP-09A
+Artery - Tibial_552
+Skin - Not Sun Exposed (Suprapubic)_252
+Brain - Nucleus accumbens (basal ganglia)_166
+TCGA-CV-6940-01A
+TARGET-20-PASRLS-09A
+Stomach_4
+Ovary_175
+Brain - Nucleus accumbens (basal ganglia)_266
+TCGA-LN-A4A9-01A
+Pituitary_62
+Brain - Amygdala_59
+Stomach_54
+Skin - Sun Exposed (Lower leg)_326
+Colon - Sigmoid_99
+Pancreas_150
+TARGET-20-PASRRU-03A
+C3N-00167-02
+TCGA-DJ-A3UQ-01A
+TCGA-EL-A3T2-11A
+Colon - Transverse_473
+BLGSP-71-22-00339-01A
+Skin - Sun Exposed (Lower leg)_719
+Small Intestine - Terminal Ileum_111
+TCGA-B0-4712-11A
+Artery - Tibial_78
+Stomach_253
+Lung_209
+TCGA-OR-A5LO-01A
+Brain - Caudate (basal ganglia)_178
+TARGET-20-PAWFIZ-09A
+Cells - EBV-transformed lymphocytes_311
+760f15d2-444c-4deb-b133-62f3ca
+Pancreas_13
+TCGA-A7-A13D-01B
+TCGA-24-1564-01A
+TARGET-20-PAVNIX-09A
+Bladder_54
+Stomach_290
+TCGA-2Y-A9H5-01A
+TARGET-20-PATIVW-09A
+Heart - Atrial Appendage_325
+Nerve - Tibial_253
+Artery - Coronary_124
+Artery - Tibial_671
+Skin - Not Sun Exposed (Suprapubic)_271
+Heart - Left Ventricle_109
+Skin - Sun Exposed (Lower leg)_186
+Testis_120
+TCGA-61-2012-01A
+TCGA-3X-AAVB-01A
+TCGA-A5-A0GM-01A
+TCGA-KN-8424-01A
+Lung_583
+Brain - Putamen (basal ganglia)_132
+Testis_317
+TCGA-A6-6781-01A
+TCGA-94-7943-01A
+Brain - Cortex_211
+C3N-02332-06
+TCGA-CN-5355-01A
+Stomach_312
+Brain - Hippocampus_219
+Stomach_322
+TCGA-BF-AAP0-06A
+TCGA-J4-A83N-01A
+0065bfd9-e1b9-43a8-9379-9658ba
+TARGET-20-PASPLH-09A
+Heart - Atrial Appendage_138
+TCGA-DX-A2IZ-01A
+Esophagus - Muscularis_122
+Pituitary_189
+Brain - Cerebellar Hemisphere_58
+BLGSP-71-08-00040-01A
+Esophagus - Muscularis_375
+TCGA-ET-A25M-01A
+Brain - Cortex_213
+TCGA-CN-6017-01A
+TCGA-13-0913-02A
+Cells - Cultured fibroblasts_36
+Whole Blood_238
+TCGA-G3-A5SM-01A
+Lung_360
+TCGA-09-2051-01A
+TARGET-20-PAWWMZ-09A
+TCGA-VQ-A91W-01A
+Thyroid_91
+Thyroid_647
+TCGA-CV-6954-01A
+Brain - Substantia nigra_88
+Skin - Not Sun Exposed (Suprapubic)_277
+TCGA-A7-A0D9-01A
+TCGA-CV-A6K1-01A
+Brain - Cerebellar Hemisphere_53
+Muscle - Skeletal_511
+BLGSP-71-19-00522-09A
+Whole Blood_532
+TCGA-B0-5701-11A
+Heart - Left Ventricle_147
+TCGA-AA-3696-01A
+Brain - Hypothalamus_55
+TCGA-DK-A3IQ-01A
+Nerve - Tibial_252
+TARGET-50-PAJMFY-01A
+Cells - Cultured fibroblasts_567
+BLGSP-71-08-00042-01B
+C3N-03073-03
+TCGA-E9-A227-01A
+Brain - Hypothalamus_6
+Adipose - Visceral (Omentum)_165
+TCGA-44-7659-01A
+C3N-01008-03, C3N-01008-02
+BLGSP-71-08-00206-01A
+Thyroid_456
+TCGA-L9-A50W-01A
+Thyroid_470
+Esophagus - Mucosa_413
+Heart - Atrial Appendage_128
+Colon - Sigmoid_375
+Heart - Left Ventricle_11
+Esophagus - Muscularis_413
+TCGA-4V-A9QU-01A
+C3N-03063-03
+TCGA-33-4538-01A
+BLGSP-71-30-00645-01A
+C3N-02089-06
+Brain - Hippocampus_174
+C3N-02979-01
+TCGA-PE-A5DC-01A
+Brain - Hypothalamus_134
+Cells - EBV-transformed lymphocytes_180
+TCGA-LL-A7T0-01A
+TCGA-EM-A3FP-01A
+TCGA-78-8655-01A
+TCGA-B3-8121-01A
+TCGA-DZ-6132-11A
+C3N-00217-06
+TARGET-20-PATAIJ-09A
+TARGET-00-RO02249-14A
+TCGA-TT-A6YO-01A
+Brain - Anterior cingulate cortex (BA24)_197
+TCGA-AP-A0LE-01A
+TCGA-AA-3560-01A
+Whole Blood_315
+Breast - Mammary Tissue_58
+Whole Blood_191
+TCGA-R6-A8W5-01B
+Heart - Left Ventricle_229
+TCGA-CW-5581-01A
+Artery - Aorta_273
+Artery - Tibial_209
+Artery - Tibial_94
+Esophagus - Gastroesophageal Junction_311
+Brain - Putamen (basal ganglia)_156
+Cells - Cultured fibroblasts_409
+Heart - Left Ventricle_24
+C3N-01714-02
+TCGA-56-7580-11A
+Heart - Left Ventricle_236
+Brain - Cortex_242
+Esophagus - Gastroesophageal Junction_118
+Brain - Frontal Cortex (BA9)_119
+TCGA-BJ-A0ZE-01A
+Adipose - Visceral (Omentum)_352
+TCGA-D7-A6EZ-01A
+Lung_407
+Testis_97
+Colon - Sigmoid_111
+TARGET-20-PAUVPP-09A
+Skin - Sun Exposed (Lower leg)_414
+Esophagus - Mucosa_395
+Colon - Sigmoid_46
+Minor Salivary Gland_29
+Muscle - Skeletal_336
+Heart - Atrial Appendage_377
+Breast - Mammary Tissue_312
+Thyroid_178
+Cells - EBV-transformed lymphocytes_93
+Esophagus - Gastroesophageal Junction_260
+Thyroid_406
+TCGA-50-5055-01A
+Colon - Sigmoid_180
+Colon - Transverse_21
+TARGET-20-PASXJY-09A
+Testis_179
+TCGA-BH-A204-01A
+Brain - Frontal Cortex (BA9)_138
+TCGA-B0-5102-01A
+TCGA-20-1686-01A
+TCGA-BA-A6DA-01A
+TCGA-A2-A1FZ-01A
+Esophagus - Mucosa_566
+TCGA-AA-3715-01A
+Uterus_118
+Skin - Sun Exposed (Lower leg)_39
+Skin - Sun Exposed (Lower leg)_271
+TCGA-DD-AACH-01A
+Esophagus - Gastroesophageal Junction_97
+Artery - Tibial_492
+TARGET-20-PAXLVV-09A
+BLGSP-71-21-00243-01A
+Thyroid_398
+TCGA-KM-8439-01A
+Whole Blood_114
+TCGA-2G-AALW-01A
+Esophagus - Muscularis_9
+Thyroid_123
+Skin - Sun Exposed (Lower leg)_406
+Testis_181
+Esophagus - Muscularis_365
+TCGA-SH-A7BC-01A
+Adipose - Visceral (Omentum)_336
+BLGSP-71-08-00053-01A
+TCGA-ZH-A8Y5-01A
+TCGA-EB-A550-01A
+Colon - Transverse_335
+Adipose - Subcutaneous_209
+Heart - Left Ventricle_158
+Esophagus - Mucosa_376
+TCGA-85-A4QR-01A
+TCGA-29-1697-01A
+TCGA-2G-AAGI-05A
+Lung_507
+Cells - EBV-transformed lymphocytes_148
+TCGA-DX-AB37-01A
+TCGA-BC-A10X-01A
+Colon - Sigmoid_15
+C3L-01603-06
+Liver_45
+Esophagus - Mucosa_476
+Artery - Aorta_98
+TCGA-FG-5962-01B
+Heart - Left Ventricle_120
+Brain - Hippocampus_75
+TCGA-EE-A2MK-06A
+Brain - Cerebellar Hemisphere_193
+Skin - Sun Exposed (Lower leg)_149
+Adipose - Subcutaneous_118
+TCGA-AJ-A3BF-01A
+Stomach_277
+TCGA-DA-A1I8-06A
+Esophagus - Gastroesophageal Junction_263
+Spleen_185
+Artery - Tibial_33
+Breast - Mammary Tissue_129
+TARGET-20-PATBIP-09A
+TARGET-50-PAJNTJ-02A
+TCGA-4A-A93W-01A
+TARGET-20-PALFVW-09A
+TCGA-ZF-A9R5-01A
+TCGA-A2-A1G6-01A
+Artery - Tibial_339
+TCGA-63-A5MW-01A
+Lung_450
+Brain - Spinal cord (cervical c-1)_127
+TCGA-UT-A88C-01B
+Adipose - Subcutaneous_458
+Vagina_39
+TCGA-IR-A3LI-01A
+Pancreas_117
+Artery - Tibial_487
+TCGA-TS-A7OU-01B
+Cells - Cultured fibroblasts_74
+MP2PRT-PAVBXS-TTR1-A
+Skin - Sun Exposed (Lower leg)_377
+Skin - Not Sun Exposed (Suprapubic)_230
+TCGA-HT-7477-01B
+TCGA-BT-A20Q-01A
+TARGET-20-PAUUZT-09A
+Testis_386
+Muscle - Skeletal_770
+Colon - Transverse_317
+Adrenal Gland_55
+Esophagus - Mucosa_137
+Skin - Sun Exposed (Lower leg)_702
+TCGA-MZ-A7D7-01A
+Brain - Frontal Cortex (BA9)_67
+TCGA-IS-A3K6-01A
+Esophagus - Mucosa_367
+TCGA-EW-A1J5-01A
+Artery - Aorta_345
+Whole Blood_29
+TCGA-ET-A40T-01A
+TCGA-B8-4154-01A
+TCGA-24-1425-01A
+HTMCP-03-06-02042-01B
+Whole Blood_408
+Brain - Cerebellar Hemisphere_151
+Thyroid_250
+Artery - Aorta_463
+BLGSP-71-06-00098-01B
+C3L-02891-06
+TCGA-N7-A59B-01A
+TCGA-BP-4986-01A
+Colon - Sigmoid_21
+Nerve - Tibial_133
+Heart - Atrial Appendage_318
+Skin - Sun Exposed (Lower leg)_178
+TCGA-58-8388-01A
+Muscle - Skeletal_107
+Colon - Transverse_296
+Bladder_72
+Testis_216
+TCGA-B0-4838-01A
+Adrenal Gland_62
+TCGA-2J-AABO-01A
+Brain - Cerebellum_0
+TCGA-S9-A6WI-01A
+TCGA-YB-A89D-01A
+Brain - Hippocampus_44
+Testis_363
+C3N-02721-03
+C3N-01077-06
+Skin - Sun Exposed (Lower leg)_698
+C3N-02582-02, C3N-02582-01
+Esophagus - Gastroesophageal Junction_198
+Testis_205
+TCGA-BH-A1ES-06A
+Skin - Sun Exposed (Lower leg)_443
+TCGA-A2-A3XU-01A
+Heart - Left Ventricle_394
+Artery - Tibial_274
+TCGA-E2-A14R-01A
+Nerve - Tibial_47
+Adrenal Gland_184
+TCGA-BR-8369-01A
+Brain - Hypothalamus_85
+TCGA-CV-5430-01A
+TCGA-2F-A9KO-01A
+TCGA-FG-8181-01A
+Brain - Frontal Cortex (BA9)_23
+TCGA-C8-A3M7-01A
+Breast - Mammary Tissue_48
+Muscle - Skeletal_324
+TARGET-20-PAVXSH-09A
+C3L-03726-04
+TCGA-V4-A9F1-01A
+TCGA-EW-A1J6-01A
+Heart - Atrial Appendage_387
+Ovary_16
+Whole Blood_313
+Vagina_67
+BLGSP-71-06-00094-01A
+Breast - Mammary Tissue_272
+Adipose - Subcutaneous_318
+Cells - Cultured fibroblasts_245
+Brain - Nucleus accumbens (basal ganglia)_132
+TCGA-TQ-A8XE-02A
+Artery - Coronary_239
+TCGA-BH-A0BM-01A
+TCGA-BH-A0C0-01A
+TCGA-VQ-A94P-01A
+Colon - Transverse_24
+Heart - Atrial Appendage_310
+Brain - Spinal cord (cervical c-1)_34
+Adipose - Visceral (Omentum)_422
+TARGET-20-PASPTW-09A
+Cells - EBV-transformed lymphocytes_56
+HTMCP-03-06-02128-01A
+TCGA-IQ-7632-01A
+Whole Blood_184
+Nerve - Tibial_308
+TCGA-TM-A84O-01A
+Skin - Not Sun Exposed (Suprapubic)_411
+Brain - Cerebellum_100
+Brain - Amygdala_61
+TCGA-86-A4P8-01A
+Pancreas_251
+Esophagus - Muscularis_69
+Breast - Mammary Tissue_398
+Colon - Sigmoid_118
+Thyroid_529
+HTMCP-01-16-00265-01A
+Pancreas_252
+TARGET-20-PAXCWR-09A
+Artery - Aorta_364
+C3L-02961-01
+TCGA-77-A5G8-01B
+C3L-00907-03
+TCGA-NJ-A4YP-01A
+Colon - Transverse_205
+Brain - Cerebellum_91
+Whole Blood_134
+TCGA-CM-5341-01A
+Cells - Cultured fibroblasts_316
+TARGET-20-PAUNHG-09A
+Artery - Coronary_39
+Esophagus - Mucosa_328
+Adipose - Subcutaneous_400
+Cells - Cultured fibroblasts_473
+Skin - Sun Exposed (Lower leg)_132
+TCGA-KV-A6GE-01A
+Brain - Amygdala_60
+TCGA-DX-A2J0-01A
+Brain - Caudate (basal ganglia)_49
+TCGA-CR-7364-01A
+Brain - Cerebellar Hemisphere_274
+TCGA-CV-A45U-01A
+Brain - Putamen (basal ganglia)_38
+Brain - Caudate (basal ganglia)_26
+Heart - Left Ventricle_428
+TARGET-20-PAXETC-09A
+TCGA-78-7159-01A
+Breast - Mammary Tissue_84
+Esophagus - Mucosa_404
+TARGET-20-PAXEWG-09A
+Brain - Amygdala_122
+TCGA-J2-8194-01A
+Heart - Atrial Appendage_294
+BLGSP-71-30-00669-01A
+Skin - Not Sun Exposed (Suprapubic)_156
+Thyroid_58
+Brain - Hippocampus_16
+Breast - Mammary Tissue_97
+TARGET-20-PAUVZD-09A
+Esophagus - Muscularis_119
+Cells - Cultured fibroblasts_512
+C3N-03006-02
+TARGET-20-PAWKPU-09A
+Cells - Cultured fibroblasts_262
+TCGA-D8-A3Z6-01A
+Esophagus - Mucosa_41
+Breast - Mammary Tissue_369
+C3N-02230-06
+Stomach_21
+f4bccfe4-98d0-466b-a6d7-44341b
+Brain - Cerebellum_21
+Pancreas_200
+Small Intestine - Terminal Ileum_97
+TARGET-20-PATAEA-03A
+Brain - Spinal cord (cervical c-1)_44
+Ovary_170
+Artery - Coronary_15
+Esophagus - Muscularis_182
+Lung_253
+C3L-07213-01
+TCGA-EE-A3AD-06A
+Colon - Transverse_277
+TCGA-78-7158-01A
+TCGA-EJ-8470-01A
+Brain - Hypothalamus_124
+Brain - Hypothalamus_152
+Esophagus - Muscularis_94
+Heart - Atrial Appendage_184
+C3L-01682-07
+C3N-04168-01
+Esophagus - Mucosa_515
+TCGA-BH-A1FN-01A
+Artery - Aorta_8
+a03d1103-b809-42c4-ad5c-5aff58
