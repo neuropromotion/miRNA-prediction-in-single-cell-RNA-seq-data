@@ -1,1 +1,0 @@
-../build_ranking.py
