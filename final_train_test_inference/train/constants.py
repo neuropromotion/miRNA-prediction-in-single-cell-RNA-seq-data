@@ -13,8 +13,7 @@ SC_SOURCE = FINAL_VERSION / "sc_TRAIN"
 SC_TEST = FINAL_VERSION / "sc_TEST"
 
 SPLITS = ROOT / "splits"
-FEATURES_SRC = FINAL_VERSION / "stage01_bulk_trim" / "results" / "selected_features.json"
-FEATURES = ROOT / "features" / "selected_features.json"
+FEATURES_SRC = FEATURES
 
 RESULTS = ROOT / "results"
 ENSEMBLE_RESULTS = RESULTS / "ensemble"
