@@ -17,6 +17,5 @@ Out of 327 miRNAs, 164 achieved acceptable predictive performance on the test se
 | `ml_pipeline` | **Main ML workspace:** shared helpers, benchmarking stages, final training, test metrics, and scRNA-seq inference. Start here. |
 | `prepare_train_data` | End-to-end preprocessing pipeline for building the final training datasets from bulk and single-cell RNA-seq data. |
 | `scRNA_inference_data_processing` | R scripts for preprocessing scRNA-seq datasets, integrating predictions, visualization, and differential expression analysis. |
-| `VAE` | Experimental variational autoencoder for feature compression. Retained for completeness; this approach was not included in the final pipeline. |
 
-See [`ml_pipeline/README.md`](ml_pipeline/README.md) for environment setup, pipeline order, and data download contracts.
+See [`ml_pipeline/README.md`](ml_pipeline/README.md) for environment setup, pipeline order.
