@@ -9,14 +9,14 @@ import numpy as np
 import pandas as pd
 
 try:
-    from .constants import K1_REF_PATH, CONFIG_PATH, resolve_gene_mapping_path
-    from .stack_predictor import StackPredictor
+    from constants import K1_REF_PATH, CONFIG_PATH, resolve_gene_mapping_path
+    from stack_predictor import StackPredictor
 except ImportError:
     _fv = Path(__file__).resolve().parent.parent
     if str(_fv) not in sys.path:
         sys.path.insert(0, str(_fv))
-    from TOTAL_INFERENCE.constants import K1_REF_PATH, CONFIG_PATH, resolve_gene_mapping_path
-    from TOTAL_INFERENCE.stack_predictor import StackPredictor
+    from constants import K1_REF_PATH, CONFIG_PATH, resolve_gene_mapping_path
+    from stack_predictor import StackPredictor
 
 ALLOWED_PSEUDOBULK_K = frozenset({2, 3, 4, 5, 10})
 DEFAULT_KNN_REF_PATH = str(K1_REF_PATH)
