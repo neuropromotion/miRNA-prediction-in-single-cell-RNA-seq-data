@@ -15,12 +15,10 @@ from scipy.cluster import hierarchy
 from scipy.spatial.distance import pdist
 
 _SCRIPT = Path(__file__).resolve()
-if _SCRIPT.parts[:3] == ("/", "workspace", "FINAL_VERSION"):
-    BASE = Path("/workspace/FINAL_VERSION")
-else:
-    BASE = _SCRIPT.parent.parent
-SRC = BASE / "stage03_models" / "results"
-OUT = BASE / "stage03_results"
+# ml_pipeline: .../pipeline_benchmarking/model_selection/build_stage03_results.py
+BASE = _SCRIPT.parent
+SRC = BASE / "results"
+OUT = BASE / "tables"
 
 R2_COLS = {
     "inner_val_r2": "Inner val R2",

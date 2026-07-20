@@ -13,16 +13,15 @@ import pandas as pd
 import seaborn as sns
 
 _SCRIPT = Path(__file__).resolve()
-if _SCRIPT.parts[:3] == ("/", "workspace", "FINAL_VERSION"):
-    BASE = Path("/workspace/FINAL_VERSION")
-else:
-    BASE = _SCRIPT.parent.parent
+# ml_pipeline: .../final_train_test_inference/train/plot_stack_weights.py
+TRAIN_DIR = _SCRIPT.parent
+BASE = TRAIN_DIR.parent  # final_train_test_inference/
 
 ENSEMBLE = "catboost_tabm_resnet_stack"
-STACK_DIR = BASE / "final_train" / "results" / "ensemble" / ENSEMBLE
+STACK_DIR = TRAIN_DIR / "results" / "ensemble" / ENSEMBLE
 WEIGHTS_DIR = STACK_DIR / "weights"
 OUT = STACK_DIR / "weight_analysis"
-SORT_METRICS = BASE / "final_train" / "results" / "catboost_optuna" / "val_metrics.csv"
+SORT_METRICS = TRAIN_DIR / "results" / "catboost_optuna" / "val_metrics.csv"
 SORT_COL = "val_k1_r2"
 SORT_LABEL = "CatBoost Optuna val K1 R²"
 

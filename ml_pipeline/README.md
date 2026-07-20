@@ -1,11 +1,11 @@
-# ml_pipeline (local mirror: GITHUB/)
+# ml_pipeline
 
-Self-contained layout for the ML experiments that will live under `ml_pipeline/` on GitHub:
+Self-contained layout for ML experiments in this repository:
 
 https://github.com/neuropromotion/miRNA-prediction-in-single-cell-RNA-seq-data
 
 ```
-GITHUB/                          # rename/copy to ml_pipeline/ when uploading
+ml_pipeline/
 ├── README.md
 ├── requirements.txt
 ├── data/
@@ -30,7 +30,7 @@ GITHUB/                          # rename/copy to ml_pipeline/ when uploading
 ## Quick start
 
 ```bash
-export PYTHONPATH=/path/to/GITHUB   # or ml_pipeline
+export PYTHONPATH=/path/to/ml_pipeline
 pip install -r requirements.txt
 
 # Download / copy (see data/README.md):

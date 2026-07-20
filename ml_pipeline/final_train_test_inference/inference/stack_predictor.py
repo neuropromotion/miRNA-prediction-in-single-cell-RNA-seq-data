@@ -21,15 +21,43 @@ from constants import (
     WEIGHTS_DIR,
 )
 
+# Train helpers use bare `from constants import …`. Inference also has a
+# `constants` module, so once it is cached in sys.modules the train imports
+# resolve to the wrong file. Evict flat names, load train code with train/
+# first on sys.path, then always restore inference constants.
 _TRAIN = FTTI_ROOT / "train"
-if str(_TRAIN) not in sys.path:
-    sys.path.insert(0, str(_TRAIN))
-if str(FTTI_ROOT) not in sys.path:
-    sys.path.insert(0, str(FTTI_ROOT))
+_INFERENCE_CONSTANTS = sys.modules.get("constants")
+_FLAT_TRAIN_MODULES = (
+    "constants",
+    "metrics",
+    "data",
+    "stack",
+    "model_trainers",
+    "catboost_trainer",
+    "torch_trainers",
+    "dl_trainers",
+    "impute",
+    "io_splits",
+    "transforms",
+    "journal",
+)
+_train_s = str(_TRAIN)
+_ftti_s = str(FTTI_ROOT)
+for _p in (_train_s, _ftti_s):
+    if _p in sys.path:
+        sys.path.remove(_p)
+sys.path.insert(0, _ftti_s)
+sys.path.insert(0, _train_s)
 
-from stack import FitResult, apply_fit, fit_from_dict  # noqa: E402
-from data import select_features  # noqa: E402
-from model_trainers import load_artifact, predict_one  # noqa: E402
+try:
+    for _name in _FLAT_TRAIN_MODULES:
+        sys.modules.pop(_name, None)
+    from stack import FitResult, apply_fit, fit_from_dict  # noqa: E402
+    from data import select_features  # noqa: E402
+    from model_trainers import load_artifact, predict_one  # noqa: E402
+finally:
+    if _INFERENCE_CONSTANTS is not None:
+        sys.modules["constants"] = _INFERENCE_CONSTANTS
 
 
 @dataclass(frozen=True)
@@ -58,7 +86,7 @@ class StackPredictor:
       catboost_task: str = "CPU",
       preload_all: bool = False,
   ) -> None:
-      self._cofig_path = Path(config_path)
+      self._config_path = Path(config_path)
       self._weights_dir = Path(weights_dir)
       self._models_root = Path(models_root)
       self._device = device

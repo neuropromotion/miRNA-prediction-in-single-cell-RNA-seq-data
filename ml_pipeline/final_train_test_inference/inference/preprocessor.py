@@ -12,9 +12,9 @@ try:
     from constants import K1_REF_PATH, CONFIG_PATH, resolve_gene_mapping_path
     from stack_predictor import StackPredictor
 except ImportError:
-    _fv = Path(__file__).resolve().parent.parent
-    if str(_fv) not in sys.path:
-        sys.path.insert(0, str(_fv))
+    _inf = Path(__file__).resolve().parent
+    if str(_inf) not in sys.path:
+        sys.path.insert(0, str(_inf))
     from constants import K1_REF_PATH, CONFIG_PATH, resolve_gene_mapping_path
     from stack_predictor import StackPredictor
 
