@@ -1,8 +1,9 @@
 # ml_pipeline
 
-Self-contained layout for ML experiments in this repository:
+All steps from feature selection, model benchmarking up to inference. 
 
-https://github.com/neuropromotion/miRNA-prediction-in-single-cell-RNA-seq-data
+Train data preparation: ../prepare_train_data
+Inference data preparation: ../scRNA_inference_data_processing
 
 ```
 ml_pipeline/
