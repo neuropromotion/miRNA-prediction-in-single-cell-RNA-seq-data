@@ -6,8 +6,8 @@ from pathlib import Path
 
 import numpy as np
 
-from final_train.shared.metrics import clip_nonneg
-from final_train.training.dl_trainers import (
+from metrics import clip_nonneg
+from dl_trainers import (
     predict_tabm,
     predict_torch_model,
     train_resnet,
