@@ -9,8 +9,8 @@ from pathlib import Path
 import numpy as np
 from catboost import CatBoostRegressor, Pool
 
-from final_train.constants import EARLY_STOPPING_ROUNDS, OPTUNA_TRIALS, SEED
-from final_train.shared.metrics import clip_nonneg, weighted_r2
+from constants import EARLY_STOPPING_ROUNDS, OPTUNA_TRIALS, SEED
+from metrics import clip_nonneg, weighted_r2
 
 CATBOOST_TASK = os.environ.get("CATBOOST_TASK", "CPU")
 
