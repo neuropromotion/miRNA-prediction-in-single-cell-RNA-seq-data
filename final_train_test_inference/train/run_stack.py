@@ -11,12 +11,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from final_train.constants import ENSEMBLE_RESULTS, PB_COHORTS, RESULTS, STACK_MODELS
-from final_train.ensemble.stack import TUNE_SPLITS, apply_fit, fit_stack, fit_to_dict
-from final_train.shared.data import build_train_bundle, select_features
-from final_train.shared.io_splits import load_features, load_targets
-from final_train.shared.metrics import r2
-from final_train.training.model_trainers import load_artifact, model_exists, predict_one
+from constants import ENSEMBLE_RESULTS, PB_COHORTS, RESULTS, STACK_MODELS
+from stack import TUNE_SPLITS, apply_fit, fit_stack, fit_to_dict
+from data import build_train_bundle, select_features
+from io_splits import load_features, load_targets
+from metrics import r2
+from model_trainers import load_artifact, model_exists, predict_one
 
 ENSEMBLE_ID = "catboost_tabm_resnet_stack"
 
