@@ -7,7 +7,7 @@ import re
 
 import pandas as pd
 
-from final_train.constants import FEATURES, PB_COHORTS, SPLITS
+from constants import FEATURES, PB_COHORTS, SPLITS
 
 
 def load_features() -> dict[str, list[str]]:
