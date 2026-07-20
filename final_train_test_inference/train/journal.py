@@ -5,7 +5,7 @@ from __future__ import annotations
 import time
 from pathlib import Path
 
-from final_train.constants import RESULTS
+from constants import RESULTS
 
 
 def log_path(model_name: str) -> Path:
