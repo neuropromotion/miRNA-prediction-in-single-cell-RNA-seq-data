@@ -5,7 +5,7 @@ Place them under this `data/` tree after download.
 
 ---
 
-## 1) Training / benchmarking splits (~several GB)
+## 1) Training / benchmarking splits 
 
 ```
 data/splits/
@@ -22,14 +22,14 @@ data/splits/
 ```
 
 Local copy source: `FINAL_VERSION/stage00_splits/`  
-Public link: see repository root README (*Training datasets*).
+Public link: see repository root README (*Training and inference datasets*).
 
-`sc_k1/X_train.parquet` is also the **KNN imputation reference** for inference.
+`sc_k1/X_train.parquet` is also the **KNN imputation reference** for inference. It is singcle cell K1 Train part! It serves as KNN imputing reference
 
 ---
 
 ## 2) Pretrained models (for inference without re-training)
-
+Public link: see repository root README (*Pretrained models*).
 ```
 final_train_test_inference/models/
   ensemble/catboost_tabm_resnet_stack/weights/<mirna>.json
@@ -42,7 +42,7 @@ Public link: see repository root README (*Pretrained models*).
 
 ---
 
-## 3) scRNA datasets for large-scale inference  ← easy to forget
+## 3) scRNA datasets for large-scale inference   
 
 Batch script: `final_train_test_inference/inference/total_inference/total_inference.py`
 
@@ -52,6 +52,7 @@ Default paths (override with CLI flags):
 data/inference_inputs/     # put *.parquet / *.csv count matrices here
 data/inference_outputs/    # predict_all writes one CSV per dataset here
 ```
+Public link: see repository root README (*Training and inference datasets*).
 
 Example:
 
@@ -63,9 +64,6 @@ python final_train_test_inference/inference/total_inference/total_inference.py \
   --input-dir data/inference_inputs \
   --output-dir data/inference_outputs
 ```
-
-Local copy source (this project): `FINAL_VERSION/TOTAL_INFERENCE/all_parquets/` (~3.6 GB, 116 files).  
-Processed / annotated scRNA pipelines: see repo folder `scRNA_inference_data_processing/`.
 
 ---
 
