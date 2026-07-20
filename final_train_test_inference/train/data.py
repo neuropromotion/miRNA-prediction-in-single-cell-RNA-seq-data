@@ -7,8 +7,8 @@ from dataclasses import dataclass, field
 import numpy as np
 import pandas as pd
 
-from final_train.shared.impute import apply_k1_imputation
-from final_train.shared.io_splits import load_bulk, load_k1, load_pb, split_pb_by_cohort
+from impute import apply_k1_imputation
+from io_splits import load_bulk, load_k1, load_pb, split_pb_by_cohort
 
 
 @dataclass
