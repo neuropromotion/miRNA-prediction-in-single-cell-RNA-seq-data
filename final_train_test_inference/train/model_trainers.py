@@ -7,9 +7,9 @@ from pathlib import Path
 
 import numpy as np
 
-from final_train.constants import RESULTS
-from final_train.shared.data import TrainBundle, select_features
-from final_train.training.catboost_trainer import load_catboost, predict_catboost
+from constants import RESULTS
+from data import TrainBundle, select_features
+from catboost_trainer import load_catboost, predict_catboost
 
 DEVICE = os.environ.get("FINAL_DEVICE", os.environ.get("STAGE04_DEVICE", "cuda"))
 BATCH_SIZE = int(os.environ.get("FINAL_BATCH", "512"))
