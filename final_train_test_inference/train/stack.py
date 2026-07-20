@@ -7,8 +7,8 @@ from dataclasses import dataclass, field
 import numpy as np
 from sklearn.linear_model import RidgeCV
 
-from final_train.constants import PB_COHORTS, STACK_MODELS
-from final_train.shared.metrics import clip_nonneg, r2
+from constants import PB_COHORTS, STACK_MODELS
+from metrics import clip_nonneg, r2
 
 RIDGE_ALPHAS = tuple(float(x) for x in np.logspace(-2, 4, 40))
 SAFETY_GATE = True
