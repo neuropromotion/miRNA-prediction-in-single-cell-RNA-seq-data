@@ -13,12 +13,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from final_train.constants import MODELS, RESULTS, ROOT
-from final_train.shared.data import build_train_bundle, select_features
-from final_train.shared.io_splits import load_features, load_targets
-from final_train.shared.metrics import r2
-from final_train.training.journal import log
-from final_train.training.model_trainers import (
+from constants import MODELS, RESULTS, ROOT
+from data import build_train_bundle, select_features
+from io_splits import load_features, load_targets
+from metrics import r2
+from journal import log
+from model_trainers import (
     load_artifact,
     model_dir,
     model_exists,
