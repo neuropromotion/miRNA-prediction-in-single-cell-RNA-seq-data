@@ -10,10 +10,10 @@ export PYTHONPATH=/path/to/ml_pipeline
 
 | Order | Folder | Question answered | Key output |
 |------:|--------|-------------------|------------|
-| 1 | `feature_selection/` | Which feature selector? | ElasticNet (+ bulk trim) |
-| 2 | `sc_imputation_selection/` | Which SC imputer? | KNN k=5 |
-| 3 | `model_selection/` | Which base models? | CatBoost / TabM / ResNet (+ others screened) |
-| 4 | `ensembles_selection/` | How to combine? | Ridge stack CatBoost+TabM+ResNet |
+| 1 | `feature_selection/` | feature selection strategies benchmarking | ElasticNet (+ bulk trim) |
+| 2 | `sc_imputation_selection/` | imputation methods benchmarking | KNN k=5 |
+| 3 | `model_selection/` | 12 models benchmarking and selection best 4 | CatBoost / TabM / ResNet + XGBoost |
+| 4 | `ensembles_selection/` | ensemble types benchmarking | Ridge stack CatBoost+TabM+ResNet |
 
 ## Shared dependencies
 
@@ -24,4 +24,4 @@ export PYTHONPATH=/path/to/ml_pipeline
 ## Reproduce vs inspect
 
 - **Inspect results:** each stage already contains `tables/` and `figures/` used in the paper.  
-- **Full re-run:** requires GPU, `data/splits/`, and several hours–days depending on the stage.
+- **Full re-run:** requires GPU, `data/splits/`
