@@ -48,6 +48,7 @@ All remaining models were systematically evaluated using the following validatio
 *   **Data Composition:** Models were trained and validated using a heterogeneous dataset combining **bulk RNA-seq**, **single-cell (K1)**, and **pseudobulk** data (K2, K3, K4, K5, K10).
 *   **Validation Split:** The core dataset was split into training and internal validation subsets to facilitate early stopping and optimal epoch selection. Model performance was tracked using this validation set.
 *   **Held-out Test Set:** A completely separate, unseen test dataset was strictly preserved for the final evaluation phase and was not touched during this benchmarking step.
+*   **Scaler fit noise:** For DL / neural candidates that use `StandardScaler` or `QuantileTransformer`, we add \(\mathcal{N}(0, 10^{-5})\) noise (fixed seed) **only when fitting** the scaler, to avoid numerical issues from duplicate / zero-inflated feature values. This is not data augmentation; see the note in [`ml_pipeline/README.md`](../../README.md#preprocessing-note-scaler-fit-noise).
 
 ---
 

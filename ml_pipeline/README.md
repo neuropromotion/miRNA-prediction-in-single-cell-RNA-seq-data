@@ -55,6 +55,19 @@ Each stage folder has its own README with **Inputs / Run / Outputs**.
 
 **Data splits:** read [`data/SPLIT_PROTOCOL.md`](data/SPLIT_PROTOCOL.md) before interpreting any `outer_val_*` metric.
 
+## Preprocessing note (scaler fit noise)
+
+For deep-learning and some candidate models we fit `StandardScaler` or `QuantileTransformer` on training features. Expression matrices are sparse and zero-inflated, so many features have duplicate or near-constant values. Before **fitting** the scaler we add a tiny Gaussian jitter \(\mathcal{N}(0, 10^{-5})\) with a fixed seed (`SEED`):
+
+```python
+noise = rng.normal(0.0, 1e-5, x_train.shape)
+scaler.fit(x_train + noise)
+```
+
+This is only for numerical stability of the scaler fit (ties / near-zero variance). It is **not** training-time data augmentation: `transform()` still uses the original matrices, and tree models (XGBoost / CatBoost) do not use this step.
+
+Implemented in `shared/dl_trainers.py`, `shared/tabm_wrapper.py`, `final_train_test_inference/train/dl_trainers.py`, and the LassoNet/GANDALF trainers under `pipeline_benchmarking/model_selection/`.
+
 ## Environment
 
 - Python ≥ 3.10  
