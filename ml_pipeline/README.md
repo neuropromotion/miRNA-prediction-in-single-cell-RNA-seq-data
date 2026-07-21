@@ -11,8 +11,10 @@ ml_pipeline/
 ├── requirements.txt
 ├── data/
 │   ├── README.md                # splits / models / inference I/O
+│   ├── SPLIT_PROTOCOL.md        # train / inner_val / outer_val / sc_TEST
+│   ├── prepare_splits/          # Stage00 split script
 │   ├── frozen/                  # small committed artifacts
-│   ├── splits/                  # train/val parquet splits (download)
+│   ├── splits/                  # train + outer_val parquets (download)
 │   ├── inference_inputs/        # scRNA matrices for batch inference (download)
 │   └── inference_outputs/       # prediction CSVs written by batch script
 ├── shared/                      # shared Python helpers (paths, IO, DL trainers)
@@ -50,6 +52,8 @@ pip install -r requirements.txt
 6. `final_train_test_inference/inference` → scRNA inference (`data/inference_inputs` → `data/inference_outputs`)
 
 Each stage folder has its own README with **Inputs / Run / Outputs**.
+
+**Data splits:** read [`data/SPLIT_PROTOCOL.md`](data/SPLIT_PROTOCOL.md) before interpreting any `outer_val_*` metric.
 
 ## Environment
 

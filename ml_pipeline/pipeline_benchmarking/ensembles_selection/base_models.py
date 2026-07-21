@@ -8,8 +8,12 @@ from pathlib import Path
 
 import numpy as np
 
-from constants import BASE_MODELS, ML_PIPELINE, PILOT_DIR, STAGE03_RESULTS
-from metrics import clip_nonneg
+try:
+    from .constants import BASE_MODELS, ML_PIPELINE, PILOT_DIR, STAGE03_RESULTS
+    from .metrics import clip_nonneg
+except ImportError:
+    from constants import BASE_MODELS, ML_PIPELINE, PILOT_DIR, STAGE03_RESULTS
+    from metrics import clip_nonneg
 
 if str(ML_PIPELINE) not in sys.path:
     sys.path.insert(0, str(ML_PIPELINE))
@@ -88,15 +92,15 @@ def predict_all_splits(
     x, _ = _x_y(bundle, target, genes, bundle.x_val_inner, bundle.y_val_inner)
     preds["inner_val"] = predict_one(model_name, artifact, x)
 
-    x, _ = _x_y(bundle, target, genes, bundle.x_test_bulk, bundle.y_test_bulk)
-    preds["test_bulk"] = predict_one(model_name, artifact, x)
+    x, _ = _x_y(bundle, target, genes, bundle.x_outer_val_bulk, bundle.y_outer_val_bulk)
+    preds["outer_val_bulk"] = predict_one(model_name, artifact, x)
 
-    x, _ = _x_y(bundle, target, genes, bundle.x_test_k1, bundle.y_test_k1)
-    preds["test_k1"] = predict_one(model_name, artifact, x)
+    x, _ = _x_y(bundle, target, genes, bundle.x_outer_val_k1, bundle.y_outer_val_k1)
+    preds["outer_val_k1"] = predict_one(model_name, artifact, x)
 
     for cohort in PB_COHORTS:
-        key = f"test_pb_{cohort}"
-        x, _ = _x_y(bundle, target, genes, bundle.x_test_pb[cohort], bundle.y_test_pb[cohort])
+        key = f"outer_val_pb_{cohort}"
+        x, _ = _x_y(bundle, target, genes, bundle.x_outer_val_pb[cohort], bundle.y_outer_val_pb[cohort])
         preds[key] = predict_one(model_name, artifact, x)
 
     return preds
@@ -105,9 +109,9 @@ def predict_all_splits(
 def true_all_splits(bundle: ModalityBundle, target: str) -> dict[str, np.ndarray]:
     out = {
         "inner_val": bundle.y_val_inner[target].to_numpy(dtype=np.float64),
-        "test_bulk": bundle.y_test_bulk[target].to_numpy(dtype=np.float64),
-        "test_k1": bundle.y_test_k1[target].to_numpy(dtype=np.float64),
+        "outer_val_bulk": bundle.y_outer_val_bulk[target].to_numpy(dtype=np.float64),
+        "outer_val_k1": bundle.y_outer_val_k1[target].to_numpy(dtype=np.float64),
     }
     for cohort in PB_COHORTS:
-        out[f"test_pb_{cohort}"] = bundle.y_test_pb[cohort][target].to_numpy(dtype=np.float64)
+        out[f"outer_val_pb_{cohort}"] = bundle.y_outer_val_pb[cohort][target].to_numpy(dtype=np.float64)
     return out

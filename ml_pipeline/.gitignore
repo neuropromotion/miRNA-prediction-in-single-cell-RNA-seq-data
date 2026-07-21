@@ -13,3 +13,10 @@ final_train_test_inference/models/**/*.pt
 # inference
 data/inference_inputs/**/*.parquet
 data/inference_outputs/**/*.csv
+
+# Pipeline artifacts (trained model weights / intermediate outputs)
+pipeline_benchmarking/model_selection/results/**
+pipeline_benchmarking/ensembles_selection/results/**
+
+# Final-stack base models (trained weights live under train/results in this repo)
+final_train_test_inference/train/results/**

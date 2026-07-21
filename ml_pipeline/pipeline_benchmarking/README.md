@@ -18,7 +18,7 @@ export PYTHONPATH=/path/to/ml_pipeline
 ## Shared dependencies
 
 - `../shared/` — IO, splits, DL trainers, path config  
-- `../data/splits/` — prepared matrices (download)  
+- `../data/splits/` — prepared matrices (download); see [`../data/SPLIT_PROTOCOL.md`](../data/SPLIT_PROTOCOL.md)  
 - `../data/frozen/` — pilot targets + feature JSON  
 
 ## Reproduce vs inspect

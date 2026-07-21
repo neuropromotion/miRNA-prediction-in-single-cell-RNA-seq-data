@@ -7,8 +7,12 @@ from pathlib import Path
 
 import numpy as np
 
-from constants import RESULTS
-from data import TrainBundle, select_features
+try:
+    from .constants import RESULTS
+    from .data import TrainBundle, select_features
+except ImportError:
+    from final_train_test_inference.train.constants import RESULTS
+    from final_train_test_inference.train.data import TrainBundle, select_features
 
 DEVICE = os.environ.get("FINAL_DEVICE", os.environ.get("STAGE04_DEVICE", "cuda"))
 BATCH_SIZE = int(os.environ.get("FINAL_BATCH", "512"))
@@ -42,10 +46,16 @@ def train_one(model_name: str, bundle: TrainBundle, target: str, genes: list[str
     arr = _arrays(bundle, target, genes)
     out_dir = model_dir(model_name, target)
     if model_name == "catboost_optuna":
-        from catboost_trainer import train_catboost_optuna
+        try:
+            from .catboost_trainer import train_catboost_optuna
+        except ImportError:
+            from final_train_test_inference.train.catboost_trainer import train_catboost_optuna
 
         return train_catboost_optuna(arr, out_dir)
-    from torch_trainers import train_resnet_model, train_tabm_model
+    try:
+        from .torch_trainers import train_resnet_model, train_tabm_model
+    except ImportError:
+        from final_train_test_inference.train.torch_trainers import train_resnet_model, train_tabm_model
 
     if model_name == "tabm":
         return train_tabm_model(arr, out_dir, DEVICE, BATCH_SIZE)
@@ -56,10 +66,16 @@ def train_one(model_name: str, bundle: TrainBundle, target: str, genes: list[str
 
 def predict_one(model_name: str, artifact, x: np.ndarray) -> np.ndarray:
     if model_name == "catboost_optuna":
-        from catboost_trainer import predict_catboost
+        try:
+            from .catboost_trainer import predict_catboost
+        except ImportError:
+            from final_train_test_inference.train.catboost_trainer import predict_catboost
 
         return predict_catboost(artifact, x)
-    from torch_trainers import predict_resnet_model, predict_tabm_model
+    try:
+        from .torch_trainers import predict_resnet_model, predict_tabm_model
+    except ImportError:
+        from final_train_test_inference.train.torch_trainers import predict_resnet_model, predict_tabm_model
 
     if model_name == "tabm":
         return predict_tabm_model(artifact, x, DEVICE)
@@ -69,7 +85,10 @@ def predict_one(model_name: str, artifact, x: np.ndarray) -> np.ndarray:
 def load_artifact(model_name: str, target: str):
     d = model_dir(model_name, target)
     if model_name == "catboost_optuna":
-        from catboost_trainer import load_catboost
+        try:
+            from .catboost_trainer import load_catboost
+        except ImportError:
+            from final_train_test_inference.train.catboost_trainer import load_catboost
 
         return load_catboost(d)
     return d

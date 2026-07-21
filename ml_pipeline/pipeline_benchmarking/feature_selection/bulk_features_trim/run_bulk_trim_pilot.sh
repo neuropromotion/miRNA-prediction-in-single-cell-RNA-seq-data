@@ -10,6 +10,6 @@ IMAGE="${DOCKER_IMAGE:-inference-gpu:latest}"
 docker run --rm --gpus all \
   -v "${ML_ROOT}:/workspace/ml_pipeline" \
   -w /workspace/ml_pipeline/pipeline_benchmarking/feature_selection/bulk_features_trim \
-  -e PYTHONPATH=/workspace/ml_pipeline \
+  -e PYTHONPATH=/workspace/ml_pipeline:/workspace/ml_pipeline/pipeline_benchmarking/feature_selection \
   "${IMAGE}" \
   bash -lc 'python eval_bulk_trim_pilot.py'

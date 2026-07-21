@@ -1,4 +1,4 @@
-"""Load stage00 splits."""
+"""Load Stage00 splits (train fold + outer_val fold on disk as X_val)."""
 
 from __future__ import annotations
 
@@ -27,7 +27,7 @@ def load_bulk_train() -> tuple[pd.DataFrame, pd.DataFrame]:
     )
 
 
-def load_bulk_test() -> tuple[pd.DataFrame, pd.DataFrame]:
+def load_bulk_outer_val() -> tuple[pd.DataFrame, pd.DataFrame]:
     return (
         pd.read_parquet(SPLITS / "bulk" / "X_val.parquet"),
         pd.read_parquet(SPLITS / "bulk" / "Y_val.parquet"),
@@ -41,7 +41,7 @@ def load_k1_train() -> tuple[pd.DataFrame, pd.DataFrame]:
     )
 
 
-def load_k1_test() -> tuple[pd.DataFrame, pd.DataFrame]:
+def load_k1_outer_val() -> tuple[pd.DataFrame, pd.DataFrame]:
     return (
         pd.read_parquet(SPLITS / "sc_k1" / "X_val.parquet"),
         pd.read_parquet(SPLITS / "sc_k1" / "Y_val.parquet"),
@@ -54,7 +54,7 @@ def load_pb_train() -> tuple[pd.DataFrame, pd.DataFrame]:
     return x, y
 
 
-def load_pb_test() -> tuple[pd.DataFrame, pd.DataFrame]:
+def load_pb_outer_val() -> tuple[pd.DataFrame, pd.DataFrame]:
     x = pd.read_parquet(SPLITS / "sc_pb" / "X_val.parquet")
     y = pd.read_parquet(SPLITS / "sc_pb" / "Y_val.parquet")
     return x, y

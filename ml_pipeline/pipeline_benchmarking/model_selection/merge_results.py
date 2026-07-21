@@ -14,7 +14,7 @@ if str(_STAGE03) not in sys.path:
 
 import pandas as pd
 
-from model_screen_final_11.constants import MODEL_LABELS, RESULTS, SCREEN_MODELS, TEST_METRIC_COLS
+from model_screen_final_11.constants import MODEL_LABELS, RESULTS, SCREEN_MODELS, OUTER_VAL_METRIC_COLS
 from model_screen_final_11.screen_journal import log
 
 
@@ -26,7 +26,7 @@ def summarize_from_metrics(model_name: str, df: pd.DataFrame) -> dict:
         "n_targets_ok": int(len(ok)),
         "n_targets_fail": int(len(df) - len(ok)),
     }
-    for col in TEST_METRIC_COLS:
+    for col in OUTER_VAL_METRIC_COLS:
         if col in ok.columns and len(ok):
             summary[f"mean_{col}"] = float(ok[col].mean())
             summary[f"median_{col}"] = float(ok[col].median())
@@ -38,14 +38,14 @@ def summarize_from_metrics(model_name: str, df: pd.DataFrame) -> dict:
 def merge_ft_shards() -> int:
     model_name = "fttransformer"
     out_dir = RESULTS / model_name
-    parts = sorted(out_dir.glob("test_metrics_shard*.csv"))
+    parts = sorted(out_dir.glob("outer_val_metrics_shard*.csv"))
     if not parts:
         log("no FT shards to merge", "merge")
         return 0
 
     merged = pd.concat([pd.read_csv(p) for p in parts], ignore_index=True)
     merged = merged.drop_duplicates(subset=["target"], keep="last")
-    merged.to_csv(out_dir / "test_metrics.csv", index=False)
+    merged.to_csv(out_dir / "outer_val_metrics.csv", index=False)
 
     summary = summarize_from_metrics(model_name, merged)
     shard_summaries = sorted(out_dir.glob("summary_shard*.json"))
@@ -59,7 +59,7 @@ def merge_ft_shards() -> int:
 
 def refresh_model_summaries(models: tuple[str, ...] = SCREEN_MODELS) -> None:
     for model_name in models:
-        metrics_path = RESULTS / model_name / "test_metrics.csv"
+        metrics_path = RESULTS / model_name / "outer_val_metrics.csv"
         if not metrics_path.exists():
             continue
         df = pd.read_csv(metrics_path)
@@ -77,7 +77,7 @@ def write_combined_outputs() -> tuple[int, int]:
     all_metrics: list[pd.DataFrame] = []
     summaries: list[dict] = []
     for model_name in SCREEN_MODELS:
-        metrics_path = RESULTS / model_name / "test_metrics.csv"
+        metrics_path = RESULTS / model_name / "outer_val_metrics.csv"
         if metrics_path.exists():
             all_metrics.append(pd.read_csv(metrics_path))
         summary_path = RESULTS / model_name / "summary.json"
@@ -87,15 +87,15 @@ def write_combined_outputs() -> tuple[int, int]:
     n_metrics = 0
     if all_metrics:
         combined = pd.concat(all_metrics, ignore_index=True)
-        combined.to_csv(RESULTS / "test_metrics_all.csv", index=False)
+        combined.to_csv(RESULTS / "outer_val_metrics_all.csv", index=False)
         n_metrics = len(combined)
-        log(f"wrote test_metrics_all.csv ({n_metrics} rows)", "merge")
+        log(f"wrote outer_val_metrics_all.csv ({n_metrics} rows)", "merge")
 
     n_models = 0
     if summaries:
         df_sum = pd.DataFrame(summaries)
         std_cols = ["model", "model_label", "n_targets_ok", "n_targets_fail"]
-        for col in TEST_METRIC_COLS:
+        for col in OUTER_VAL_METRIC_COLS:
             std_cols.extend([f"mean_{col}", f"median_{col}"])
         std_cols.append("elapsed_sec")
         if "elapsed_wall_sec" in df_sum.columns:
@@ -119,7 +119,7 @@ def main() -> None:
 
     n_metrics, n_models = write_combined_outputs()
     if n_models < len(SCREEN_MODELS):
-        missing = [m for m in SCREEN_MODELS if not (RESULTS / m / "test_metrics.csv").exists()]
+        missing = [m for m in SCREEN_MODELS if not (RESULTS / m / "outer_val_metrics.csv").exists()]
         log(f"missing models ({len(missing)}): {', '.join(missing)}", "merge")
 
 

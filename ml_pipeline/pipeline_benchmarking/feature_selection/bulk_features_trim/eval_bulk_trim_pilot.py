@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import sys
 import time
 from pathlib import Path
 
@@ -11,12 +12,25 @@ import pandas as pd
 import xgboost as xgb
 from sklearn.metrics import r2_score
 
-from constants import SEED, STAGE, XGB_DEFAULT, XGB_SHALLOW
-from io_data import load_bulk_train, load_bulk_val, load_sc_train_combo, load_sc_val_combo
+PILOT_DIR = Path(__file__).resolve().parent
+FEATURE_SELECTION = PILOT_DIR.parent
+ML_PIPELINE = FEATURE_SELECTION.parents[1]
+for path in (ML_PIPELINE, FEATURE_SELECTION):
+    s = str(path)
+    if s not in sys.path:
+        sys.path.insert(0, s)
 
-ROOT = STAGE.parent
-FULL_RESULTS = ROOT / "stage01_full" / "results"
-OUT = STAGE / "results" / "bulk_trim_pilot"
+from constants import SEED, XGB_DEFAULT, XGB_SHALLOW  # noqa: E402
+from io_data import (  # noqa: E402
+    load_bulk_train,
+    load_bulk_val,
+    load_sc_train_combo,
+    load_sc_val_combo,
+)
+from shared.paths import PILOT_TARGETS  # noqa: E402
+
+FULL_RESULTS = FEATURE_SELECTION / "final_run" / "results"
+OUT = PILOT_DIR / "results"
 
 K_OPTIONS = (50, 100, 150, 200)
 MIN_BULK_ONLY = 50
@@ -35,13 +49,20 @@ def log(msg: str) -> None:
 
 
 def load_pilot_targets() -> list[str]:
-    path = STAGE / "selected_targets.txt"
-    return [t.strip() for t in path.read_text().splitlines() if t.strip()]
+    path = PILOT_TARGETS if PILOT_TARGETS.is_file() else FEATURE_SELECTION / "selected_targets.txt"
+    return [t.strip() for t in path.read_text(encoding="utf-8").splitlines() if t.strip()]
 
 
 def load_full_features() -> tuple[dict[str, list[str]], dict[str, list[str]]]:
-    bulk = json.loads((FULL_RESULTS / "bulk_features.json").read_text(encoding="utf-8"))
-    sc = json.loads((FULL_RESULTS / "sc_features.json").read_text(encoding="utf-8"))
+    bulk_path = FULL_RESULTS / "bulk_features.json"
+    sc_path = FULL_RESULTS / "sc_features.json"
+    if not bulk_path.is_file() or not sc_path.is_file():
+        raise FileNotFoundError(
+            f"Missing feature JSON under {FULL_RESULTS}. "
+            "Run feature_selection/final_run/run_full.py first."
+        )
+    bulk = json.loads(bulk_path.read_text(encoding="utf-8"))
+    sc = json.loads(sc_path.read_text(encoding="utf-8"))
     return bulk, sc
 
 

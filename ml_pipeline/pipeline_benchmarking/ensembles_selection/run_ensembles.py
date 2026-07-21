@@ -28,7 +28,7 @@ from constants import (
     R2_THRESHOLD,
     RESULTS,
     STAGE,
-    TEST_METRIC_COLS,
+    OUTER_VAL_METRIC_COLS,
     TUNE_SPLITS,
 )
 from ensemble import apply_fit, ensemble_id, fit_ensemble, fit_to_dict
@@ -66,7 +66,7 @@ def rebuild_global_outputs() -> None:
     if not eids:
         return
     parts = [pd.read_csv(metrics_path(eid)) for eid in eids]
-    pd.concat(parts, ignore_index=True).to_csv(RESULTS / "test_metrics_all.csv", index=False)
+    pd.concat(parts, ignore_index=True).to_csv(RESULTS / "outer_val_metrics_all.csv", index=False)
 
     summaries: list[dict] = []
     for eid in eids:
@@ -81,7 +81,7 @@ def rebuild_global_outputs() -> None:
 
 
 def metrics_path(eid: str) -> Path:
-    return RESULTS / eid / "test_metrics.csv"
+    return RESULTS / eid / "outer_val_metrics.csv"
 
 
 def done_targets(eid: str) -> set[str]:
@@ -165,9 +165,9 @@ def run_one_target(
 
 def _threshold_stats(df_ok: pd.DataFrame) -> dict:
     out: dict = {}
-    if "test_k1_r2" not in df_ok.columns or df_ok.empty:
+    if "outer_val_k1_r2" not in df_ok.columns or df_ok.empty:
         return {"n_targets_k1_gt_0_4": 0, "n_exclusive_k1_gt_0_4": 0}
-    out["n_targets_k1_gt_0_4"] = int((df_ok["test_k1_r2"] > R2_THRESHOLD).sum())
+    out["n_targets_k1_gt_0_4"] = int((df_ok["outer_val_k1_r2"] > R2_THRESHOLD).sum())
     out["n_exclusive_k1_gt_0_4"] = 0
     return out
 
@@ -186,7 +186,7 @@ def summarize_ensemble(eid: str) -> dict:
         row["mean_tune_r2"] = float(ok["tune_r2"].mean())
         row["median_tune_r2"] = float(ok["tune_r2"].median())
     row.update(_threshold_stats(ok))
-    for col in TEST_METRIC_COLS:
+    for col in OUTER_VAL_METRIC_COLS:
         if col in ok.columns:
             row[f"mean_{col}"] = float(ok[col].mean()) if len(ok) else None
             row[f"median_{col}"] = float(ok[col].median()) if len(ok) else None
@@ -204,19 +204,19 @@ def write_integral_summary(summaries: list[dict]) -> None:
         "median_tune_r2",
         "mean_inner_val_r2",
         "median_inner_val_r2",
-        "mean_test_bulk_r2",
-        "median_test_bulk_r2",
-        "mean_test_k1_r2",
-        "median_test_k1_r2",
+        "mean_outer_val_bulk_r2",
+        "median_outer_val_bulk_r2",
+        "mean_outer_val_k1_r2",
+        "median_outer_val_k1_r2",
         "n_targets_k1_gt_0_4",
         "n_exclusive_k1_gt_0_4",
     ]
-    for col in TEST_METRIC_COLS:
-        if col.startswith("test_pb"):
+    for col in OUTER_VAL_METRIC_COLS:
+        if col.startswith("outer_val_pb"):
             cols.extend([f"mean_{col}", f"median_{col}"])
     cols.append("elapsed_sec")
     df = df[[c for c in cols if c in df.columns]]
-    df = df.sort_values("median_test_k1_r2", ascending=False, na_position="last")
+    df = df.sort_values("median_outer_val_k1_r2", ascending=False, na_position="last")
     df.to_csv(RESULTS / "summary_by_ensemble.csv", index=False)
 
 
@@ -236,7 +236,7 @@ def main() -> None:
         "protocol": {
             "tune": "pooled K1 + pseudo-bulk PB (K2-K10), no real bulk",
             "tune_metric": "R2 on pooled tune samples (+ mean per-split for reporting)",
-            "test": "inner val, bulk (held-out), K1, PB K2-K10",
+            "outer_val_reporting": "inner val, bulk (held-out), K1, PB K2-K10",
             "base_artifacts": "pipeline_benchmarking/model_selection/results/{model}/models/{target}/",
         },
     }
@@ -286,11 +286,11 @@ def main() -> None:
             summary["elapsed_sec"] = round(time.time() - t1, 1)
             (RESULTS / eid / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
             summaries.append(summary)
-            print(f"  median_k1={summary.get('median_test_k1_r2')}", flush=True)
+            print(f"  median_k1={summary.get('median_outer_val_k1_r2')}", flush=True)
 
     parts = [pd.read_csv(metrics_path(eid)) for eid in all_eids if metrics_path(eid).exists()]
     if parts:
-        pd.concat(parts, ignore_index=True).to_csv(RESULTS / "test_metrics_all.csv", index=False)
+        pd.concat(parts, ignore_index=True).to_csv(RESULTS / "outer_val_metrics_all.csv", index=False)
 
     rebuild_global_outputs()
     print("\n=== summary_by_ensemble.csv ===")

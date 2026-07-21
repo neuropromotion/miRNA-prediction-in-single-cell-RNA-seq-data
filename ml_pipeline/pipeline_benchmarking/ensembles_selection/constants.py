@@ -75,30 +75,31 @@ METHOD_LABELS = {
     "stack": "Stack (Ridge)",
 }
 
+# Ensemble weight tuning: Stage00 outer_val SC only (not bulk, not sc_TEST).
 TUNE_SPLITS = (
-    "test_k1",
-    "test_pb_K2",
-    "test_pb_K3",
-    "test_pb_K4",
-    "test_pb_K5",
-    "test_pb_K10",
+    "outer_val_k1",
+    "outer_val_pb_K2",
+    "outer_val_pb_K3",
+    "outer_val_pb_K4",
+    "outer_val_pb_K5",
+    "outer_val_pb_K10",
 )
 
 EVAL_SPLITS = (
     "inner_val",
-    "test_bulk",
+    "outer_val_bulk",
     *TUNE_SPLITS,
 )
 
-TEST_METRIC_COLS = (
+OUTER_VAL_METRIC_COLS = (
     "inner_val_r2",
-    "test_bulk_r2",
-    "test_k1_r2",
-    "test_pb_K2_r2",
-    "test_pb_K3_r2",
-    "test_pb_K4_r2",
-    "test_pb_K5_r2",
-    "test_pb_K10_r2",
+    "outer_val_bulk_r2",
+    "outer_val_k1_r2",
+    "outer_val_pb_K2_r2",
+    "outer_val_pb_K3_r2",
+    "outer_val_pb_K4_r2",
+    "outer_val_pb_K5_r2",
+    "outer_val_pb_K10_r2",
 )
 
 R2_THRESHOLD = 0.4

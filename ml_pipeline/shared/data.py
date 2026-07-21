@@ -1,4 +1,4 @@
-"""Train / inner-val / test bundles (shared by model_screen and speed_test)."""
+"""Train / inner_val / outer_val bundles (shared by model_screen and ensembles)."""
 
 from __future__ import annotations
 
@@ -12,11 +12,11 @@ from shared.impute import apply_k1_imputation
 from shared.io_splits import (
     PB_COHORTS,
     count_pb_cohorts,
-    load_bulk_test,
+    load_bulk_outer_val,
     load_bulk_train,
-    load_k1_test,
+    load_k1_outer_val,
     load_k1_train,
-    load_pb_test,
+    load_pb_outer_val,
     load_pb_train,
     split_pb_by_cohort,
 )
@@ -32,12 +32,12 @@ class ModalityBundle:
     x_val_inner: pd.DataFrame
     y_val_inner: pd.DataFrame
     val_modality: np.ndarray
-    x_test_bulk: pd.DataFrame
-    y_test_bulk: pd.DataFrame
-    x_test_k1: pd.DataFrame
-    y_test_k1: pd.DataFrame
-    x_test_pb: dict[str, pd.DataFrame] = field(default_factory=dict)
-    y_test_pb: dict[str, pd.DataFrame] = field(default_factory=dict)
+    x_outer_val_bulk: pd.DataFrame
+    y_outer_val_bulk: pd.DataFrame
+    x_outer_val_k1: pd.DataFrame
+    y_outer_val_k1: pd.DataFrame
+    x_outer_val_pb: dict[str, pd.DataFrame] = field(default_factory=dict)
+    y_outer_val_pb: dict[str, pd.DataFrame] = field(default_factory=dict)
     impute_stats: dict = field(default_factory=dict)
     pool_modality: np.ndarray | None = None
 
@@ -65,16 +65,21 @@ def modality_sample_weights(modality: np.ndarray) -> np.ndarray:
     return weights
 
 
-def build_modality_bundle() -> ModalityBundle:
-    bulk_tr_x, bulk_tr_y = load_bulk_train()
-    bulk_te_x, bulk_te_y = load_bulk_test()
-    k1_tr_x, k1_tr_y = load_k1_train()
-    k1_te_x, k1_te_y = load_k1_test()
-    pb_tr_x, pb_tr_y = load_pb_train()
-    pb_te_x, pb_te_y = load_pb_test()
+def concat_pb_outer_val(x_outer_val_pb: dict[str, pd.DataFrame]) -> pd.DataFrame:
+    return pd.concat([x_outer_val_pb[c] for c in PB_COHORTS if c in x_outer_val_pb], axis=0)
 
-    k1_tr_imp, k1_te_imp, impute_stats = apply_k1_imputation(k1_tr_x, k1_te_x)
-    pb_test = split_pb_by_cohort(pb_te_x, pb_te_y)
+
+def build_modality_bundle() -> ModalityBundle:
+    """Build benchmarking bundle: inner split from Stage00 train + outer_val from Stage00 val."""
+    bulk_tr_x, bulk_tr_y = load_bulk_train()
+    bulk_ov_x, bulk_ov_y = load_bulk_outer_val()
+    k1_tr_x, k1_tr_y = load_k1_train()
+    k1_ov_x, k1_ov_y = load_k1_outer_val()
+    pb_tr_x, pb_tr_y = load_pb_train()
+    pb_ov_x, pb_ov_y = load_pb_outer_val()
+
+    k1_tr_imp, k1_ov_imp, impute_stats = apply_k1_imputation(k1_tr_x, k1_ov_x)
+    pb_outer_val = split_pb_by_cohort(pb_ov_x, pb_ov_y)
 
     x_pool, y_pool, mod_pool = _tagged_concat(
         [
@@ -107,9 +112,9 @@ def build_modality_bundle() -> ModalityBundle:
             "n_pool": int(len(x_pool)),
             "n_train": int(len(x_train)),
             "n_inner_val": int(len(x_val_inner)),
-            "n_test_bulk": int(len(bulk_te_x)),
-            "n_test_k1": int(len(k1_te_imp)),
-            "n_test_pb_total": int(len(pb_te_x)),
+            "n_outer_val_bulk": int(len(bulk_ov_x)),
+            "n_outer_val_k1": int(len(k1_ov_imp)),
+            "n_outer_val_pb_total": int(len(pb_ov_x)),
             "n_train_pb_by_cohort": count_pb_cohorts(pb_tr_x.index),
             "pool_modality_counts": {m: int((mod_pool == m).sum()) for m in np.unique(mod_pool)},
             "train_modality_counts": {m: int((mod_train == m).sum()) for m in np.unique(mod_train)},
@@ -124,12 +129,12 @@ def build_modality_bundle() -> ModalityBundle:
         x_val_inner=x_val_inner,
         y_val_inner=y_val_inner,
         val_modality=mod_val,
-        x_test_bulk=bulk_te_x,
-        y_test_bulk=bulk_te_y,
-        x_test_k1=k1_te_imp,
-        y_test_k1=k1_te_y,
-        x_test_pb={c: pb_test[c][0] for c in PB_COHORTS},
-        y_test_pb={c: pb_test[c][1] for c in PB_COHORTS},
+        x_outer_val_bulk=bulk_ov_x,
+        y_outer_val_bulk=bulk_ov_y,
+        x_outer_val_k1=k1_ov_imp,
+        y_outer_val_k1=k1_ov_y,
+        x_outer_val_pb={c: pb_outer_val[c][0] for c in PB_COHORTS},
+        y_outer_val_pb={c: pb_outer_val[c][1] for c in PB_COHORTS},
         impute_stats=impute_stats,
         pool_modality=mod_pool,
     )

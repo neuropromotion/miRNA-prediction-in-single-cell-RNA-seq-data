@@ -17,10 +17,10 @@ if str(_STAGE03) not in sys.path:
 import numpy as np
 import pandas as pd
 
-from shared.data import build_modality_bundle, concat_pb_test_x, select_features
-from shared.io_splits import load_features, load_pilot_targets
+from shared.data import build_modality_bundle, concat_pb_outer_val, select_features
+from shared.io_splits import load_features
 from shared.paths import SEED
-from speed_test.constants import RESULTS, SPEED_N_TARGETS
+from speed_test.constants import RESULTS, SPEED_TARGETS
 
 OUT_DIR = RESULTS / "tabpfn3_speed"
 DEVICE = os.environ.get("STAGE03_DEVICE", "cuda")
@@ -72,8 +72,8 @@ def run_one(
         genes = feature_map[target]
         x_tr = select_features(bundle.x_train, genes).to_numpy(dtype=np.float32)
         y_tr = bundle.y_train[target].to_numpy(dtype=np.float32)
-        x_te_bulk = select_features(bundle.x_test_bulk, genes).to_numpy(dtype=np.float32)
-        x_te_k1 = select_features(bundle.x_test_k1, genes).to_numpy(dtype=np.float32)
+        x_te_bulk = select_features(bundle.x_outer_val_bulk, genes).to_numpy(dtype=np.float32)
+        x_te_k1 = select_features(bundle.x_outer_val_k1, genes).to_numpy(dtype=np.float32)
         x_te_pb = select_features(x_pb_all, genes).to_numpy(dtype=np.float32)
 
         if MAX_TRAIN > 0 and len(x_tr) > MAX_TRAIN:
@@ -111,13 +111,6 @@ def run_one(
     return row
 
 
-def pick_targets(n: int = SPEED_N_TARGETS) -> list[str]:
-    all_t = load_pilot_targets()
-    rng = np.random.default_rng(SEED)
-    idx = rng.choice(len(all_t), size=min(n, len(all_t)), replace=False)
-    return sorted(all_t[i] for i in idx)
-
-
 def main() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -136,12 +129,12 @@ def main() -> None:
 
     model_path = resolve_v3_model_path()
 
-    targets = pick_targets()
+    targets = list(SPEED_TARGETS)
     print(f"Targets ({len(targets)}): {targets}", flush=True)
 
     bundle = build_modality_bundle()
     feature_map = load_features()
-    x_pb_all = concat_pb_test_x(bundle.x_test_pb)
+    x_pb_all = concat_pb_outer_val(bundle.x_outer_val_pb)
 
     meta = {
         "tabpfn_version": tabpfn.__version__,

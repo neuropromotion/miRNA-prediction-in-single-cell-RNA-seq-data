@@ -71,13 +71,13 @@ MODEL_GROUPS = {
     ),
 }
 
-TEST_METRIC_COLS = (
+OUTER_VAL_METRIC_COLS = (
     "inner_val_r2",
-    "test_bulk_r2",
-    "test_k1_r2",
-    "test_pb_K2_r2",
-    "test_pb_K3_r2",
-    "test_pb_K4_r2",
-    "test_pb_K5_r2",
-    "test_pb_K10_r2",
+    "outer_val_bulk_r2",
+    "outer_val_k1_r2",
+    "outer_val_pb_K2_r2",
+    "outer_val_pb_K3_r2",
+    "outer_val_pb_K4_r2",
+    "outer_val_pb_K5_r2",
+    "outer_val_pb_K10_r2",
 )

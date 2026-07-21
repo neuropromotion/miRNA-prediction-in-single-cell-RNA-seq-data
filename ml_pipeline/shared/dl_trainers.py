@@ -241,11 +241,14 @@ def save_torch_artifacts(model_dir: Path, artifacts: dict[str, Any]) -> None:
 def load_torch_artifacts(model_dir: Path) -> dict[str, Any]:
     with (model_dir / "meta.json").open("r", encoding="utf-8") as f:
         meta = json.load(f)
+    device = meta["device"]
+    if device == "cuda" and not torch.cuda.is_available():
+        device = "cpu"
     return {
         "model_state": torch.load(model_dir / "model.pt", map_location="cpu"),
         "preprocessing": joblib.load(model_dir / "preprocessing.joblib"),
         "label_stats": meta["label_stats"],
-        "device": meta["device"],
+        "device": device,
         "arch": meta["arch"],
         "model_hparams": meta["model_hparams"],
         "best_epoch": meta["best_epoch"],

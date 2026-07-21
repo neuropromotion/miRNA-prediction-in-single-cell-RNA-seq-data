@@ -6,13 +6,22 @@ from pathlib import Path
 
 import numpy as np
 
-from metrics import clip_nonneg
-from dl_trainers import (
-    predict_tabm,
-    predict_torch_model,
-    train_resnet,
-    train_tabm,
-)
+try:
+    from .metrics import clip_nonneg
+    from .dl_trainers import (
+        predict_tabm,
+        predict_torch_model,
+        train_resnet,
+        train_tabm,
+    )
+except ImportError:
+    from final_train_test_inference.train.metrics import clip_nonneg
+    from final_train_test_inference.train.dl_trainers import (
+        predict_tabm,
+        predict_torch_model,
+        train_resnet,
+        train_tabm,
+    )
 
 
 def train_tabm_model(arr: dict, model_dir: Path, device: str, batch_size: int) -> Path:

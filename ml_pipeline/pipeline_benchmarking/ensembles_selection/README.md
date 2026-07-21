@@ -6,6 +6,8 @@
 - `../../data/splits/` + frozen features/targets
 - `../../shared/dl_trainers.py`
 
+Split protocol: [`../../data/SPLIT_PROTOCOL.md`](../../data/SPLIT_PROTOCOL.md) — ensemble weights tuned on **outer_val** SC folds, not sc_TEST.
+
 **Run**
 ```bash
 export PYTHONPATH=/path/to/ml_pipeline

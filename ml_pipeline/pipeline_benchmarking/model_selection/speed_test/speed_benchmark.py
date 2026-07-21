@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Speed benchmark: train + inference time for 7 screen models on 5 miRNA."""
+"""Speed benchmark: train + inference time for 8 models on 5 fixed miRNA."""
 
 from __future__ import annotations
 
@@ -19,27 +19,26 @@ import optuna
 import pandas as pd
 import xgboost as xgb
 
-from shared.data import build_modality_bundle, concat_pb_test_x, select_features
-from shared.io_splits import load_features, load_pilot_targets
-from shared.paths import PILOT_DIR, SEED
-from speed_test.constants import (
-    EARLY_STOPPING_ROUNDS,
-    OPTUNA_TRIALS_SPEED,
-    RESULTS,
-    SPEED_N_TARGETS,
-    XGB_DEFAULT,
-)
-
-sys.path.insert(0, str(PILOT_DIR))
-from dl_trainers import (  # noqa: E402
+from shared.data import build_modality_bundle, concat_pb_outer_val, select_features
+from shared.dl_trainers import (
     predict_tabm,
     predict_tabnet,
     predict_torch_model,
     train_dcnv2,
+    train_fttransformer,
     train_realmlp,
     train_resnet,
     train_tabm,
     train_tabnet,
+)
+from shared.io_splits import load_features
+from shared.paths import SEED
+from speed_test.constants import (
+    EARLY_STOPPING_ROUNDS,
+    OPTUNA_TRIALS_SPEED,
+    RESULTS,
+    SPEED_TARGETS,
+    XGB_DEFAULT,
 )
 
 DEVICE = os.environ.get("STAGE03_DEVICE", "cuda" if os.environ.get("CUDA_VISIBLE_DEVICES", "") != "" else "cpu")
@@ -47,13 +46,6 @@ BATCH_SIZE = int(os.environ.get("STAGE03_BATCH", "512"))
 OUT_DIR = RESULTS / "speed_benchmark"
 TABNET_EPOCHS = int(os.environ.get("STAGE03_TABNET_EPOCHS", "100"))
 TABNET_PATIENCE = int(os.environ.get("STAGE03_TABNET_PATIENCE", "20"))
-
-
-def pick_speed_targets(n: int = SPEED_N_TARGETS) -> list[str]:
-    all_t = load_pilot_targets()
-    rng = np.random.default_rng(SEED)
-    idx = rng.choice(len(all_t), size=min(n, len(all_t)), replace=False)
-    return sorted(all_t[i] for i in idx)
 
 
 def suggest_xgb(trial: optuna.Trial) -> dict:
@@ -198,13 +190,14 @@ MODELS = [
     ("realmlp", train_realmlp, None),
     ("resnet", train_resnet, None),
     ("dcnv2", train_dcnv2, None),
+    ("fttransformer", train_fttransformer, None),
 ]
 
 
 def main() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     feature_map = load_features()
-    targets = pick_speed_targets()
+    targets = list(SPEED_TARGETS)
     bundle = build_modality_bundle()
 
     meta = {
@@ -216,7 +209,7 @@ def main() -> None:
     }
     (OUT_DIR / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 
-    x_pb_all = concat_pb_test_x(bundle.x_test_pb)
+    x_pb_all = concat_pb_outer_val(bundle.x_outer_val_pb)
 
     rows: list[dict] = []
     for target in targets:
@@ -226,8 +219,8 @@ def main() -> None:
         sw = bundle.sample_weight
         x_va = select_features(bundle.x_val_inner, genes).to_numpy(dtype=np.float32)
         y_va = bundle.y_val_inner[target].to_numpy(dtype=np.float64)
-        x_te_bulk = select_features(bundle.x_test_bulk, genes).to_numpy(dtype=np.float32)
-        x_te_k1 = select_features(bundle.x_test_k1, genes).to_numpy(dtype=np.float32)
+        x_te_bulk = select_features(bundle.x_outer_val_bulk, genes).to_numpy(dtype=np.float32)
+        x_te_k1 = select_features(bundle.x_outer_val_k1, genes).to_numpy(dtype=np.float32)
         x_te_pb = select_features(x_pb_all, genes).to_numpy(dtype=np.float32)
 
         for name, train_fn, predict_fn in MODELS:

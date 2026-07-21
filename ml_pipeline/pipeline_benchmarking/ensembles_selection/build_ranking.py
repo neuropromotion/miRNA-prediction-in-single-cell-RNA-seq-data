@@ -59,7 +59,7 @@ def load_ensemble_ranking() -> pd.DataFrame:
     for model_set, models in ENSEMBLE_SETS.items():
         for method in ENSEMBLE_METHODS:
             eid = ensemble_id(model_set, method)
-            if not (RESULTS / eid / "test_metrics.csv").exists():
+            if not (RESULTS / eid / "outer_val_metrics.csv").exists():
                 continue
             row = summarize_ensemble(eid)
             row["kind"] = "ensemble"
@@ -73,8 +73,8 @@ def load_ensemble_ranking() -> pd.DataFrame:
 
 
 def pick_best(df: pd.DataFrame) -> dict:
-    ens = df[df["kind"] == "ensemble"].sort_values("median_test_k1_r2", ascending=False)
-    solo = df[df["kind"] == "solo"].sort_values("median_test_k1_r2", ascending=False)
+    ens = df[df["kind"] == "ensemble"].sort_values("median_outer_val_k1_r2", ascending=False)
+    solo = df[df["kind"] == "solo"].sort_values("median_outer_val_k1_r2", ascending=False)
     best_ens = ens.iloc[0].to_dict() if len(ens) else {}
     best_solo = solo.iloc[0].to_dict() if len(solo) else {}
     best_stack = ens[ens["method"] == "stack"].head(1)
@@ -104,19 +104,19 @@ def main() -> None:
         "method",
         "n_models",
         "models_label",
-        "median_test_k1_r2",
-        "mean_test_k1_r2",
+        "median_outer_val_k1_r2",
+        "mean_outer_val_k1_r2",
         "n_targets_k1_gt_0_4",
         "n_fallback_solo",
-        "median_test_bulk_r2",
+        "median_outer_val_bulk_r2",
         "median_tune_r2",
         "elapsed_sec",
     ]
     rank_cols = [c for c in rank_cols if c in combined.columns]
-    ranked = combined.sort_values("median_test_k1_r2", ascending=False, na_position="last")
+    ranked = combined.sort_values("median_outer_val_k1_r2", ascending=False, na_position="last")
     ranked[rank_cols].to_csv(OUT / "ranking_all.csv", index=False)
 
-    ens_only = ens_df.sort_values("median_test_k1_r2", ascending=False)
+    ens_only = ens_df.sort_values("median_outer_val_k1_r2", ascending=False)
     ens_only.to_csv(OUT / "ranking_ensembles_only.csv", index=False)
 
     picks = pick_best(combined)
@@ -127,10 +127,10 @@ def main() -> None:
     print()
     if picks.get("best_ensemble_overall"):
         b = picks["best_ensemble_overall"]
-        print(f"BEST ENSEMBLE: {b.get('ensemble')} | median K1={b.get('median_test_k1_r2'):.4f}")
+        print(f"BEST ENSEMBLE: {b.get('ensemble')} | median K1={b.get('median_outer_val_k1_r2'):.4f}")
     if picks.get("best_stack"):
         s = picks["best_stack"]
-        print(f"BEST STACK:    {s.get('ensemble')} | median K1={s.get('median_test_k1_r2'):.4f}")
+        print(f"BEST STACK:    {s.get('ensemble')} | median K1={s.get('median_outer_val_k1_r2'):.4f}")
     print(f"\nWrote {OUT}/ranking_all.csv")
 
 

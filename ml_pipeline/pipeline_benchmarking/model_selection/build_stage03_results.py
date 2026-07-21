@@ -22,8 +22,8 @@ OUT = BASE / "tables"
 
 R2_COLS = {
     "inner_val_r2": "Inner val R2",
-    "test_bulk_r2": "Bulk test R2",
-    "test_k1_r2": "K1 test R2",
+    "outer_val_bulk_r2": "Bulk outer_val R2",
+    "outer_val_k1_r2": "K1 outer_val R2",
 }
 
 CELL_W = 0.72
@@ -34,8 +34,8 @@ R2_THRESHOLD = 0.4
 
 LINE_PLOTS = {
     "inner_val_r2": ("Inner val R²", "inner_val"),
-    "test_bulk_r2": ("Bulk test R²", "bulk"),
-    "test_k1_r2": ("K1 test R²", "k1"),
+    "outer_val_bulk_r2": ("Bulk outer_val R²", "bulk"),
+    "outer_val_k1_r2": ("K1 outer_val R²", "k1"),
 }
 
 MODEL_COLORS = {
@@ -58,13 +58,13 @@ def _ensure_out() -> None:
 
 
 def _load_metrics() -> pd.DataFrame:
-    df = pd.read_csv(SRC / "test_metrics_all.csv")
+    df = pd.read_csv(SRC / "outer_val_metrics_all.csv")
     ok = df[df["status"] == "ok"].copy() if "status" in df.columns else df.copy()
     return ok
 
 
 def _model_order(summary: pd.DataFrame) -> list[str]:
-    return summary.sort_values("median_test_k1_r2", ascending=False)["model"].tolist()
+    return summary.sort_values("median_outer_val_k1_r2", ascending=False)["model"].tolist()
 
 
 def _label_matrix(matrix: pd.DataFrame, model_labels: dict[str, str]) -> pd.DataFrame:
@@ -95,10 +95,10 @@ def _save_summary_table(summary: pd.DataFrame) -> None:
         "n_targets_fail",
         "mean_inner_val_r2",
         "median_inner_val_r2",
-        "mean_test_bulk_r2",
-        "median_test_bulk_r2",
-        "mean_test_k1_r2",
-        "median_test_k1_r2",
+        "mean_outer_val_bulk_r2",
+        "median_outer_val_bulk_r2",
+        "mean_outer_val_k1_r2",
+        "median_outer_val_k1_r2",
         "n_targets_k1_gt_0_4",
         "n_exclusive_k1_gt_0_4",
         "elapsed_sec",
@@ -113,7 +113,7 @@ def _save_summary_table(summary: pd.DataFrame) -> None:
 
 
 def _compute_k1_threshold_stats(df: pd.DataFrame, model_order: list[str]) -> tuple[pd.DataFrame, pd.DataFrame]:
-    k1 = df.pivot(index="target", columns="model", values="test_k1_r2").reindex(columns=model_order)
+    k1 = df.pivot(index="target", columns="model", values="outer_val_k1_r2").reindex(columns=model_order)
     above = k1 > R2_THRESHOLD
 
     n_gt = above.sum(axis=0).astype(int)
@@ -127,7 +127,7 @@ def _compute_k1_threshold_stats(df: pd.DataFrame, model_order: list[str]) -> tup
             {
                 "model": model,
                 "target": target,
-                "test_k1_r2": float(k1.loc[target, model]),
+                "outer_val_k1_r2": float(k1.loc[target, model]),
             }
         )
 
@@ -325,13 +325,13 @@ def _plot_r2_by_target_lines(
 
 def _plot_model_mean_median(summary: pd.DataFrame, model_order: list[str]) -> None:
     plot_df = summary.set_index("model").reindex(model_order).reset_index()
-    plot_df = plot_df[["model_label", "mean_test_k1_r2", "median_test_k1_r2"]].melt(
+    plot_df = plot_df[["model_label", "mean_outer_val_k1_r2", "median_outer_val_k1_r2"]].melt(
         id_vars="model_label",
         var_name="stat",
         value_name="r2",
     )
     plot_df["stat"] = plot_df["stat"].map(
-        {"mean_test_k1_r2": "mean", "median_test_k1_r2": "median"}
+        {"mean_outer_val_k1_r2": "mean", "median_outer_val_k1_r2": "median"}
     )
     plt.figure(figsize=(max(12, len(model_order) * 0.95), 5.8))
     sns.barplot(data=plot_df, x="model_label", y="r2", hue="stat")
@@ -348,7 +348,7 @@ def _plot_model_mean_median(summary: pd.DataFrame, model_order: list[str]) -> No
 def _plot_k1_density(df: pd.DataFrame, model_order: list[str], model_labels: dict[str, str]) -> None:
     plt.figure(figsize=(11, 6.5))
     for model in model_order:
-        data = df.loc[df["model"] == model, "test_k1_r2"].dropna()
+        data = df.loc[df["model"] == model, "outer_val_k1_r2"].dropna()
         if len(data) < 2:
             continue
         sns.kdeplot(data=data, label=model_labels.get(model, model), fill=False, linewidth=2)
@@ -367,7 +367,7 @@ def _plot_k1_violin(df: pd.DataFrame, model_order: list[str], model_labels: dict
     p["model_label"] = p["model"].map(model_labels).fillna(p["model"])
     label_order = [model_labels.get(m, m) for m in model_order]
     plt.figure(figsize=(max(12, len(model_order) * 0.95), 5.8))
-    sns.violinplot(data=p, x="model_label", y="test_k1_r2", order=label_order, cut=0, inner="quartile")
+    sns.violinplot(data=p, x="model_label", y="outer_val_k1_r2", order=label_order, cut=0, inner="quartile")
     plt.axhline(0.0, color="black", linewidth=1, alpha=0.5)
     plt.xticks(rotation=40, ha="right")
     plt.xlabel("Model")
@@ -389,7 +389,7 @@ def main() -> None:
     model_order = _model_order(summary)
 
     df = _load_metrics()
-    df.to_csv(OUT / "test_metrics_all_ok.csv", index=False)
+    df.to_csv(OUT / "outer_val_metrics_all_ok.csv", index=False)
 
     k1_stats, exclusive_df = _compute_k1_threshold_stats(df, model_order)
     summary = summary.drop(columns=["n_targets_k1_gt_0_4", "n_exclusive_k1_gt_0_4"], errors="ignore")
@@ -399,10 +399,10 @@ def main() -> None:
     if not exclusive_df.empty:
         exclusive_out = exclusive_df.copy()
         exclusive_out["model_label"] = exclusive_out["model"].map(model_labels)
-        exclusive_out = exclusive_out[["model", "model_label", "target", "test_k1_r2"]]
+        exclusive_out = exclusive_out[["model", "model_label", "target", "outer_val_k1_r2"]]
         exclusive_out.to_csv(OUT / "exclusive_targets_k1_gt_0.4.csv", index=False)
     else:
-        pd.DataFrame(columns=["model", "model_label", "target", "test_k1_r2"]).to_csv(
+        pd.DataFrame(columns=["model", "model_label", "target", "outer_val_k1_r2"]).to_csv(
             OUT / "exclusive_targets_k1_gt_0.4.csv",
             index=False,
         )
@@ -419,8 +419,8 @@ def main() -> None:
         )
 
     _plot_heatmap_clustered_columns(
-        matrices["test_k1_r2"],
-        "K1 test R2 heatmap (column-clustered by model)",
+        matrices["outer_val_k1_r2"],
+        "K1 outer_val R2 heatmap (column-clustered by model)",
         OUT / "k1_r2_heatmap_clustered_columns.png",
         model_labels,
     )
@@ -450,7 +450,7 @@ def main() -> None:
     with (OUT / "plot_meta.json").open("w", encoding="utf-8") as f:
         json.dump(
             {
-                "source_metrics": str(SRC / "test_metrics_all.csv"),
+                "source_metrics": str(SRC / "outer_val_metrics_all.csv"),
                 "source_summary": str(SRC / "summary_by_model.csv"),
                 "models": model_order,
                 "model_labels": model_labels,

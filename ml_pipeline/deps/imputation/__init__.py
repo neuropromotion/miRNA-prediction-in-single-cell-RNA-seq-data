@@ -1,1 +1,1 @@
-"""Vendored imputation helpers (KNN / SoftImpute / MAGIC loaders)."""
+"""Vendored imputation helpers (KNN imputation, NE regression)."""

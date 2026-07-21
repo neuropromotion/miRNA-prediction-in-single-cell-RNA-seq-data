@@ -10,6 +10,17 @@ SPEED_N_TARGETS = 5
 OPTUNA_TRIALS_SPEED = 5
 EARLY_STOPPING_ROUNDS = 30
 
+# Fixed pilot targets used in the original speed_benchmark run
+SPEED_TARGETS = (
+    "hsa-mir-125a-5p",
+    "hsa-mir-301b-5p",
+    "hsa-mir-411-5p",
+    "hsa-mir-487a-3p",
+    "hsa-mir-99b-3p",
+)
+
+CANDIDATE_MODELS = ("lassonet", "gandalf")
+
 XGB_DEFAULT = {
     "objective": "reg:squarederror",
     "tree_method": "hist",

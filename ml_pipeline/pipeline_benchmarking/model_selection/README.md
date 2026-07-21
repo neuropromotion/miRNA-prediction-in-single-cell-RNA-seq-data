@@ -13,7 +13,7 @@ python run_model_screen.py
 ```
 
 **Outputs**
-- `results/<model>/test_metrics.csv` (created on run)
+- `results/<model>/outer_val_metrics.csv` (created on run)
 - committed summary: `tables/`, `figures/`
 
 ## Model Selection & Benchmarking

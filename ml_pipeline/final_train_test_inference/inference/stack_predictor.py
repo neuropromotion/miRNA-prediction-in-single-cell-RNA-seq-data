@@ -12,14 +12,24 @@ from typing import Iterable
 import numpy as np
 import pandas as pd
 
-from constants import (
-    ENSEMBLE_ID,
-    FTTI_ROOT,
-    CONFIG_PATH,
-    MODELS_ROOT,
-    STACK_MODELS,
-    WEIGHTS_DIR,
-)
+try:
+    from .constants import (
+        ENSEMBLE_ID,
+        FTTI_ROOT,
+        CONFIG_PATH,
+        MODELS_ROOT,
+        STACK_MODELS,
+        WEIGHTS_DIR,
+    )
+except ImportError:
+    from constants import (
+        ENSEMBLE_ID,
+        FTTI_ROOT,
+        CONFIG_PATH,
+        MODELS_ROOT,
+        STACK_MODELS,
+        WEIGHTS_DIR,
+    )
 
 # Train helpers use bare `from constants import …`. Inference also has a
 # `constants` module, so once it is cached in sys.modules the train imports

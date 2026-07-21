@@ -26,7 +26,7 @@ from model_screen_final_11.constants import (
     SCREEN_MODELS,
     SEED,
     STAGE,
-    TEST_METRIC_COLS,
+    OUTER_VAL_METRIC_COLS,
 )
 from model_screen_final_11.metrics import r2
 from model_screen_final_11.model_trainers import load_artifact, predict_model, train_one
@@ -62,25 +62,25 @@ def filter_targets(targets: list[str]) -> list[str]:
     return targets
 
 
-def test_sets(bundle, target: str, genes: list[str]) -> list[tuple[str, np.ndarray, np.ndarray]]:
+def outer_val_sets(bundle, target: str, genes: list[str]) -> list[tuple[str, np.ndarray, np.ndarray]]:
     sets: list[tuple[str, np.ndarray, np.ndarray]] = [
         (
             "bulk",
-            select_features(bundle.x_test_bulk, genes).to_numpy(dtype=np.float32),
-            bundle.y_test_bulk[target].to_numpy(dtype=np.float64),
+            select_features(bundle.x_outer_val_bulk, genes).to_numpy(dtype=np.float32),
+            bundle.y_outer_val_bulk[target].to_numpy(dtype=np.float64),
         ),
         (
             "k1",
-            select_features(bundle.x_test_k1, genes).to_numpy(dtype=np.float32),
-            bundle.y_test_k1[target].to_numpy(dtype=np.float64),
+            select_features(bundle.x_outer_val_k1, genes).to_numpy(dtype=np.float32),
+            bundle.y_outer_val_k1[target].to_numpy(dtype=np.float64),
         ),
     ]
     for cohort in PB_COHORTS:
         sets.append(
             (
                 f"pb_{cohort}",
-                select_features(bundle.x_test_pb[cohort], genes).to_numpy(dtype=np.float32),
-                bundle.y_test_pb[cohort][target].to_numpy(dtype=np.float64),
+                select_features(bundle.x_outer_val_pb[cohort], genes).to_numpy(dtype=np.float32),
+                bundle.y_outer_val_pb[cohort][target].to_numpy(dtype=np.float64),
             )
         )
     return sets
@@ -105,14 +105,14 @@ def eval_target(
         "inner_val_r2": r2(y_val, pred_val),
         "status": "ok",
     }
-    for name, x_te, y_te in test_sets(bundle, target, genes):
+    for name, x_te, y_te in outer_val_sets(bundle, target, genes):
         pred = predict_model(model_name, artifact, x_te)
-        row[f"test_{name}_r2"] = r2(y_te, pred)
+        row[f"outer_val_{name}_r2"] = r2(y_te, pred)
     return row
 
 
 def metrics_path(model_name: str) -> Path:
-    return RESULTS / model_name / f"test_metrics{METRICS_SUFFIX}.csv"
+    return RESULTS / model_name / f"outer_val_metrics{METRICS_SUFFIX}.csv"
 
 
 def done_targets(model_name: str) -> set[str]:
@@ -149,7 +149,7 @@ def summarize_model(model_name: str) -> dict:
         "n_targets_ok": int(len(ok)),
         "n_targets_fail": int(len(df) - len(ok)),
     }
-    for col in TEST_METRIC_COLS:
+    for col in OUTER_VAL_METRIC_COLS:
         if col in ok.columns:
             summary[f"mean_{col}"] = float(ok[col].mean()) if len(ok) else None
             summary[f"median_{col}"] = float(ok[col].median()) if len(ok) else None
@@ -184,7 +184,7 @@ def run_model(model_name: str, targets: list[str], features: dict[str, list[str]
             append_metric(model_name, row)
             log(
                 f"{target}: inner_r2={row['inner_val_r2']:.4f} "
-                f"k1_test={row['test_k1_r2']:.4f} bulk_test={row['test_bulk_r2']:.4f} "
+                f"k1_outer_val={row['outer_val_k1_r2']:.4f} bulk_outer_val={row['outer_val_bulk_r2']:.4f} "
                 f"train={train_sec}s",
                 model_name,
             )
@@ -209,14 +209,14 @@ def run_model(model_name: str, targets: list[str], features: dict[str, list[str]
 
 
 def merge_ft_shards() -> None:
-    """Merge test_metrics_shard*.csv into test_metrics.csv for fttransformer."""
+    """Merge outer_val_metrics_shard*.csv into outer_val_metrics.csv for fttransformer."""
     model_name = "fttransformer"
     out_dir = RESULTS / model_name
-    parts = sorted(out_dir.glob("test_metrics_shard*.csv"))
+    parts = sorted(out_dir.glob("outer_val_metrics_shard*.csv"))
     if not parts:
         return
     dfs = [pd.read_csv(p) for p in parts]
-    main_path = out_dir / "test_metrics.csv"
+    main_path = out_dir / "outer_val_metrics.csv"
     merged = pd.concat(dfs, ignore_index=True)
     merged = merged.drop_duplicates(subset=["target"], keep="last")
     merged.to_csv(main_path, index=False)
@@ -227,11 +227,11 @@ def write_combined_outputs(ran_models: list[str]) -> None:
     merge_ft_shards()
     all_metrics = []
     for model_name in SCREEN_MODELS:
-        p = RESULTS / model_name / "test_metrics.csv"
+        p = RESULTS / model_name / "outer_val_metrics.csv"
         if p.exists():
             all_metrics.append(pd.read_csv(p))
     if all_metrics:
-        pd.concat(all_metrics, ignore_index=True).to_csv(RESULTS / "test_metrics_all.csv", index=False)
+        pd.concat(all_metrics, ignore_index=True).to_csv(RESULTS / "outer_val_metrics_all.csv", index=False)
 
     summaries = []
     for model_name in SCREEN_MODELS:
@@ -255,7 +255,7 @@ def write_config(targets: list[str], models: list[str]) -> None:
             "train": "stage00 train: bulk + K1_imp + PB all cohorts",
             "inner_split": "85/15 stratified by modality (bulk/k1/pb)",
             "inner_val_metric": "mixed inner val R2",
-            "test": "stage00 val: bulk, k1, pb K2/K3/K4/K5/K10",
+            "outer_val": "stage00 val fold (not sc_TEST): bulk, k1, pb K2/K3/K4/K5/K10",
             "impute": "KNN k=5 on K1 only",
             "sample_weights": "inverse modality frequency",
         },

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Merge stage03 speed benchmarks (7 models + TabPFN-3) into comparison CSV tables."""
+"""Merge stage03 speed benchmarks (8 models + TabPFN-3) into comparison tables."""
 
 from __future__ import annotations
 
@@ -15,7 +15,8 @@ import pandas as pd
 from shared.paths import STAGE03
 
 RESULTS = STAGE03 / "results"
-OUT = RESULTS / "speed_comparison_all_01.tsv"
+TABLES = Path(__file__).resolve().parent / "tables"
+OUT = TABLES / "speed_comparison_all_01.tsv"
 OUT_DETAIL = RESULTS / "speed_comparison_per_target.csv"
 OUT_SUMMARY = RESULTS / "speed_comparison_summary.csv"
 
@@ -23,6 +24,20 @@ N_INFER_BULK = 4537
 N_INFER_K1 = 370
 N_INFER_PB = 263
 N_INFER_TOTAL = N_INFER_BULK + N_INFER_K1 + N_INFER_PB
+
+SUMMARY_COLS = [
+    "benchmark",
+    "model",
+    "n_train_pool",
+    "n_infer_total",
+    "mean_train_sec",
+    "mean_infer_sec",
+    "mean_infer_sec_per_1k_samples",
+    "total_train_50mirna_h",
+    "total_infer_50mirna_h",
+    "total_train_327mirna_h",
+    "total_infer_327mirna_h",
+]
 
 
 def _infer_per_1k(infer_sec: float, n_infer: int) -> float | None:
@@ -33,6 +48,10 @@ def _infer_per_1k(infer_sec: float, n_infer: int) -> float | None:
 
 def load_main_benchmark() -> pd.DataFrame:
     path = RESULTS / "speed_benchmark" / "speed_results.csv"
+    if not path.is_file():
+        raise FileNotFoundError(
+            f"Missing {path}. Run speed_test/speed_benchmark.py first."
+        )
     df = pd.read_csv(path)
     df["benchmark"] = "stage03_speed"
     df["model_label"] = df["model"]
@@ -51,11 +70,16 @@ def load_main_benchmark() -> pd.DataFrame:
 
 def load_tabpfn3() -> pd.DataFrame:
     path = RESULTS / "tabpfn3_speed" / "speed_results.csv"
+    if not path.is_file():
+        raise FileNotFoundError(
+            f"Missing {path}. Run speed_test/tabpfn3_speed_benchmark.py first."
+        )
     df = pd.read_csv(path)
     df = df.rename(columns={"n_train_pool": "n_train"})
     df["benchmark"] = "tabpfn3_speed"
     df["model"] = "tabpfn_v3"
     df["model_label"] = "TabPFN-3 (tabpfn 8.0.8, full train)"
+    df["n_fit"] = df.get("n_fit", df["n_train"])
     df["n_infer_bulk"] = N_INFER_BULK
     df["n_infer_k1"] = N_INFER_K1
     df["n_infer_pb"] = N_INFER_PB
@@ -140,6 +164,7 @@ def build_summary(detail: pd.DataFrame) -> pd.DataFrame:
 
 
 def main() -> None:
+    TABLES.mkdir(parents=True, exist_ok=True)
     parts = [load_main_benchmark(), load_tabpfn3()]
     detail = pd.concat([p for p in parts if len(p)], ignore_index=True)
     for col in DETAIL_COLS:
@@ -150,13 +175,15 @@ def main() -> None:
 
     summary = build_summary(detail)
     summary.to_csv(OUT_SUMMARY, index=False)
-    summary.to_tsc(OUT, sep='\t', index=False)
+
+    compact = summary[SUMMARY_COLS].copy()
+    compact.to_csv(OUT, sep="\t", index=False)
 
     print(f"Wrote {OUT}")
     print(f"Wrote {OUT_DETAIL}")
     print(f"Wrote {OUT_SUMMARY}")
     print("\nSummary preview:")
-    print(summary.to_string(index=False))
+    print(compact.to_string(index=False))
 
 
 if __name__ == "__main__":

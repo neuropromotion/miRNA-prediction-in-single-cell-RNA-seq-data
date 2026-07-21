@@ -1,0 +1,7 @@
+# TabPFN-3 speed benchmark (isolated from inference stack 6.4.1)
+tabpfn==8.0.8
+scikit-learn>=1.5.0,<1.6.0
+numpy>=1.24.0,<2.0.0
+pandas>=2.0.0
+pyarrow>=14.0.0
+scipy>=1.10.0

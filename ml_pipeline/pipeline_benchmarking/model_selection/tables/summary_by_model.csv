@@ -1,4 +1,4 @@
-model,model_label,n_targets_ok,n_targets_fail,mean_inner_val_r2,median_inner_val_r2,mean_test_bulk_r2,median_test_bulk_r2,mean_test_k1_r2,median_test_k1_r2,n_targets_k1_gt_0_4,n_exclusive_k1_gt_0_4,elapsed_sec
+model,model_label,n_targets_ok,n_targets_fail,mean_inner_val_r2,median_inner_val_r2,mean_outer_val_bulk_r2,median_outer_val_bulk_r2,mean_outer_val_k1_r2,median_outer_val_k1_r2,n_targets_k1_gt_0_4,n_exclusive_k1_gt_0_4,elapsed_sec
 xgb_default,XGB default,50,0,0.6818019562812723,0.7467061896419427,0.7091054506054185,0.79157182580994,0.1283743855606205,0.0629429545050234,12,0,62.7
 xgb_optuna,XGB Optuna,50,0,0.7054748656101087,0.7691346526952122,0.7468791217090842,0.8107420422409601,0.2207580431554257,0.1575567930009664,15,0,4885.3
 catboost_optuna,CatBoost Optuna,50,0,0.7038928329393205,0.7635982820880794,0.743895629504435,0.8103877697015306,0.2215344502060721,0.144300041803205,15,0,13782.3
