@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stage00: train/outer_val splits + log2(x+1) from raw TRAIN sources.
+"""Stage00: train/outer_val splits + log2(x+1) from raw TRAIN sources (sc_TRAIN/bulk_TRAIN).
 
 Creates parquet matrices under data/splits/ used by all benchmarking stages.
 See ../SPLIT_PROTOCOL.md for how this fold relates to inner_val and sc_TEST.
@@ -23,8 +23,8 @@ if str(ML_PIPELINE) not in sys.path:
 
 from shared.paths import DATA, SPLITS  # noqa: E402
 
-BULK_SOURCE = DATA / "raw" / "bulk_TRAIN"
-SC_SOURCE = DATA / "raw" / "sc_TRAIN"
+BULK_SOURCE = DATA / "bulk_TRAIN"
+SC_SOURCE = DATA / "sc_TRAIN"
 
 SEED = 42
 TRANSFORM = "log2(x+1)"

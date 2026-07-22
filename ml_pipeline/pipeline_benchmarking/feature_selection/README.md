@@ -3,7 +3,7 @@
 
 **Inputs**
 - `../../data/splits/{bulk,sc_k1,sc_pb}/*.parquet`
-- pilot list: `../../data/frozen/selected_targets.txt` (or local `selected_targets.txt`)
+- pilot list: `../../data/frozen/selected_targets.txt` 
 
 **Run** (from this folder, with `PYTHONPATH` = ml_pipeline root)
 ```bash
@@ -15,7 +15,7 @@ cd bulk_trim && python run_full.py    # if present
 
 **Outputs**
 - `tables/`, `figures/`
-- `final_run/results/selected_features.json`
+- `final_run/results/selected_features.json` # final selected features for each target  
 
 ## Feature Selection 
 

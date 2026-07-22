@@ -2,13 +2,13 @@
 
 Builds frozen train / **outer_val** parquet splits from raw TRAIN matrices.
 
-## Inputs (not in git)
+## Inputs (not in git, available on Kaggle)
 
 ```
-data/raw/bulk_TRAIN/
+data/bulk_TRAIN/
   X_BULK_TRAIN.parquet
   Y_BULK_TRAIN.parquet
-data/raw/sc_TRAIN/
+data/sc_TRAIN/
   X_TRAIN_K1.parquet  Y_TRAIN_K1.parquet
   X_TRAIN_PB.parquet  Y_TRAIN_PB.parquet
 ```
@@ -23,6 +23,8 @@ python data/prepare_splits/prepare_stage00_splits.py
 ## Outputs
 
 ```
+data/bulk_TRAIN + data/sc_TRAIN
+->
 data/splits/
   bulk/   sc_k1/   sc_pb/
     X_train.parquet  Y_train.parquet

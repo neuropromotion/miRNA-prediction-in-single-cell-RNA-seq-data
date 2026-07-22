@@ -17,10 +17,12 @@ ROOT = TRAIN_DIR
 FINAL_VERSION = FINAL
 WORKSPACE = ML_PIPELINE
 
-# Raw sources are optional; prepared splits under data/splits are required.
-BULK_SOURCE = ML_PIPELINE / "data" / "raw" / "bulk_TRAIN"
-SC_SOURCE = ML_PIPELINE / "data" / "raw" / "sc_TRAIN"
-SC_TEST = ML_PIPELINE / "data" / "raw" / "sc_TEST"
+# Raw TRAIN sources (optional; prepared splits under data/splits are required).
+BULK_SOURCE = ML_PIPELINE / "data" / "bulk_TRAIN"
+SC_SOURCE = ML_PIPELINE / "data" / "sc_TRAIN"
+# Held-out TEST lives next to evaluate_* scripts (not under data/).
+SC_TEST = FINAL / "test_metrics" / "test_evaluating" / "sc_TEST"
+BULK_TEST = FINAL / "test_metrics" / "test_evaluating" / "bulk_TEST"
 
 FEATURES = FINAL / "selected_features.json"
 FEATURES_SRC = FEATURES

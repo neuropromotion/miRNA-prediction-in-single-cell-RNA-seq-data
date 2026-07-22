@@ -7,14 +7,9 @@ Place them under this `data/` tree after download.
 
 ---
 
-## 0) Regenerate Stage00 splits (optional)
+## 0) TRAIN matrices + Stage00 splits
 
-If you have raw TRAIN matrices locally:
-
-```bash
-export PYTHONPATH=/path/to/ml_pipeline
-python data/prepare_splits/prepare_stage00_splits.py
-```
+Train and test maticies were generated in prepare_train_data section from publicaly available data. Then splitted into train and validation cohorts for banchmarking and training purposes
 
 See [`prepare_splits/README.md`](prepare_splits/README.md).
 
@@ -27,16 +22,15 @@ data/splits/
   bulk/
     X_train.parquet  Y_train.parquet
     X_val.parquet    Y_val.parquet    # outer_val holdout (not sc_TEST)
-  sc_k1/
+  sc_k1/                              # K1 - pure single cell
     X_train.parquet  Y_train.parquet
     X_val.parquet    Y_val.parquet
-  sc_pb/
-    X_train.parquet  Y_train.parquet
+  sc_pb/                                # K2,K3,K4,K5 and K10 pseudobulks
+    X_train.parquet  Y_train.parquet  
     X_val.parquet    Y_val.parquet
   split_summary.json
 ```
 
-Local copy source: `FINAL_VERSION/stage00_splits/`  
 Public link: see repository root README (*Training and inference datasets*).
 
 `sc_k1/X_train.parquet` is also the **KNN imputation reference** for inference. It is single-cell K1 Train part; it serves as the KNN imputing reference.
@@ -59,7 +53,7 @@ Public link: see repository root README (*Pretrained models*).
 
 ## 3) scRNA datasets for large-scale inference
 
-Batch script: `final_train_test_inference/inference/total_inference/total_inference.py`
+Inference script: `final_train_test_inference/inference/total_inference/total_inference.py`
 
 Default paths (override with CLI flags):
 
@@ -88,6 +82,6 @@ Processed / annotated scRNA pipelines: see repo folder `scRNA_inference_data_pro
 
 | File | Role |
 |------|------|
-| `frozen/selected_targets.txt` | 50 pilot miRNAs for screens |
+| `frozen/selected_targets.txt` | 50 pilot miRNAs for benchmarking |
 | `frozen/selected_features.json` | Final gene lists per miRNA |
 | `frozen/split_summary.json` | Split metadata / full target list |

@@ -4,6 +4,12 @@ __pycache__/
 
 # Data
 data/splits/**/*.parquet
+data/bulk_TRAIN/
+data/sc_TRAIN/
+final_train_test_inference/test_metrics/test_evaluating/bulk_TEST/
+final_train_test_inference/test_metrics/test_evaluating/sc_TEST/
+final_train_test_inference/test_metrics/test_evaluating/bulk_test_run/
+final_train_test_inference/test_metrics/test_evaluating/sc_test_run/
 
 # models
 final_train_test_inference/models/**/*.joblib

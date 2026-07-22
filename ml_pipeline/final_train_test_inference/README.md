@@ -21,6 +21,13 @@ python run_train.py
 python run_stack.py
 ```
 
+## Run held-out TEST evaluation
+
+See `test_metrics/README.md`. Scripts live in `test_metrics/test_evaluating/` and write:
+
+- `test_metrics/bulk_test_metrics.csv`
+- `test_metrics/K1_K10_test_metrics.csv`
+
 ## Run inference
 
 See `inference/README.md`. Requires weights under `models/` and KNN ref `../data/splits/sc_k1/X_train.parquet`.

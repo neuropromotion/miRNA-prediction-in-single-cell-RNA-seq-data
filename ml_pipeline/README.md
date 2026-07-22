@@ -11,12 +11,14 @@ ml_pipeline/
 ├── requirements.txt
 ├── data/
 │   ├── README.md                # splits / models / inference I/O
-│   ├── SPLIT_PROTOCOL.md        # train / inner_val / outer_val / sc_TEST
-│   ├── prepare_splits/          # Stage00 split script
+│   ├── SPLIT_PROTOCOL.md        # full splitting protocole 
+│   ├── prepare_splits/          # Split script for splitting sc_TRAIN/bulk_TRAIN 
 │   ├── frozen/                  # small committed artifacts
 │   ├── splits/                  # train + outer_val parquets (download)
 │   ├── inference_inputs/        # scRNA matrices for batch inference (download)
 │   └── inference_outputs/       # prediction CSVs written by batch script
+    └── sc_TRAIN/                # single cell train data (see prepare_train_data) .ignored
+    └── bulk_TRAIN/              # bulk train data (see prepare_train_data) .ignored
 ├── shared/                      # shared Python helpers (paths, IO, DL trainers)
 ├── deps/imputation/             # KNN / NE helpers used by imputation + train
 ├── pipeline_benchmarking/
@@ -40,15 +42,16 @@ pip install -r requirements.txt
 #   1) data/splits/              — train/val matrices + KNN ref
 #   2) final_train_test_inference/models/  — pretrained weights
 #   3) data/inference_inputs/    — scRNA count matrices for batch inference
+# all stuff available on Kaggle (see main page)
 ```
 
 ### Pipeline order
 
-1. `pipeline_benchmarking/feature_selection` → ElasticNet features  
-2. `pipeline_benchmarking/sc_imputation_selection` → KNN k=5  
-3. `pipeline_benchmarking/model_selection` → CatBoost / TabM / ResNet among others  
-4. `pipeline_benchmarking/ensembles_selection` → Ridge stack CatBoost+TabM+ResNet  
-5. `final_train_test_inference/train` → retrain on all targets  
+1. `pipeline_benchmarking/feature_selection` → ElasticNet features separe for bulk (trimmed) and sc 
+2. `pipeline_benchmarking/sc_imputation_selection` → KNN k=5
+3. `pipeline_benchmarking/model_selection` → XGB / CatBoost / TabM / ResNet are winners
+4. `pipeline_benchmarking/ensembles_selection` → Ridge stack CatBoost+TabM+ResNet - winner  
+5. `final_train_test_inference/train` → retrain on all targets   
 6. `final_train_test_inference/inference` → scRNA inference (`data/inference_inputs` → `data/inference_outputs`)
 
 Each stage folder has its own README with **Inputs / Run / Outputs**.
@@ -57,7 +60,7 @@ Each stage folder has its own README with **Inputs / Run / Outputs**.
 
 ## Preprocessing note (scaler fit noise)
 
-For deep-learning and some candidate models we fit `StandardScaler` or `QuantileTransformer` on training features. Expression matrices are sparse and zero-inflated, so many features have duplicate or near-constant values. Before **fitting** the scaler we add a tiny Gaussian jitter \(\mathcal{N}(0, 10^{-5})\) with a fixed seed (`SEED`):
+For deep-learning and some candidate models we fit `StandardScaler` or `QuantileTransformer` on training features. Expression matrices are sparse and zero-inflated, so many features have duplicate or near-constant values. Before **fitting** the scaler we add a tiny Gaussian jitter 𝒩(0, 10⁻⁵) with a fixed seed (`SEED`):
 
 ```python
 noise = rng.normal(0.0, 1e-5, x_train.shape)

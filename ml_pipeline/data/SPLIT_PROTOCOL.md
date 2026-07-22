@@ -5,7 +5,7 @@ This document describes **all** train / validation folds used in `ml_pipeline`, 
 ## Overview (three levels)
 
 ```
-Level 0 — Raw TRAIN corpus (not in git; see data/raw/)
+Level 0 — Raw TRAIN corpus (see /prepare_train_data)
   bulk_TRAIN + sc_TRAIN
         │
         ▼  Stage00 split  [prepare_splits/prepare_stage00_splits.py]
@@ -20,8 +20,8 @@ Level 0 — Raw TRAIN corpus (not in git; see data/raw/)
         └─ val fold (parquet X_val) ──► outer_val  — benchmarking holdout
                                           (ensemble tuning on SC only; reporting on bulk+SC)
 
-Level 1 — Held-out test (separate repo / raw data; NEVER used in pipeline_benchmarking)
-  sc_TEST  — final generalization metrics (outside this repository)
+Level 1 — Held-out test (see /prepare_train_data; not used in pipeline_benchmarking)
+
 ```
 
 ## Terminology
@@ -51,7 +51,7 @@ Level 1 — Held-out test (separate repo / raw data; NEVER used in pipeline_benc
 
 Both X and Y are transformed with `log2(x+1)` before saving.
 
-After download from Kaggle, splits are ready under `data/splits/`; re-run the script only if you need to regenerate from `data/raw/`.
+After download from Kaggle, splits are ready to `data/prepare_splits/prepare_stage00_splits.py`
 
 ---
 
@@ -131,14 +131,3 @@ Final publication metrics on **sc_TEST** are computed outside this repository.
 5. Inner_val is created automatically; no extra download required.
 
 ---
-
-## FAQ for reviewers
-
-**Q: Did you tune ensembles on the final test set?**  
-No. Ensemble weights are tuned on **outer_val** single-cell folds (Stage00 val = holdout from TRAIN). The final **sc_TEST** set is not accessed during `pipeline_benchmarking/`.
-
-**Q: Why is there an inner_val if Stage00 already has a val fold?**  
-Stage00 outer_val is reserved for comparing models and ensembles. Inner_val is carved from the Stage00 **train** pool so base models can use early stopping without peeking at outer_val.
-
-**Q: Where is inner_val defined?**  
-Only in `shared/data.py` (`build_modality_bundle()`), at the start of model_selection and ensembles_selection runs.

@@ -1,3 +1,39 @@
+## Reproduce held-out TEST metrics
+
+Raw TEST matrices (gitignored) live under `test_evaluating/`:
+
+```
+test_evaluating/
+  bulk_TEST/   X_BULK_TEST.parquet  Y_BULK_TEST.parquet
+  sc_TEST/     X_TEST_K1.parquet  Y_TEST_K1.parquet
+               X_TEST_PB_K{2,3,4,5,10}.parquet (+ matching Y_*)
+  evaluate_bulk_test.py
+  evaluate_sc_test.py
+  run_bulk_test_eval.sh
+  run_sc_test_eval.sh
+```
+
+Also required:
+- `../models/ensemble/catboost_tabm_resnet_stack/weights/`
+- `../train/results/{catboost_optuna,tabm,resnet}/models/`
+- `../../data/splits/sc_k1/X_train.parquet` (KNN ref for K1)
+
+```bash
+export PYTHONPATH=/path/to/ml_pipeline
+export FINAL_DEVICE=cuda   # or cpu
+cd final_train_test_inference/test_metrics/test_evaluating
+
+# optional: smoke-test a few targets
+# export FINAL_TARGETS=hsa-let-7a-5p,hsa-mir-142-3p
+
+bash run_bulk_test_eval.sh   # → ../bulk_test_metrics.csv
+bash run_sc_test_eval.sh     # → ../K1_K10_test_metrics.csv
+```
+
+Committed summary tables (already computed): `bulk_test_metrics.csv`, `K1_K10_test_metrics.csv`.
+
+---
+
 ## Overview
 
 Model performance was evaluated across **327 target miRNAs**.  

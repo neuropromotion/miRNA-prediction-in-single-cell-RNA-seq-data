@@ -1,6 +1,6 @@
 # Pipeline benchmarking
 
-Four sequential experiment stages. All paths are relative to the `ml_pipeline` root (`GITHUB/` locally).
+Four sequential experiment stages. All paths are relative to the `ml_pipeline` root.
 
 Set before running:
 
