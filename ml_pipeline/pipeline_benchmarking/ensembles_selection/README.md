@@ -33,9 +33,11 @@ For the ensembling phase, we selected the 4 top-performing architectures from th
 We explored several blending and stacking techniques to build the combinations:
 1. **Ridge Stacking:** A meta-learner (Ridge regression) trained on base model predictions.
 2. **Weighted Blending:** Linear combinations of model predictions. 
-   $$
-   \text{Example (2 models): } \hat{y} = \alpha \cdot \mathrm{pred}_{\mathrm{model}_1} + (1-\alpha) \cdot \mathrm{pred}_{\mathrm{model}_2}
-   $$
+
+$$
+\text{Example (2 models): } \hat{y} = \alpha \cdot \mathrm{pred}_{\mathrm{model}_1} + (1-\alpha) \cdot \mathrm{pred}_{\mathrm{model}_2}
+$$
+
 3. **Model Soup:** Averaging weights or predictions across configurations using three distinct heuristics:
    * *Uniform Soup:* Simple unweighted average of the selected models.
    * *Greedy Soup:* Sequentially adding models only if they improve validation performance.
