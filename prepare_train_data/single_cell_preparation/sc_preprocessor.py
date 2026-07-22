@@ -94,8 +94,8 @@ class Pseudobulk_Sampler:
             out[:, anchor] = counts_gc[:, neighbor_indices[anchor]].sum(axis=1)
         return out
 
-    def boot_single_cell(self, df, target_barcodes, N):
-        """Return raw single-cell profiles with original barcodes (K=1)."""
+    def _select_barcodes(self, target_barcodes, N):
+        """Sample up to N barcodes once (shared by mRNA and miRNA for K=1)."""
         n_unique = len(target_barcodes)
         if N > n_unique:
             warnings.warn(
@@ -103,35 +103,55 @@ class Pseudobulk_Sampler:
                 f"Returning {n_unique}.",
                 stacklevel=2,
             )
-            selected_barcodes = list(target_barcodes)
-        elif N < n_unique:
-            selected_barcodes = self.rng.choice(
-                target_barcodes, size=N, replace=False
-            ).tolist()
-        else:
-            selected_barcodes = list(target_barcodes)
+            return list(target_barcodes)
+        if N < n_unique:
+            return self.rng.choice(target_barcodes, size=N, replace=False).tolist()
+        return list(target_barcodes)
 
-        return df[selected_barcodes]
+    def boot_single_cell(self, df, target_barcodes, N):
+        """Return raw single-cell profiles with original barcodes (K=1)."""
+        return df[self._select_barcodes(target_barcodes, N)]
 
-    def boot_knn(self, df, target_barcodes, K, N, tissue, n_hvg=2000, n_pca=30):
+    def boot_knn(
+        self,
+        df,
+        target_barcodes,
+        K,
+        N,
+        tissue,
+        n_hvg=2000,
+        n_pca=30,
+        neighbor_idx=None,
+        anchor_indices=None,
+        knn_counts_gc=None,
+    ):
         """
         KNN pseudobulk bootstrap within tissue.
 
-        For each of N bootstrap draws: pick a random anchor cell and sum counts
-        of its K nearest neighbors (same PCA+HVG KNN as preprocessor.py).
+        Neighborhoods are built on mRNA (or on ``knn_counts_gc`` / ``df`` if
+        ``neighbor_idx`` is not supplied). The same neighbor sets and anchors
+        must be reused for miRNA so both modalities aggregate the same cells.
         """
         data = df[target_barcodes].values
         n_cells = data.shape[1]
 
-        neighbor_idx = self._knn_neighbor_indices(data, K=K, n_hvg=n_hvg, n_pca=n_pca)
-        anchor_indices = self.rng.choice(n_cells, size=N, replace=False) # without replacement
+        if neighbor_idx is None:
+            knn_source = knn_counts_gc if knn_counts_gc is not None else data
+            if knn_source.shape[1] != n_cells:
+                raise ValueError("knn_counts_gc must have the same cells as df[target_barcodes].")
+            neighbor_idx = self._knn_neighbor_indices(
+                knn_source, K=K, n_hvg=n_hvg, n_pca=n_pca
+            )
+        if anchor_indices is None:
+            anchor_indices = self.rng.choice(n_cells, size=N, replace=False)
 
         boot_matrix = np.zeros((data.shape[0], N), dtype=np.float64)
         for i, anchor in enumerate(anchor_indices):
             boot_matrix[:, i] = data[:, neighbor_idx[anchor]].sum(axis=1)
 
-        cols = [f'boot_K{K}_{tissue}_{i}' for i in range(N)]
-        return pd.DataFrame(boot_matrix, index=df.index, columns=cols)
+        cols = [f"boot_K{K}_{tissue}_{i}" for i in range(N)]
+        boot_df = pd.DataFrame(boot_matrix, index=df.index, columns=cols)
+        return boot_df, neighbor_idx, anchor_indices
 
     def generate(self, tissue: str, K: int = 30, N: int = 50, subset_barcodes: list = None,
                  n_hvg: int = 2000, n_pca: int = 30):
@@ -150,18 +170,26 @@ class Pseudobulk_Sampler:
         n_cells = len(target_barcodes)
 
         if K == 1:
-            rna_boot = self.boot_single_cell(self.rna, target_barcodes, N)
-            mir_boot = self.boot_single_cell(self.mir, target_barcodes, N)
+            selected = self._select_barcodes(target_barcodes, N)
+            rna_boot = self.rna[selected]
+            mir_boot = self.mir[selected]
         else:
             if n_cells < K:
                 raise ValueError(
                     f"Need at least K={K} cells in tissue subset, got {n_cells}."
                 )
-            rna_boot = self.boot_knn(
+            # KNN graph from mRNA only; reuse the same neighbors/anchors for miRNA.
+            rna_boot, neighbor_idx, anchor_indices = self.boot_knn(
                 self.rna, target_barcodes, K, N, tissue, n_hvg=n_hvg, n_pca=n_pca
             )
-            mir_boot = self.boot_knn(
-                self.mir, target_barcodes, K, N, tissue, n_hvg=n_hvg, n_pca=n_pca
+            mir_boot, _, _ = self.boot_knn(
+                self.mir,
+                target_barcodes,
+                K,
+                N,
+                tissue,
+                neighbor_idx=neighbor_idx,
+                anchor_indices=anchor_indices,
             )
 
         if self.selected_rna:
