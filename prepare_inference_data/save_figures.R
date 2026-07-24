@@ -3,7 +3,8 @@ library(dplyr)
 library(ggplot2)
 library(patchwork) # Для удобной склейки графиков в один лейаут
 
-path <- '/mnt/jack-5/amismailov/miRNA_study/cancers' 
+path <- 'PATH_TO_RDS_FILES' 
+# RDS files are not presented in Git and Kaggle, but can be requested from author through email on main page
 types <- list.dirs(path, recursive = FALSE, full.names = FALSE)
 
 n_datasets <- c(
@@ -16,7 +17,7 @@ n_datasets <- c(
 )
 
 # Создаем общую папку для финальных отчетов, если её нет
-output_report_dir <- file.path("/mnt/jack-5/amismailov/miRNA_study/supplementary_plots")
+output_report_dir <- file.path("NOT_PRESENTED_IN_GIT")
 if(!dir.exists(output_report_dir)) dir.create(output_report_dir)
 
 
@@ -26,7 +27,7 @@ for (type in names(n_datasets)){
   
   for (sample_id in 1:n_datasets[[type]]){
     cat('Sample ', sample_id, '/', n_datasets[[type]], '\n')
-    main_path <- paste0('/mnt/jack-5/amismailov/miRNA_study/cancers/', type, '/')
+    main_path <- paste0(path, type, '/')
     
     # 1. Загрузка данных
     seu <- readRDS(file = paste0(main_path, 'rds/', sample_id, '.rds'))

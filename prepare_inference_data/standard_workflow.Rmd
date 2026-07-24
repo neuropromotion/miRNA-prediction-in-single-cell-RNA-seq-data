@@ -1,7 +1,8 @@
 # GSE...
 ```{r}
 sample_id = 3 # typically from 1 to 5
-main_path <- '/path_to/miRNA_study/breast/'
+main_path <- 'PATH_TO_RDS_FILES/breast/' 
+# RDS files are not presented in Git and Kaggle, but can be requested from author through email on main page
 type <- 'breast' # 'RCC', 'col', 'GC', 'HCC', 'ovarian'...
 ```
 

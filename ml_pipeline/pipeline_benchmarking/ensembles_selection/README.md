@@ -1,24 +1,4 @@
-
-## Inputs / Run / Outputs
-
-**Inputs**
-- trained base models from `../model_selection/results/`
-- `../../data/splits/` + frozen features/targets
-- `../../shared/dl_trainers.py`
-
-Split protocol: [`../../data/SPLIT_PROTOCOL.md`](../../data/SPLIT_PROTOCOL.md) — ensemble weights tuned on **outer_val** SC folds.
-
-**Run**
-```bash
-export PYTHONPATH=/path/to/ml_pipeline
-python run_ensembles.py
-```
-
-**Outputs**
-- `tables/summary_by_ensemble.csv`, `figures/`
-- Decision: **Ridge stack CatBoost + TabM + ResNet**
-
-## Ensembling Strategies
+## Ensembling strategies
 
 ### Selected Base Models
 For the ensembling phase, we selected the 4 top-performing architectures from the previous step (`model_selection`) that demonstrated the optimal trade-off between computational efficiency and predictive metrics:
@@ -49,13 +29,13 @@ $$\Big( \binom{4}{2} + \binom{4}{3} + \binom{4}{4} \Big) \times 5 = (6 + 4 + 1) 
 ---
 
 ### Results & Final Selection
-The ensembles successfully pushed the performance boundary beyond any individual model. When evaluated by **median $R^2$** on outer K1 cohort, the top-performing combinations were:
+The ensembles successfully pushed the performance boundary beyond any individual model. When evaluated by **median $R^2$** on outer_val K1 cohort, the top-performing combinations were:
 
-| Rank | Ensemble Architecture | Base Models Included | Median $R^2$ |
-| :---: | :--- | :--- | :---: |
-| **1** | **Ridge Stacking** | CatBoost + TabM + ResNet | **0.1729** |
-| **2** | **Ridge Stacking** | CatBoost + TabM | 0.1715 |
-| **3** | **Uniform Soup** | All 4 models (CatBoost + XGBoost + TabM + ResNet) | 0.1714 |
+| Rank | Ensemble Architecture | Base Models Included | Median $R^2$ | Mean $R^2$ |
+| :---: | :--- | :--- | :---: | :---: |
+| **1** | **Ridge Stacking** | CatBoost + TabM + ResNet | **0.1729** | **0.2492** |
+| **2** | **Ridge Stacking** | CatBoost + TabM | 0.1715 | 0.2489 | 
+| **3** | **Uniform Soup** | All 4 models (CatBoost + XGBoost + TabM + ResNet) | 0.1714 | 0.2487 |
 
 ![Single cell R2 Performance](figures/r2_by_target_k1_solo_vs_stack.png)
 ![Weights of stacking CatBoost + ResNet + TabM](figures/stack_abs_share_by_target.png)

@@ -1,25 +1,7 @@
+## Model Selection 
 
-## Inputs / Run / Outputs
-
-**Inputs**
-- `../../data/splits/`
-- `../../data/frozen/selected_features.json`  
-- `../../shared/` (DL trainers)
-
-**Run**
-```bash
-export PYTHONPATH=/path/to/ml_pipeline
-python run_model_screen.py
-```
-
-**Outputs**
-- `results/<model>/outer_val_metrics.csv` (created on run)
-- committed summary: `tables/`, `figures/`
-
-## Model Selection & Benchmarking
-
-### Overview of Candidates
-To identify the top-performing architectures for our predictive tasks, we evaluated 12 distinct models. An XGBoost model with default parameters was established as the baseline. The complete list of tested models includes:
+### Overview of candidates
+An XGBoost model with default parameters was established as the baseline. 
 
 1. **XGBoost** + Optuna
 2. **CatBoost** + Optuna
@@ -45,13 +27,13 @@ In the initial iteration, we benchmarked the training and inference speeds of th
 
 ### Phase 2: Evaluation Protocol
 All remaining models were systematically evaluated using the following validation pipeline:
-*   **Data Composition:** Models were trained and validated using a heterogeneous dataset combining **bulk RNA-seq**, **single-cell (K1)**, and **pseudobulk** data (K2, K3, K4, K5, K10).
-*   **Validation Split:** The core dataset was split into training and internal validation subsets to facilitate early stopping and optimal epoch selection. Model performance was tracked using this validation set.
-*   **Scaler fit noise:** For DL / neural candidates that use `StandardScaler` or `QuantileTransformer`, we add 𝒩(0, 10⁻⁵) noise (fixed seed) **only when fitting** the scaler, to avoid numerical issues from duplicate / zero-inflated feature values. This is not data augmentation; see the note in [`ml_pipeline/README.md`](../../README.md#preprocessing-note-scaler-fit-noise).
+*   **Data Composition:** Models were trained and validated using a mixed data combining **bulk RNA-seq**, **single-cell (K1)**, and **pseudobulk** data (K2, K3, K4, K5, K10) as usual.
+*   **Validation Split:** Train dataset was split into inner_train and inner_validation to train models and facilitate early stopping / optimal epoch selection, respectively. Model performance was tracked using this validation set (outer_val - used as temporary test cohort).
+*   **Scaler fit noise:** For DL / neural candidates that use `StandardScaler` or `QuantileTransformer`, we add N(0, 10e-5) noise (fixed seed) **only when fitting** the scaler, to avoid numerical issues from duplicate / zero-inflated feature values. 
 
 ---
 
-### Benchmarking Results & Next Steps
+### Benchmarking resutls
 Based on our evaluation metrics, TabM, CatBoost and XGB models clearly outperformed the rest of the cohort. FT-Transformer achieved a better median performance than ResNet but showed worse mean performance due to several outlier predictions. Considering its high computational cost and inferior mean performance, we decided to exclude FT-Transformer from further analysis. ResNet, GANDALF, and RealMLP showed comparable mean and median performance. For downstream analysis and ensemble benchmarking, we selected ResNet as the fourth model. The top models were ranked by their mean and median $R^2$ scores on outer K1 (main cohort for comparing):
 
 | Rank | Model | Mean $R^2$ | Model | Median $R^2$ |

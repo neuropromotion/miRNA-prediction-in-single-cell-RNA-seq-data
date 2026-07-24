@@ -5,7 +5,8 @@ library(circlize)
 library(viridis)
 library(grid)
 
-path <- '/mnt/jack-5/amismailov/miRNA_study/cancers' 
+path <- 'PATH_TO_RDS_FILES' 
+# RDS files are not presented in Git and Kaggle, but can be requested from author through email on main page
 
 n_datasets <- c(
   'RCC' = 5,

@@ -7,7 +7,7 @@ from pathlib import Path
 # Directory layout (this file lives in .../inference/constants.py):
 #   INFERENCE_DIR  -> final_train_test_inference/inference/
 #   FTTI_ROOT      -> final_train_test_inference/
-#   ML_PIPELINE    -> ml_pipeline root (GITHUB/ locally)
+#   ML_PIPELINE    -> ml_pipeline root
 INFERENCE_DIR = Path(__file__).resolve().parent
 FTTI_ROOT = INFERENCE_DIR.parent
 ML_PIPELINE = FTTI_ROOT.parent

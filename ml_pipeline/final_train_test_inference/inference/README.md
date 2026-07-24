@@ -2,23 +2,17 @@
 
 Model performance was evaluated on 327 target miRNAs. A total of 164 targets achieved the predefined performance threshold (R² > 0.4) and were selected for downstream inference.
 
-## Prerequisites (not in git)
+## Prerequisites (not in git, available through kaggle)
 
 See `../../data/README.md`:
 
 1. **Training splits** → `data/splits/` (includes KNN ref `sc_k1/X_train.parquet`)
 2. **Pretrained models** → `final_train_test_inference/models/`
-3. **scRNA matrices for batch inference** → `data/inference_inputs/`  
+3. **scRNA matrices for inference** → `data/inference_inputs/`  
    Outputs → `data/inference_outputs/`
 
-```bash
-export PYTHONPATH=/path/to/ml_pipeline
-python total_inference/total_inference.py \
-  --input-dir ../../data/inference_inputs \
-  --output-dir ../../data/inference_outputs
-```
 
-`SingleCell` lives in `preprocessor.py`:
+`SingleCell` - main class for inference, lives in `preprocessor.py`:
 
 ```python
 from preprocessor import SingleCell

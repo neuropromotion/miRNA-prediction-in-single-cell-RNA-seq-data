@@ -1,39 +1,3 @@
-## Reproduce held-out TEST metrics
-
-Raw TEST matrices (gitignored) live under `test_evaluating/`:
-
-```
-test_evaluating/
-  bulk_TEST/   X_BULK_TEST.parquet  Y_BULK_TEST.parquet
-  sc_TEST/     X_TEST_K1.parquet  Y_TEST_K1.parquet
-               X_TEST_PB_K{2,3,4,5,10}.parquet (+ matching Y_*)
-  evaluate_bulk_test.py
-  evaluate_sc_test.py
-  run_bulk_test_eval.sh
-  run_sc_test_eval.sh
-```
-
-Also required:
-- `../models/ensemble/catboost_tabm_resnet_stack/weights/`
-- `../train/results/{catboost_optuna,tabm,resnet}/models/`
-- `../../data/splits/sc_k1/X_train.parquet` (KNN ref for K1)
-
-```bash
-export PYTHONPATH=/path/to/ml_pipeline
-export FINAL_DEVICE=cuda   # or cpu
-cd final_train_test_inference/test_metrics/test_evaluating
-
-# optional: smoke-test a few targets
-# export FINAL_TARGETS=hsa-let-7a-5p,hsa-mir-142-3p
-
-bash run_bulk_test_eval.sh   # → ../bulk_test_metrics.csv
-bash run_sc_test_eval.sh     # → ../K1_K10_test_metrics.csv
-```
-
-Committed summary tables (already computed): `bulk_test_metrics.csv`, `K1_K10_test_metrics.csv`.
-
----
-
 ## Overview
 
 Model performance was evaluated across **327 target miRNAs**.  
@@ -45,15 +9,15 @@ In total, **164 miRNAs** passed this criterion and were defined as *eligible tar
 
 ## Optimal pseudobulk resolution selection
 
-Predictive performance generally improved with increasing pseudobulk aggregation level. However, for a subset of miRNAs, performance differences between single-cell resolution (K = 1) and higher pseudobulk levels were minimal.
+Predictive performance generally improved with increasing pseudobulk aggregation level which was expected gived abundance of bulk data in train set. However, for a subset of miRNAs, performance differences between single-cell resolution (K = 1) and higher pseudobulk levels were minimal.
 
-To balance **predictive accuracy** and **resolution granularity**, we implemented an adaptive selection strategy (see `vizualization_and_config.ipynb`):
+To fix it we implemented an adaptive selection strategy (see `vizualization_and_config.ipynb`):
 
 1. For each eligible miRNA, the maximum R² across all K values was identified  
 2. A tolerance threshold was defined as **−7.5% from the maximum R²**  
 3. The **smallest K** satisfying this criterion was selected as the optimal resolution  
 
-This ensures preference for higher resolution (lower K) when performance is comparable.
+This ensures preference for lower K when performance is comparable.
 
 ---
 

@@ -135,8 +135,6 @@ integrate_samles <- function(root, k, min_datasets, exclude_mirnas = to_remove){
   }
 }
 
-
-
 assambly_summary <- function(root, k, exclude_mirnas = to_remove){
   cancer_total_lookup <- n_datasets
   
@@ -249,16 +247,16 @@ assambly_summary <- function(root, k, exclude_mirnas = to_remove){
   writeData(wb_base, "Long Format Summary", pan_cancer_df)
   writeData(wb_base, "Only specific miRNAs", single_cluster_mirnas)
   
-  saveWorkbook(wb_base, file = paste0(root, k, '_', "pan_cancer_miRNA_markers.xlsx"), overwrite = TRUE)
-  write.xlsx(pivot_matrix, file = paste0(root, k, '_', "miRNA_cancer_cluster_matrix.xlsx"), overwrite = TRUE)
+  saveWorkbook(wb_base, file = paste0(root, "pan_cancer_miRNA_markers.xlsx"), overwrite = TRUE)
+  write.xlsx(pivot_matrix, file = paste0(root, "miRNA_cancer_cluster_matrix.xlsx"), overwrite = TRUE)
   
   cat('Все результаты успешно сохранены в папку:', root, '\n')
 }
 
 
-root <- '/mnt/jack-5/amismailov/DEGs_MIR/'
+root <- '/tables/'
 log_fc <- '1'
-min_datasets <- 3
+min_datasets <- 3 # threshold for miRNA to be considered as a marker
 
 integrate_samles(root, log_fc, min_datasets)
 assambly_summary(root, log_fc)

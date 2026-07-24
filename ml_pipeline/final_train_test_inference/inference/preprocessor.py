@@ -164,7 +164,7 @@ class SingleCell:
 
     @property
     def available_mirnas(self) -> list[str]:
-        """Eligible miRNAs with trained stack models (168 by default)."""
+        """Eligible miRNAs with trained stack models (164 by default)."""
         return list(self._available_mirnas)
 
     @property

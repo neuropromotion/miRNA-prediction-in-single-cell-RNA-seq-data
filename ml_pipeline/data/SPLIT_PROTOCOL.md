@@ -8,7 +8,7 @@ This document describes **all** train / validation folds used in `ml_pipeline`, 
 Level 0 — Raw TRAIN corpus (see /prepare_train_data)
   bulk_TRAIN + sc_TRAIN
         │
-        ▼  Stage00 split  [prepare_splits/prepare_stage00_splits.py]
+        ▼  Stage00 split  [prepare_splits/prepare_stage00_splits.py] 
         │  Writes data/splits/*/X_train|X_val.parquet
         │
         ├─ train fold  ──► training pool for benchmarking
@@ -17,11 +17,12 @@ Level 0 — Raw TRAIN corpus (see /prepare_train_data)
         │                      ├─ inner train  (85% of pool, stratified by modality)
         │                      └─ inner_val    (15% of pool) — early stopping, base-model metrics
         │
-        └─ val fold (parquet X_val) ──► outer_val  — benchmarking holdout
+        └─ val fold (parquet X_val) ──► outer_val (temporary test)  — benchmarking holdout
                                           (ensemble tuning on SC only; reporting on bulk+SC)
 
 Level 1 — Held-out test (see /prepare_train_data; not used in pipeline_benchmarking)
 
+# data stored in Kaggle is TRAIN and TEST parts. Code for splitting TRAIN into train/val stored in prepare_splits/prepare_stage00_splits.py!
 ```
 
 ## Terminology

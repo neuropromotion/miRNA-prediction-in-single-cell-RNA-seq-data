@@ -1,27 +1,7 @@
 
-## Inputs / Run / Outputs
-
-**Inputs**
-- `../../data/splits/{bulk,sc_k1,sc_pb}/*.parquet`
-- pilot list: `../../data/frozen/selected_targets.txt` 
-
-**Run** (from this folder, with `PYTHONPATH` = ml_pipeline root)
-```bash
-python run_feature_screen.py          # 50-miRNA pilot
-# full scale:
-cd final_run && python run_full.py
-cd bulk_trim && python run_full.py    # if present
-```
-
-**Outputs**
-- `tables/`, `figures/`
-- `final_run/results/selected_features.json` # final selected features for each target  
-
 ## Feature Selection 
 
-This repository contains a scalable pipeline designed to handle a severe feature-to-sample ratio of out train data: **17k+ features** against **300+ targets** (miRNAs). 
-
-To identify the most robust and computationally efficient feature selection strategy, we implemented a benchmarking framework using a representative subset of **50 randomly selected miRNAs** before scaling the optimal approach to the entire dataset.
+To identify the most robust and computationally efficient feature selection strategy, we implemented a benchmarking tactic using a representative subset of **50 randomly selected miRNAs** before scaling the optimal approach to the entire dataset.
 
 ### Pipeline Architecture
 
@@ -35,7 +15,7 @@ Every feature selection strategy in this pipeline follows a **two-step architect
    * **Non-linear Alternative 2:** Information-theoretic ranking via **Mutual Information (MI)** scores.
    * Pair-wise union of Linean and non-linear approaches
 
-For each method we selected top 800 features from bulk train data and top 800 features for train K1+K2 data (pure single cell + pseudobulk size 2 samples). Final set included 800 features (preferentially from K1+K2 part) - in order to test stability of method to select features in resticted conditions
+For each method we selected top 800 features from bulk train data and top 800 features for train K1+K2 data (pure single cell + pseudobulk size 2 in order to enrich set). Final set included 800 features (preferentially from K1+K2 part: because final purpose is adaptation of prediction in scRNA-seq data) - in order to test stability of method to select features in resticted conditions
 ---
 
 ### Benchmarking Strategy
@@ -44,7 +24,7 @@ To evaluate and compare the performance of each selection method, we train a dow
 
 ### Benchmarking Results
 
-The evaluation of the feature selection strategies revealed a tight competition between the linear methods, while non-linear approaches and their pairwise combinations significantly underperformed, particularly in terms of the performance-to-sparsity trade-off.
+The evaluation of the feature selection strategies revealed a tight competition between the linear methods, while non-linear approaches and their pairwise combinations significantly underperformed, particularly in terms of the performance-to-sparsity trade-off (linear methods selected less features and had higher performance on val).
 
 The final results, compiled in `table/summary.сsv`, demonstrate that **ElasticNet** and **Lasso** deliver highly comparable predictive accuracy, but with a noticeable difference in the size of the selected feature space.
 
@@ -52,10 +32,13 @@ The final results, compiled in `table/summary.сsv`, demonstrate that **ElasticN
 
 ElasticNet and Lasso were the strongest standalone selectors on the 50-miRNA pilot. Non-linear methods (XGB importance, MI) and their unions with linear selectors did not improve the performance-to-sparsity trade-off and often hurt single-cell validation.
 
-Bulk-only post-processing (ElasticNet + bulk trim)
-After the full ElasticNet run on all 327 miRNAs (stage01_full/), bulk and SC feature counts were highly imbalanced (mean ~543 bulk vs ~104 SC per target, overlap ~4). To reduce bulk-dominated noise in the final feature set without re-running selection, we added a bulk-only trimming step (stage01_bulk_trim/):
+Bulk-only post-processing (ElasticNet + bulk trimming)
 
-Split selected genes into SC pool (kept intact) and bulk-only set (bulk \ sc).
+Bulk and single-cell (SC) feature counts were highly imbalanced after feature selection (median of 96 SC features vs. 588 bulk features per target (n=50)), with only a small overlap between the two modalities. To reduce the dominance of bulk-derived features, we implemented a bulk-only trimming strategy.
+
+After the full ElasticNet feature selection across all 327 miRNAs, the imbalance remained substantial (mean of ~543 bulk features vs. ~104 SC features per target, with an average overlap of ~4 features). To reduce bulk-dominated noise in the final feature sets without repeating the computationally expensive feature selection procedure, we introduced an additional bulk-only trimming step (stage01_bulk_trim/).
+
+Split selected genes into sc (singlce-cell) pool (kept intact) and bulk-only set (bulk \ sc).
 Rank bulk-only genes by XGB shallow importance on bulk train.
 Per-target K from {50, 100, 150, 200}: pick the smallest K that keeps bulk val R² within 10% relative / 0.02 absolute of the full union, and does not decrease SC val R² vs baseline; otherwise increase K or fall back to the full bulk-only set.
 Skip targets with bulk_only < 50 or baseline bulk val R² < 0.4.

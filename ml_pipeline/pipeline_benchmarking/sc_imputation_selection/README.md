@@ -1,25 +1,7 @@
 
-## Inputs / Run / Outputs
-
-**Inputs**
-- `../../data/splits/`
-- `../../data/frozen/selected_features.json`
-- `../../data/frozen/selected_targets.txt`
-
-**Run**
-```bash
-export PYTHONPATH=/path/to/ml_pipeline
-python run_screen.py
-# or: bash run_docker.sh python run_screen.py
-```
-
-**Outputs**
-- `tables/summary_by_method.csv`, `figures/`
-- Decision used downstream: **KNN k=5**
-
 # Benchmarking Imputation Methods for Single-Cell Transcriptomics
 
-This repository contains the pipeline and evaluation scripts for benchmarking data imputation methods on transcriptomic datasets.
+This repository contains the pipeline and evaluation scripts for benchmarking data imputation methods on K1 part (pure single cell level).
 
 ## Method Comparison
 The benchmark evaluated the following methods:

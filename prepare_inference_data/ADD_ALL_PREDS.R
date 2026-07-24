@@ -1,7 +1,8 @@
 library(Seurat)
 library(dplyr)
 
-path <- '/mnt/jack-5/amismailov/miRNA_study/cancers' 
+path <- 'PATH_TO_RDS_FILES' 
+# RDS files are not presented in Git and Kaggle, but can be requested from author through email on main page
 types <- list.dirs(path, recursive=F, full.names = F)
 
 
@@ -31,33 +32,6 @@ n_datasets <- c(
   'cSCC' = 5
 )
 
-filter_metadata <- function(obj) {
-  
-  patterns <- c(
-    "^hsa-",
-    "^adjusted_",
-    "^bulk_",
-    "^XGB-",
-    "^nCount_miRNA-",
-    "^nFeature_miRNA-"
-  )
-  
-  cols_to_remove <- unique(unlist(
-    lapply(patterns, grep,
-           x = colnames(obj@meta.data),
-           value = TRUE)
-  ))
-  
-  obj@meta.data <- obj@meta.data[
-    , !colnames(obj@meta.data) %in% cols_to_remove,
-    drop = FALSE
-  ]
-  
-  message("Removed ", length(cols_to_remove), " metadata columns.")
-  
-  obj
-}
-
 FAM <- function(obj, logfc=0.5){
   res <- FindAllMarkers(obj,
                           logfc.threshold = logfc, 
@@ -71,9 +45,6 @@ FAM <- function(obj, logfc=0.5){
 }
 
 log_progress <- function(current_type, current_sample, types_list, n_datasets_vector) {
-  # 1. Определяем папку, где лежит сам скрипт
-  # Если скрипт запущен из терминала (Rscript) или RStudio, этот код найдет его директорию.
-  # Если определить не удастся, лог сохранится в текущую рабочую директорию (getwd()).
   script_dir <- "./"
   cmd_args <- commandArgs(trailingOnly = FALSE)
   file_arg <- grep("--file=", cmd_args, value = TRUE)
@@ -138,9 +109,8 @@ for (type in types_to_process){
     
     DefaultAssay(obj) <- 'RNA'
     obj@assays <- list(RNA = obj@assays$RNA)
-    obj <- filter_metadata(obj)
     
-    path_predicted <- paste0('/mnt/jack-5/amismailov/inference_output/', type, '_S', sample_id, '.csv')
+    path_predicted <- paste0('ml_pipeline/data/inference_outputs', type, '_S', sample_id, '.csv')
     
     preds <- read.csv(path_predicted, row.names = 1, check.names = FALSE)
     barcodes_val <- colnames(obj)
@@ -159,14 +129,14 @@ for (type in types_to_process){
     
     
     write.csv(res_1, 
-              file = paste0('/mnt/jack-5/amismailov/DEGs_MIR/1/', type, '_S', sample_id, '.csv'),
+              file = paste0('/tables/1/', type, '_S', sample_id, '.csv'),
               row.names = TRUE)
     
     write.csv(res_0_5, 
-              file = paste0('/mnt/jack-5/amismailov/DEGs_MIR/0_5/', type, '_S', sample_id, '.csv'),
+              file = paste0('/tables/0_5/', type, '_S', sample_id, '.csv'), # logfc=0.5 eventually excluded. We used logfc=1
               row.names = TRUE)
     
-    saveRDS(obj, file = paste0(path, '/', type, '/rds/', sample_id, '.rds'))
+    saveRDS(obj, file = paste0(path, '/', type, '/rds/', sample_id, '.rds')) # save predictions in RDS
     
     gc()
   }

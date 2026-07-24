@@ -32,35 +32,22 @@ ml_pipeline/
     └── inference/
 ```
 
-## Quick start
-
-```bash
-export PYTHONPATH=/path/to/ml_pipeline
-pip install -r requirements.txt
-
-# Download / copy (see data/README.md):
-#   1) data/splits/              — train/val matrices + KNN ref
-#   2) final_train_test_inference/models/  — pretrained weights
-#   3) data/inference_inputs/    — scRNA count matrices for batch inference
-# all stuff available on Kaggle (see main page)
-```
-
 ### Pipeline order
 
-1. `pipeline_benchmarking/feature_selection` → ElasticNet features separe for bulk (trimmed) and sc 
-2. `pipeline_benchmarking/sc_imputation_selection` → KNN k=5
-3. `pipeline_benchmarking/model_selection` → XGB / CatBoost / TabM / ResNet are winners
-4. `pipeline_benchmarking/ensembles_selection` → Ridge stack CatBoost+TabM+ResNet - winner  
-5. `final_train_test_inference/train` → retrain on all targets   
-6. `final_train_test_inference/inference` → scRNA inference (`data/inference_inputs` → `data/inference_outputs`)
+1. `pipeline_benchmarking/feature_selection` - feature selection strategy benchmarking
+2. `pipeline_benchmarking/sc_imputation_selection` - scRNA-seq (K1) data imputation strategy selection
+3. `pipeline_benchmarking/model_selection` - compition of 12 models and selection best 4 of them
+4. `pipeline_benchmarking/ensembles_selection` - ensemble approaches benchmarking (5 ensemble type across 4 models = 55 ensebmles)
+5. `final_train_test_inference/train` - final train of selected architecture 
+6. `final_train_test_inference/inference` → inference on 121 scRNA-seq data
 
 Each stage folder has its own README with **Inputs / Run / Outputs**.
 
-**Data splits:** read [`data/SPLIT_PROTOCOL.md`](data/SPLIT_PROTOCOL.md) before interpreting any `outer_val_*` metric.
+**Data splits:** read [`data/SPLIT_PROTOCOL.md`](data/SPLIT_PROTOCOL.md)
 
 ## Preprocessing note (scaler fit noise)
 
-For deep-learning and some candidate models we fit `StandardScaler` or `QuantileTransformer` on training features. Expression matrices are sparse and zero-inflated, so many features have duplicate or near-constant values. Before **fitting** the scaler we add a tiny Gaussian jitter 𝒩(0, 10⁻⁵) with a fixed seed (`SEED`):
+For deep-learning and some candidate models we fit `StandardScaler` or `QuantileTransformer` on training features. Expression matrices are sparse and zero-inflated, so many features have duplicate or near-constant values. Before **fitting** the scaler we add a tiny Gaussian jitter N(0, 10⁻⁵) with a fixed seed (`SEED`):
 
 ```python
 noise = rng.normal(0.0, 1e-5, x_train.shape)
