@@ -107,25 +107,29 @@ integrate_samles <- function(root, k, min_datasets, exclude_mirnas = to_remove){
     
     cat('Total datasets found:', length(current_files), '| Threshold set to >=', min_datasets, '\n')
     
-    # count for each miRNA how many times gene was statistically significant upregulated within cluster and chose >= min_datasets
-    consensus_df <- all_degs %>%
+    # Full counts (no min_datasets filter) — used for miRNA_cancer_cluster_matrix
+    full_counts <- all_degs %>%
       group_by(cluster, miRNA) %>%
       summarise(
         n_datasets = n_distinct(sample_id),
         .groups = "drop"
       ) %>%
+      left_join(cluster_presence, by = "cluster") %>%
+      arrange(cluster, desc(n_datasets))
+    
+    full_file <- file.path(summary_path, paste0(type, '_full.csv'))
+    write.csv(full_counts, file = full_file, row.names = FALSE)
+    cat('Saved full counts to:', full_file, '\n')
+    
+    # Consensus markers (>= min_datasets) — used for pan_cancer_miRNA_markers
+    consensus_df <- full_counts %>%
       filter(n_datasets >= min_datasets)
     
-    valid_clusters <- all_degs %>%
-      group_by(cluster) %>%
-      summarise(n_datasets = n_distinct(sample_id), .groups = "drop") %>%
-      filter(n_datasets >= min_datasets)
-    
-    consensus_df <- consensus_df %>%
-      semi_join(valid_clusters, by = "cluster")
+    valid_clusters <- cluster_presence %>%
+      filter(cluster_n_datasets >= min_datasets)
     
     final_robust_markers <- consensus_df %>%
-      left_join(cluster_presence, by = "cluster") %>%
+      semi_join(valid_clusters, by = "cluster") %>%
       arrange(cluster, desc(n_datasets))
     
     output_file <- file.path(summary_path, paste0(type, '_markers.csv'))
@@ -134,6 +138,8 @@ integrate_samles <- function(root, k, min_datasets, exclude_mirnas = to_remove){
     cat('Saved consensus markers to:', output_file, '\n')
   }
 }
+
+
 
 assambly_summary <- function(root, k, exclude_mirnas = to_remove){
   cancer_total_lookup <- n_datasets
@@ -227,17 +233,82 @@ assambly_summary <- function(root, k, exclude_mirnas = to_remove){
   
   cat('=== miRNA только в одном кластере:', nrow(single_cluster_mirnas), '===\n')
   
-  # 2. Создаем широкую сводную матрицу (Pivot Table)
-  pivot_matrix <- pan_cancer_df %>%
-    dplyr::select(miRNA, cluster, Cancer_Type, n_datasets) %>%
-    mutate(n_datasets = as.numeric(n_datasets)) %>%
-    group_by(miRNA, cluster, Cancer_Type) %>%
-    summarise(n_datasets = max(n_datasets), .groups = "drop") %>%
-    pivot_wider(
-      names_from = Cancer_Type,
-      values_from = n_datasets,
-      values_fill = 0
-    )
+  # 2. Full matrix (no min_datasets cutoff): DE counts + cluster presence per tissue
+  full_files <- list.files(path, pattern = "_full\\.csv$", full.names = TRUE)
+  if (length(full_files) == 0) {
+    stop("No *_full.csv files found in: ", path, " — rerun integrate_samles")
+  }
+  
+  full_list <- list()
+  for (f in full_files) {
+    type <- sub("_full\\.csv$", "", basename(f))
+    df <- read.csv(f, stringsAsFactors = FALSE) %>%
+      filter(!miRNA %in% exclude_mirnas) %>%
+      mutate(Cancer_Type = type)
+    if (nrow(df) > 0) {
+      full_list <- append(full_list, list(df))
+    }
+  }
+  full_df <- bind_rows(full_list)
+  
+  # Disambiguate display labels if several types share the same change_names value
+  type_keys <- sort(unique(full_df$Cancer_Type))
+  raw_labels <- vapply(type_keys, get_cancer_label, character(1))
+  label_counts <- table(raw_labels)
+  type_display <- setNames(
+    vapply(type_keys, function(t) {
+      lab <- get_cancer_label(t)
+      total_n <- unname(cancer_total_lookup[t])
+      if (is.na(total_n)) total_n <- NA_integer_
+      if (!is.na(label_counts[lab]) && label_counts[lab] > 1) {
+        lab <- paste0(lab, " [", t, "]")
+      }
+      sprintf("%s (n=%d)", lab, total_n)
+    }, character(1)),
+    type_keys
+  )
+  
+  cat('=== Building full matrix from', length(full_files), 'tissue types ===\n')
+  
+  # All miRNA x cluster pairs that appear anywhere
+  pairs <- full_df %>% dplyr::distinct(miRNA, cluster)
+  
+  # Cluster presence per tissue (independent of miRNA)
+  cluster_lookup <- full_df %>%
+    dplyr::distinct(Cancer_Type, cluster, cluster_n_datasets)
+  
+  # DE counts per miRNA x cluster x tissue
+  de_lookup <- full_df %>%
+    dplyr::select(miRNA, cluster, Cancer_Type, n_datasets)
+  
+  # Build wide matrix: for each tissue type → DE column + cluster column
+  pivot_matrix <- pairs
+  for (t in type_keys) {
+    base <- unname(type_display[t])
+    de_col <- paste0(base, " | DE")
+    cl_col <- paste0(base, " | cluster")
+    
+    de_t <- de_lookup %>%
+      filter(Cancer_Type == t) %>%
+      dplyr::select(miRNA, cluster, n_datasets)
+    
+    cl_t <- cluster_lookup %>%
+      filter(Cancer_Type == t) %>%
+      dplyr::select(cluster, cluster_n_datasets)
+    
+    pivot_matrix <- pivot_matrix %>%
+      left_join(de_t, by = c("miRNA", "cluster")) %>%
+      left_join(cl_t, by = "cluster") %>%
+      mutate(
+        !!de_col := tidyr::replace_na(n_datasets, 0L),
+        !!cl_col := tidyr::replace_na(cluster_n_datasets, 0L)
+      ) %>%
+      dplyr::select(-n_datasets, -cluster_n_datasets)
+  }
+  
+  pivot_matrix <- pivot_matrix %>%
+    arrange(miRNA, cluster)
+  
   wb_base <- createWorkbook()
   addWorksheet(wb_base, "Summary by datasets")
   addWorksheet(wb_base, "Long Format Summary")
@@ -252,7 +323,6 @@ assambly_summary <- function(root, k, exclude_mirnas = to_remove){
   
   cat('Все результаты успешно сохранены в папку:', root, '\n')
 }
-
 
 root <- '/tables/'
 log_fc <- '1'
