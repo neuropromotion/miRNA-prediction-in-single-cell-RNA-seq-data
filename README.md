@@ -14,7 +14,7 @@ Out of 327 miRNAs, 164 achieved acceptable predictive performance on the test se
 
 | Directory | Description |
 |----------|-------------|
-| `ml_pipeline` | **Main ML workspace:** feature selection | data imputation | architecture selection | inference | . |
+| `ml_pipeline` | **Main ML workspace:** feature selection \ data imputation \ architecture selection \ inference. |
 | `prepare_train_data` | End-to-end preprocessing pipeline for building the final training datasets from bulk and single-cell RNA-seq data. |
 | `scRNA_inference_data_processing` | R scripts for preprocessing scRNA-seq datasets, integrating predictions, visualization, and differential expression analysis. |
 
