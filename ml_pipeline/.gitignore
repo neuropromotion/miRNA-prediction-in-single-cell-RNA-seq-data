@@ -12,9 +12,7 @@ final_train_test_inference/test_metrics/test_evaluating/bulk_test_run/
 final_train_test_inference/test_metrics/test_evaluating/sc_test_run/
 
 # models
-final_train_test_inference/models/**/*.joblib
-final_train_test_inference/models/**/*.json
-final_train_test_inference/models/**/*.pt
+final_train_test_inference/models/*
 
 # inference
 data/inference_inputs/**/*.parquet

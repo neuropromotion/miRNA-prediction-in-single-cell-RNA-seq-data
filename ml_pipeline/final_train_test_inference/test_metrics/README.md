@@ -1,9 +1,9 @@
 ## Overview
 
 Model performance was evaluated across **327 target miRNAs**.  
-Only targets achieving a minimum predictive performance threshold (**R² > 0.4**) at any resolution (K = 1, 2–5, 10) or on bulk-level metrics were retained for downstream analysis.
+Only targets achieving a minimum predictive performance threshold (**R² > 0.4**) at any resolution (K = 1, 2–5, 10) or on bulk-level metrics were retained for downstream analysis. 15 from 327 miRNAs were exluded due to zero expression on GTEx train data. 
 
-In total, **164 miRNAs** passed this criterion and were defined as *eligible targets*.
+In total, **152 miRNAs** passed this criterion and were defined as *eligible targets*.
 
 ---
 
@@ -25,36 +25,36 @@ This ensures preference for lower K when performance is comparable.
 
 Final assignment of optimal pseudobulk resolution:
 
-- **K1 (single-cell level):** 11 targets  
-- **K2:** 21 targets  
-- **K3:** 18 targets  
-- **K4:** 20 targets  
-- **K5:** 22 targets  
-- **K10:** 76 targets  
+- **K1 (single-cell level):** 10 targets  
+- **K2:** 18 targets  
+- **K3:** 16 targets  
+- **K4:** 19 targets  
+- **K5:** 20 targets  
+- **K10:** 73 targets  
 
 ---
 
-## Model performance summary
+## Model performance summary across eligible miRNAs
 
-### Pseudobulk (optimal K selection)
+### scRNA-seq test metrics (optimal K selected)
 
-- Mean R²: **0.7820**  
-- Median R²: **0.8212**  
-- Max R²: **0.9688**  
-- Min R²: **0.4019**
+- Mean R²: **0.78**  
+- Median R²: **0.82**  
+- Max R²: **0.97**  
+- Min R²: **0.4**
 
-### Bulk-level performance
+### Bulk-level test metrics
 
-- Mean R²: **0.7663**  
-- Median R²: **0.7813**  
-- Max R²: **0.9754**  
-- Min R²: **0.4195**
+- Mean R²: **0.75**  
+- Median R²: **0.77**  
+- Max R²: **0.96**  
+- Min R²: **0.42**
 
 ---
 
-## Reproducibility
 
 The selection strategy is implemented in `vizualization_and_config.ipynb`.
+Building final target config: `build_target_config.ipynb`
 
 ![R2 Performance](figures/eligible_vs_rest_k1.png)
 ![R2 Performance](figures/r2_mean_median_by_k.png)

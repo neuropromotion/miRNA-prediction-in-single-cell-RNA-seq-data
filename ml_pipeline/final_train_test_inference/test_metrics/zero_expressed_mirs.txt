@@ -1,0 +1,15 @@
+hsa-let-7a-5p
+hsa-let-7c-5p
+hsa-let-7f-5p
+hsa-mir-103a-3p
+hsa-mir-106b-5p
+hsa-mir-139-5p
+hsa-mir-17-5p
+hsa-mir-181a-5p
+hsa-mir-182-5p
+hsa-mir-18a-5p
+hsa-mir-192-5p
+hsa-mir-34a-5p
+hsa-mir-423-3p
+hsa-mir-491-5p
+hsa-mir-675-3p

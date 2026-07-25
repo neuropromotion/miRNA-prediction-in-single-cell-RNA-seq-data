@@ -1,6 +1,6 @@
 ## Overview
 
-Model performance was evaluated on 327 target miRNAs. A total of 164 targets achieved the predefined performance threshold (R² > 0.4) and were selected for downstream inference.
+Model performance was evaluated on 327 target miRNAs. A total of 164 targets achieved the predefined performance threshold (R² > 0.4 both on scRNA and bulk test datasets). 12 miRNAs from 164 (15 from 327) had zero expression in GTEx bulk dataset and consequently were excluded from prediction. Finally 152 targets (miRNAs) were selected for downstream inference.
 
 ## Prerequisites (not in git, available through kaggle)
 
