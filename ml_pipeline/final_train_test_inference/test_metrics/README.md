@@ -30,7 +30,7 @@ Final assignment of optimal pseudobulk resolution:
 - **K3:** 16 targets  
 - **K4:** 19 targets  
 - **K5:** 20 targets  
-- **K10:** 73 targets  
+- **K10:** 69 targets  
 
 ---
 
@@ -56,6 +56,7 @@ Final assignment of optimal pseudobulk resolution:
 The selection strategy is implemented in `vizualization_and_config.ipynb`.
 Building final target config: `build_target_config.ipynb`
 
+![R2 Performance](figures/mean_median_by_K.png)
 ![R2 Performance](figures/eligible_vs_rest_k1.png)
 ![R2 Performance](figures/r2_mean_median_by_k.png)
 ![R2 Performance](figures/r2_lines_by_target.png)
