@@ -51,10 +51,9 @@ Final assignment of optimal pseudobulk resolution:
 - Min R²: **0.42**
 
 ---
-
-
 The selection strategy is implemented in `vizualization_and_config.ipynb`.
 Building final target config: `build_target_config.ipynb`
+---
 
 ![R2 Performance](figures/mean_median_by_K.png)
 ![R2 Performance](figures/eligible_vs_rest_k1.png)
