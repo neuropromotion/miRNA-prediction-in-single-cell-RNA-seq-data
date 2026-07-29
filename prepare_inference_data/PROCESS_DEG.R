@@ -2,6 +2,7 @@ library(dplyr)
 library(purrr)
 library(tidyr)
 library(openxlsx)
+library(jsonlite)
 
 n_datasets <- c(
   'RCC' = 5,
@@ -41,7 +42,7 @@ change_names <- c(
   'LUAD_metastasis' = 'LUAD [Metastatic]',
   'colorectal_met' = 'Colorectal cancer [Metastatic]',
   'LUAD' = 'Lung adenocarcinoma', 
-  'breast_met' = 'Breast cancer',
+  'breast_met' = 'Breast cancer [Metastatic]',
   'HCC' = 'Hepatocellular carcinoma',
   'thyroid' = 'Thyroid cancer',
   'met_cholangiocarcinoma' = 'Cholangiocarcinoma [Metastatic]',
@@ -55,14 +56,19 @@ change_names <- c(
   'cSCC' = 'cunateus SCC'
 )
 
-# miRNAs with r2 < 0.4 on bulk test metrics
-to_remove <- c('hsa-mir-29a-3p', 'hsa-mir-556-3p', 'hsa-mir-585-5p', 'hsa-mir-7-1-3p')
+# Keep only QC-eligible miRNAs from prediction_config.json
+prediction_config_path <- 'ml_pipeline/final_train_test_inference/test_metrics/prediction_config.json'
+eligible_mirs <- fromJSON(prediction_config_path)$eligible_mirs
+if (is.null(eligible_mirs) || length(eligible_mirs) == 0) {
+  stop("eligible_mirs is empty or missing in: ", prediction_config_path)
+}
+cat('Loaded', length(eligible_mirs), 'eligible miRNAs from prediction_config.json\n')
 
 get_cancer_label <- function(type) {
   if (type %in% names(change_names)) unname(change_names[[type]]) else type
 }
 
-integrate_samles <- function(root, k, min_datasets, exclude_mirnas = to_remove){
+integrate_samles <- function(root, k, min_datasets, keep_mirnas = eligible_mirs){
   path <- paste0(root, k)
   summary_path <- paste0(path, '_summary')
   dir.create(summary_path, showWarnings = FALSE, recursive = TRUE)
@@ -99,7 +105,7 @@ integrate_samles <- function(root, k, min_datasets, exclude_mirnas = to_remove){
         dplyr::select(cluster, miRNA, sample_id) %>%
         distinct()
     }) %>% bind_rows() %>%
-      filter(!miRNA %in% exclude_mirnas)
+      filter(miRNA %in% keep_mirnas)
     
     cluster_presence <- all_degs %>%
       group_by(cluster) %>%
@@ -141,7 +147,7 @@ integrate_samles <- function(root, k, min_datasets, exclude_mirnas = to_remove){
 
 
 
-assambly_summary <- function(root, k, exclude_mirnas = to_remove){
+assambly_summary <- function(root, k, min_datasets = 3, keep_mirnas = eligible_mirs){
   cancer_total_lookup <- n_datasets
   
   path <- paste0(root, k, '_summary')
@@ -168,7 +174,7 @@ assambly_summary <- function(root, k, exclude_mirnas = to_remove){
   
   
   pan_cancer_df <- bind_rows(pan_cancer_list) %>%
-    filter(!miRNA %in% exclude_mirnas)
+    filter(miRNA %in% keep_mirnas)
   if (nrow(pan_cancer_df) == 0) {
     stop("All consensus files are empty in: ", path)
   }
@@ -182,6 +188,32 @@ assambly_summary <- function(root, k, exclude_mirnas = to_remove){
   
   all_cancer_types <- sort(sub("_markers\\.csv$", "", basename(files)))
   
+  # Full counts (needed for Cluster_Cancer_Count and the wide matrix)
+  full_files <- list.files(path, pattern = "_full\\.csv$", full.names = TRUE)
+  if (length(full_files) == 0) {
+    stop("No *_full.csv files found in: ", path, " — rerun integrate_samles")
+  }
+  
+  full_list <- list()
+  for (f in full_files) {
+    type <- sub("_full\\.csv$", "", basename(f))
+    df <- read.csv(f, stringsAsFactors = FALSE) %>%
+      filter(miRNA %in% keep_mirnas) %>%
+      mutate(Cancer_Type = type)
+    if (nrow(df) > 0) {
+      full_list <- append(full_list, list(df))
+    }
+  }
+  full_df <- bind_rows(full_list)
+  
+  # Cluster present in a cancer type only if seen in >= min_datasets datasets
+  cluster_cancer_n <- full_df %>%
+    dplyr::distinct(Cancer_Type, cluster, cluster_n_datasets) %>%
+    filter(cluster_n_datasets >= min_datasets) %>%
+    group_by(cluster) %>%
+    summarise(Cluster_Cancer_Count = n_distinct(Cancer_Type), .groups = "drop")
+  
+  cat('=== Cluster presence threshold: >=', min_datasets, 'datasets per cancer type ===\n') 
   pan_cancer_df <- pan_cancer_df %>% 
     mutate(
       Total_Datasets = unname(cancer_total_lookup[Cancer_Type]),
@@ -196,11 +228,11 @@ assambly_summary <- function(root, k, exclude_mirnas = to_remove){
     arrange(miRNA, cluster, desc(n_datasets))
   
   cat('\n=== Всего найдено уникальных комбинаций:', nrow(pan_cancer_df), '===\n')
-  cat('=== Исключено miRNA из to_remove:', length(exclude_mirnas), '===\n')
+  cat('=== Kept eligible miRNAs:', length(keep_mirnas), '===\n')
   
   all_cancer_labels <- vapply(all_cancer_types, get_cancer_label, character(1))
   
-  # 1. Создаем глобальную метрику: в скольки ВИДАХ РАКА эта miRNA является маркером для данного кластера?
+  # 1. Pan-cancer summary: signal breadth vs cluster presence across tissue types
   pan_cancer_summary <- pan_cancer_df %>%
     group_by(miRNA, cluster) %>%
     summarise(
@@ -208,7 +240,9 @@ assambly_summary <- function(root, k, exclude_mirnas = to_remove){
       Cancers_With_Signal = paste(sort(unique(Cancer_Type)), collapse = "; "),
       .groups = "drop"
     ) %>%
+    left_join(cluster_cancer_n, by = "cluster") %>%
     mutate(
+      Score = Cancer_Count / Cluster_Cancer_Count,
       Cancers_Without_Signal = vapply(
         Cancers_With_Signal,
         function(x) {
@@ -219,12 +253,12 @@ assambly_summary <- function(root, k, exclude_mirnas = to_remove){
       )
     ) %>%
     dplyr::select(
-      miRNA, cluster, Cancer_Count,
+      miRNA, cluster, Cancer_Count, Cluster_Cancer_Count, Score,
       Cancers_With_Signal, Cancers_Without_Signal
     ) %>%
     arrange(desc(Cancer_Count), miRNA, cluster)
   
-  # miRNA, встречающиеся только в одном кластере (но возможно во многих видах рака)
+  # miRNA linked to exactly one cluster (may still span many cancer types)
   single_cluster_mirnas <- pan_cancer_summary %>%
     group_by(miRNA) %>%
     filter(n_distinct(cluster) == 1) %>%
@@ -234,23 +268,6 @@ assambly_summary <- function(root, k, exclude_mirnas = to_remove){
   cat('=== miRNA только в одном кластере:', nrow(single_cluster_mirnas), '===\n')
   
   # 2. Full matrix (no min_datasets cutoff): DE counts + cluster presence per tissue
-  full_files <- list.files(path, pattern = "_full\\.csv$", full.names = TRUE)
-  if (length(full_files) == 0) {
-    stop("No *_full.csv files found in: ", path, " — rerun integrate_samles")
-  }
-  
-  full_list <- list()
-  for (f in full_files) {
-    type <- sub("_full\\.csv$", "", basename(f))
-    df <- read.csv(f, stringsAsFactors = FALSE) %>%
-      filter(!miRNA %in% exclude_mirnas) %>%
-      mutate(Cancer_Type = type)
-    if (nrow(df) > 0) {
-      full_list <- append(full_list, list(df))
-    }
-  }
-  full_df <- bind_rows(full_list)
-  
   # Disambiguate display labels if several types share the same change_names value
   type_keys <- sort(unique(full_df$Cancer_Type))
   raw_labels <- vapply(type_keys, get_cancer_label, character(1))
@@ -324,9 +341,9 @@ assambly_summary <- function(root, k, exclude_mirnas = to_remove){
   cat('Все результаты успешно сохранены в папку:', root, '\n')
 }
 
-root <- '/tables/'
+root <- 'tables/'
 log_fc <- '1'
 min_datasets <- 3 # threshold for miRNA to be considered as a marker
 
 integrate_samles(root, log_fc, min_datasets)
-assambly_summary(root, log_fc)
+assambly_summary(root, log_fc, min_datasets)

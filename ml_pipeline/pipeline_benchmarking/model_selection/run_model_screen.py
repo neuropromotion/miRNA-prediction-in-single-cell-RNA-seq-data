@@ -10,9 +10,12 @@ import time
 import traceback
 from pathlib import Path
 
-_STAGE03 = Path(__file__).resolve().parents[1]
-if str(_STAGE03) not in sys.path:
-    sys.path.insert(0, str(_STAGE03))
+# Symlink-safe: this file may live under model_screen_final_11/ via symlink.
+_STAGE03 = Path(__file__).resolve().parent  # model_selection/
+_ML_PIPELINE = _STAGE03.parents[1]  # ml_pipeline/
+for _p in (_STAGE03, _ML_PIPELINE):
+    if str(_p) not in sys.path:
+        sys.path.insert(0, str(_p))
 
 import numpy as np
 import pandas as pd
