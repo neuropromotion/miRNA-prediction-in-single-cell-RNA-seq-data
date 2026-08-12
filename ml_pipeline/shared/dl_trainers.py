@@ -33,6 +33,17 @@ def _fit_standard_scaler(x_train: np.ndarray) -> sklearn.preprocessing.StandardS
     return sklearn.preprocessing.StandardScaler().fit(x_train + noise)
 
 
+def _fit_noisy_quantile(x_train: np.ndarray) -> sklearn.preprocessing.QuantileTransformer:
+    """TabM / TabPack-style numerical preprocessing (noisy quantile → N(0,1))."""
+    noise = np.random.default_rng(SEED).normal(0.0, 1e-5, x_train.shape).astype(np.float32)
+    n_quantiles = max(min(len(x_train) // 30, 1000), 10)
+    return sklearn.preprocessing.QuantileTransformer(
+        n_quantiles=n_quantiles,
+        output_distribution="normal",
+        subsample=10**9,
+    ).fit(x_train + noise)
+
+
 def _ft_infer_batch_size(n_features: int, default: int = 2048) -> int:
     # attention memory ~ O(batch * n_features^2); keep peak under ~4GB activations
     return max(8, min(default, 12000 // max(n_features, 1)))
@@ -44,7 +55,7 @@ def _train_torch_regressor(
     y_train: np.ndarray,
     x_val: np.ndarray,
     y_val: np.ndarray,
-    preprocessing: sklearn.preprocessing.StandardScaler,
+    preprocessing: Any,
     device: str,
     arch: str,
     batch_size: int = 512,
@@ -52,7 +63,12 @@ def _train_torch_regressor(
     max_epochs: int = 200,
     lr: float = 2e-3,
     weight_decay: float = 3e-4,
+    optimizer_kind: str = "adamw",
+    muon_lr: float | None = None,
+    ema_decay: float = 0.99,
 ) -> tuple[dict[str, Any], dict[str, float]]:
+    from optim_recipes import build_optimizer, ema_state_dict, make_ema
+
     dev = _resolve_device(device)
     torch.manual_seed(SEED)
     np.random.seed(SEED)
@@ -70,13 +86,17 @@ def _train_torch_regressor(
     label_stats = LabelStats(mean=float(y_train.mean()), std=float(max(y_train.std(), 1e-6)))
     y_train_z = label_stats.transform(y_train)
 
-    def forward(xb: Tensor) -> Tensor:
+    def forward(mod: nn.Module, xb: Tensor) -> Tensor:
         if arch == "FTTransformer":
-            return model(xb, None).squeeze(-1).float()
-        return model(xb).squeeze(-1).float()
+            return mod(xb, None).squeeze(-1).float()
+        return mod(xb).squeeze(-1).float()
 
     model = model.to(dev)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
+    optimizer = build_optimizer(
+        model, kind=optimizer_kind, lr=lr, weight_decay=weight_decay, muon_lr=muon_lr
+    )
+    use_ema = optimizer_kind.lower().strip() == "adamw_ema"
+    ema_model = make_ema(model, decay=ema_decay) if use_ema else None
     loss_fn = nn.MSELoss()
 
     if use_ft_fast:
@@ -102,42 +122,55 @@ def _train_torch_regressor(
             if use_ft_fast:
                 xb = x_train_t_tensor[idx]
                 yb = y_train_t_tensor[idx]
-                with torch.cuda.amp.autocast():
-                    pred = forward(xb)
+                with torch.amp.autocast("cuda"):
+                    pred = forward(model, xb)
                     loss = loss_fn(pred, yb)
-                scaler.scale(loss).backward()
-                scaler.unscale_(optimizer)
-                torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-                scaler.step(optimizer)
-                scaler.update()
+                # GradScaler + DualOptimizer is awkward; fall back to non-AMP for muon/ema.
+                if use_ema or optimizer_kind.lower().startswith("muon"):
+                    loss.backward()
+                    torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+                    optimizer.step()
+                else:
+                    scaler.scale(loss).backward()
+                    scaler.unscale_(optimizer)
+                    torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+                    scaler.step(optimizer)
+                    scaler.update()
             else:
                 xb = x_train_cpu[idx].to(dev, non_blocking=True)
                 yb = y_train_cpu[idx].to(dev, non_blocking=True)
-                pred = forward(xb)
+                pred = forward(model, xb)
                 loss = loss_fn(pred, yb)
                 loss.backward()
                 torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
                 optimizer.step()
+            if ema_model is not None:
+                ema_model.update_parameters(model)
             del xb, yb, pred, loss
 
-        model.eval()
+        eval_mod = ema_model.module if ema_model is not None else model
+        eval_mod.eval()
         pred_val_parts: list[np.ndarray] = []
         with torch.inference_mode():
             val_bs = min(batch_size, 256) if arch == "FTTransformer" else batch_size
             for start in range(0, len(x_val_t), val_bs):
                 xb = torch.as_tensor(x_val_t[start : start + val_bs], device=dev)
                 if use_ft_fast:
-                    with torch.cuda.amp.autocast():
-                        pred_val_parts.append(forward(xb).float().cpu().numpy())
+                    with torch.amp.autocast("cuda"):
+                        pred_val_parts.append(forward(eval_mod, xb).float().cpu().numpy())
                 else:
-                    pred_val_parts.append(forward(xb).cpu().numpy())
+                    pred_val_parts.append(forward(eval_mod, xb).cpu().numpy())
         pred_val = label_stats.inverse(np.concatenate(pred_val_parts))
         rmse = val_rmse(y_val, pred_val)
 
         if rmse < best_rmse - 1e-6:
             best_rmse = rmse
             best_epoch = epoch
-            best_state = deepcopy(model.state_dict())
+            best_state = (
+                ema_state_dict(ema_model)
+                if ema_model is not None
+                else deepcopy(model.state_dict())
+            )
             remaining_patience = patience
         else:
             remaining_patience -= 1
@@ -156,7 +189,13 @@ def _train_torch_regressor(
         "device": str(dev),
         "arch": arch if arch != "FTTransformer" else "FTTransformer",
     }
-    info = {"best_epoch": best_epoch, "val_rmse": best_rmse, "epochs_ran": epoch + 1}
+    info = {
+        "best_epoch": best_epoch,
+        "val_rmse": best_rmse,
+        "epochs_ran": epoch + 1,
+        "optimizer_kind": optimizer_kind,
+        "ema": use_ema,
+    }
     return artifacts, info
 
 
@@ -166,7 +205,7 @@ def _predict_torch_regressor(
     batch_size: int = 2048,
 ) -> np.ndarray:
     dev = torch.device(artifacts["device"])
-    preprocessing: sklearn.preprocessing.StandardScaler = artifacts["preprocessing"]
+    preprocessing = artifacts["preprocessing"]
     label_stats = LabelStats(**artifacts["label_stats"])
     x = np.asarray(x, dtype=np.float32)
     x_t = preprocessing.transform(x).astype(np.float32)
@@ -193,6 +232,9 @@ def _predict_torch_regressor(
 
         model = RealMLP(d_in=n_features, d_out=1, **hparams)
     elif arch == "DCNv2":
+        _shared = Path(__file__).resolve().parent
+        if str(_shared) not in sys.path:
+            sys.path.insert(0, str(_shared))
         from dcnv2_model import DCNv2
 
         model = DCNv2(d_in=n_features, d_out=1, **hparams)
@@ -210,7 +252,7 @@ def _predict_torch_regressor(
             batch = torch.as_tensor(x_t[start : start + batch_size], device=dev)
             if arch == "FTTransformer":
                 if use_amp:
-                    with torch.cuda.amp.autocast():
+                    with torch.amp.autocast("cuda"):
                         pred = model(batch, None).squeeze(-1).float()
                 else:
                     pred = model(batch, None).squeeze(-1).float()
@@ -234,6 +276,8 @@ def save_torch_artifacts(model_dir: Path, artifacts: dict[str, Any]) -> None:
         "best_epoch": artifacts["best_epoch"],
         "val_rmse": artifacts["val_rmse"],
     }
+    if artifacts.get("num_policy"):
+        meta["num_policy"] = artifacts["num_policy"]
     with (model_dir / "meta.json").open("w", encoding="utf-8") as f:
         json.dump(meta, f, indent=2)
 
@@ -346,10 +390,30 @@ def train_realmlp(*args, **kwargs):
     return info
 
 
-def train_dcnv2(*args, **kwargs):
+def train_dcnv2(
+    x_train,
+    y_train,
+    x_val,
+    y_val,
+    model_dir,
+    device,
+    batch_size,
+    *,
+    lr: float = 2e-3,
+    weight_decay: float = 3e-4,
+    patience: int = 20,
+    max_epochs: int = 200,
+    model_hparams: dict[str, Any] | None = None,
+    optimizer_kind: str = "adamw",
+    muon_lr: float | None = None,
+    save: bool = True,
+):
+    # Ensure sibling module is importable when shared/ is on sys.path.
+    _shared = Path(__file__).resolve().parent
+    if str(_shared) not in sys.path:
+        sys.path.insert(0, str(_shared))
     from dcnv2_model import DCNv2
 
-    x_train, y_train, x_val, y_val, model_dir, device, batch_size = args[:7]
     n_features = x_train.shape[1]
     low_rank = min(32, max(8, n_features // 4))
     hparams = {
@@ -359,28 +423,88 @@ def train_dcnv2(*args, **kwargs):
         "n_deep_layers": 3,
         "dropout": 0.1,
     }
+    if model_hparams:
+        hparams.update(model_hparams)
     model = DCNv2(d_in=n_features, d_out=1, **hparams)
-    preprocessing = _fit_standard_scaler(x_train)
+    # Unified with TabM / TabPack: noisy quantile → N(0,1) (not StandardScaler).
+    preprocessing = _fit_noisy_quantile(x_train)
     artifacts, info = _train_torch_regressor(
-        model, x_train, y_train, x_val, y_val, preprocessing,
-        device=device, arch="DCNv2", batch_size=batch_size,
+        model,
+        x_train,
+        y_train,
+        x_val,
+        y_val,
+        preprocessing,
+        device=device,
+        arch="DCNv2",
+        batch_size=batch_size,
+        patience=patience,
+        max_epochs=max_epochs,
+        lr=lr,
+        weight_decay=weight_decay,
+        optimizer_kind=optimizer_kind,
+        muon_lr=muon_lr,
     )
     artifacts["model_hparams"] = hparams
-    save_torch_artifacts(model_dir, artifacts)
-    return info
+    artifacts["num_policy"] = "noisy-quantile"
+    info["model_hparams"] = hparams
+    info["lr"] = lr
+    info["weight_decay"] = weight_decay
+    info["num_policy"] = "noisy-quantile"
+    if save:
+        save_torch_artifacts(model_dir, artifacts)
+        return info
+    return info, artifacts
 
 
-def train_tabm(*args, **kwargs):
+def train_tabm(
+    x_train,
+    y_train,
+    x_val,
+    y_val,
+    model_dir,
+    device,
+    batch_size,
+    *,
+    lr: float = 2e-3,
+    weight_decay: float = 3e-4,
+    patience: int = 20,
+    max_epochs: int = 200,
+    arch_type: str = "tabm-mini",
+    n_blocks: int | None = None,
+    d_block: int | None = None,
+    dropout: float | None = None,
+    k: int | None = None,
+    optimizer_kind: str = "adamw",
+    muon_lr: float | None = None,
+    save: bool = True,
+):
     sys.path.insert(0, str(TABM_DIR))
     from tabm_wrapper import train_tabm_regressor
 
-    x_train, y_train, x_val, y_val, model_dir, device, batch_size = args[:7]
     bundle, info = train_tabm_regressor(
-        x_train, y_train, x_val, y_val, device=device, batch_size=batch_size,
+        x_train,
+        y_train,
+        x_val,
+        y_val,
+        device=device,
+        batch_size=batch_size,
+        patience=patience,
+        max_epochs=max_epochs,
+        lr=lr,
+        weight_decay=weight_decay,
+        arch_type=arch_type,
+        n_blocks=n_blocks,
+        d_block=d_block,
+        dropout=dropout,
+        k=k,
+        optimizer_kind=optimizer_kind,
+        muon_lr=muon_lr,
     )
-    bundle.save(model_dir)
-    return info
-
+    if save:
+        bundle.save(model_dir)
+        return info
+    return info, bundle
 
 def predict_tabm(model_dir: Path, x: np.ndarray, device: str) -> np.ndarray:
     sys.path.insert(0, str(TABM_DIR))

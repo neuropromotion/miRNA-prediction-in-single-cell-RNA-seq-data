@@ -49,6 +49,9 @@ class TabMBundle:
     n_num_features: int
     arch_type: str = "tabm-mini"
     use_embeddings: bool = False
+    n_blocks: int | None = None
+    d_block: int | None = None
+    dropout: float | None = None
 
     def predict(self, x: np.ndarray, batch_size: int = 8192) -> np.ndarray:
         x = np.asarray(x, dtype=np.float32)
@@ -74,6 +77,9 @@ class TabMBundle:
             "device": str(self.device),
             "arch_type": getattr(self, "arch_type", "tabm-mini"),
             "use_embeddings": getattr(self, "use_embeddings", False),
+            "n_blocks": self.n_blocks,
+            "d_block": self.d_block,
+            "dropout": self.dropout,
         }
         with (model_dir / "meta.json").open("w", encoding="utf-8") as f:
             json.dump(meta, f, indent=2)
@@ -89,10 +95,14 @@ class TabMBundle:
         n_num_features = int(meta["n_num_features"])
         arch_type = meta.get("arch_type", "tabm-mini")
         use_embeddings = bool(meta.get("use_embeddings", False))
+        k = int(meta["k"])
+        n_blocks = meta.get("n_blocks")
+        d_block = meta.get("d_block")
+        dropout = meta.get("dropout")
 
         state = torch.load(model_dir / "tabm.pt", map_location=dev)
         if "use_embeddings" not in meta:
-            use_embeddings = any(k.startswith("num_module") for k in state)
+            use_embeddings = any(key.startswith("num_module") for key in state)
             if use_embeddings:
                 arch_type = "tabm"
 
@@ -102,13 +112,22 @@ class TabMBundle:
 
             num_embeddings = rtdl_num_embeddings.LinearReLUEmbeddings(n_num_features)
 
-        model = tabm.TabM.make(
-            n_num_features=n_num_features,
-            cat_cardinalities=[],
-            d_out=1,
-            num_embeddings=num_embeddings,
-            arch_type=arch_type,
-        )
+        model_kwargs: dict[str, Any] = {
+            "n_num_features": n_num_features,
+            "cat_cardinalities": [],
+            "d_out": 1,
+            "num_embeddings": num_embeddings,
+            "arch_type": arch_type,
+            "k": k,
+        }
+        if n_blocks is not None:
+            model_kwargs["n_blocks"] = int(n_blocks)
+        if d_block is not None:
+            model_kwargs["d_block"] = int(d_block)
+        if dropout is not None:
+            model_kwargs["dropout"] = float(dropout)
+
+        model = tabm.TabM.make(**model_kwargs)
         model.load_state_dict(state)
         model.to(dev)
         model.eval()
@@ -119,10 +138,13 @@ class TabMBundle:
             preprocessing=preprocessing,
             label_stats=LabelStats.from_dict(meta["label_stats"]),
             device=dev,
-            k=int(meta["k"]),
+            k=k,
             n_num_features=n_num_features,
             arch_type=arch_type,
             use_embeddings=use_embeddings,
+            n_blocks=int(n_blocks) if n_blocks is not None else None,
+            d_block=int(d_block) if d_block is not None else None,
+            dropout=float(dropout) if dropout is not None else None,
         )
 
 
@@ -159,7 +181,17 @@ def train_tabm_regressor(
     lr: float = 2e-3,
     weight_decay: float = 3e-4,
     gradient_clipping_norm: float = 1.0,
+    arch_type: str = "tabm-mini",
+    n_blocks: int | None = None,
+    d_block: int | None = None,
+    dropout: float | None = None,
+    k: int | None = None,
+    optimizer_kind: str = "adamw",
+    muon_lr: float | None = None,
+    ema_decay: float = 0.99,
 ) -> tuple[TabMBundle, dict[str, Any]]:
+    from optim_recipes import build_optimizer, ema_state_dict, make_ema
+
     torch.manual_seed(SEED)
     np.random.seed(SEED)
 
@@ -177,14 +209,28 @@ def train_tabm_regressor(
     y_train_z = label_stats.transform(y_train)
 
     n_num_features = x_train.shape[1]
-    model = tabm.TabM.make(
-        n_num_features=n_num_features,
-        cat_cardinalities=[],
-        d_out=1,
-        arch_type="tabm-mini",
-    ).to(dev)
+    model_kwargs: dict[str, Any] = {
+        "n_num_features": n_num_features,
+        "cat_cardinalities": [],
+        "d_out": 1,
+        "arch_type": arch_type,
+    }
+    if n_blocks is not None:
+        model_kwargs["n_blocks"] = int(n_blocks)
+    if d_block is not None:
+        model_kwargs["d_block"] = int(d_block)
+    if dropout is not None:
+        model_kwargs["dropout"] = float(dropout)
+    if k is not None:
+        model_kwargs["k"] = int(k)
+    model = tabm.TabM.make(**model_kwargs).to(dev)
 
-    optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
+    optimizer = build_optimizer(
+        model, kind=optimizer_kind, lr=lr, weight_decay=weight_decay, muon_lr=muon_lr
+    )
+    use_ema = optimizer_kind.lower().strip() == "adamw_ema"
+    ema_model = make_ema(model, decay=ema_decay) if use_ema else None
+
     train_size = len(x_train_t)
     k = int(model.backbone.k)
 
@@ -210,21 +256,29 @@ def train_tabm_regressor(
             if gradient_clipping_norm is not None:
                 torch.nn.utils.clip_grad_norm_(model.parameters(), gradient_clipping_norm)
             optimizer.step()
+            if ema_model is not None:
+                ema_model.update_parameters(model)
             del xb, yb, pred, loss
 
+        eval_model = ema_model.module if ema_model is not None else model
         bundle = TabMBundle(
-            model=model,
+            model=eval_model,
             preprocessing=preprocessing,
             label_stats=label_stats,
             device=dev,
             k=k,
             n_num_features=n_num_features,
+            arch_type=arch_type,
         )
         val_rmse = _val_rmse(bundle, x_val, y_val)
         if val_rmse < best_rmse - 1e-6:
             best_rmse = val_rmse
             best_epoch = epoch
-            best_state = deepcopy(model.state_dict())
+            best_state = (
+                ema_state_dict(ema_model)
+                if ema_model is not None
+                else deepcopy(model.state_dict())
+            )
             remaining_patience = patience
         else:
             remaining_patience -= 1
@@ -241,15 +295,27 @@ def train_tabm_regressor(
         device=dev,
         k=k,
         n_num_features=n_num_features,
-        arch_type="tabm-mini",
+        arch_type=arch_type,
         use_embeddings=False,
+        n_blocks=int(n_blocks) if n_blocks is not None else None,
+        d_block=int(d_block) if d_block is not None else None,
+        dropout=float(dropout) if dropout is not None else None,
     )
     info = {
         "best_epoch": best_epoch,
         "val_rmse": best_rmse,
         "device": str(dev),
         "k": k,
+        "arch_type": arch_type,
+        "n_blocks": n_blocks,
+        "d_block": d_block,
+        "dropout": dropout,
         "epochs_ran": epoch + 1,
+        "lr": lr,
+        "weight_decay": weight_decay,
+        "optimizer_kind": optimizer_kind,
+        "muon_lr": muon_lr,
+        "ema": use_ema,
     }
     return final_bundle, info
 

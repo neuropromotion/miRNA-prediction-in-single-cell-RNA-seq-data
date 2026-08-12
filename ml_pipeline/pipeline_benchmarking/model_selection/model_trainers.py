@@ -45,11 +45,34 @@ from dl_trainers import (  # noqa: E402
     train_tabm,
     train_tabnet,
 )
+from shared.tabr_trainer import (  # noqa: E402
+    load_tabr,
+    predict_tabr,
+    save_tabr,
+    train_tabr,
+)
+from shared.tabpack_trainer import load_tabpack_screen, train_tabpack_screen  # noqa: E402
+from shared.io_splits import PB_COHORTS  # noqa: E402
 
 DEVICE = os.environ.get("STAGE03_DEVICE", "cuda")
 BATCH_SIZE = int(os.environ.get("STAGE03_BATCH", "512"))
 TABNET_EPOCHS = int(os.environ.get("STAGE03_TABNET_EPOCHS", "100"))
 TABNET_PATIENCE = int(os.environ.get("STAGE03_TABNET_PATIENCE", "20"))
+
+
+def _xgb_base_params() -> dict:
+    """XGB defaults; set XGB_DEVICE=cuda (or STAGE03_DEVICE=cuda with XGB_DEVICE unset→cpu for trees).
+
+    Explicit: XGB_DEVICE=cuda|cpu. Default remains CPU hist unless XGB_DEVICE=cuda.
+    """
+    params = dict(XGB_DEFAULT)
+    xgb_device = os.environ.get("XGB_DEVICE", "cpu").strip().lower()
+    if xgb_device in {"cuda", "gpu"}:
+        # XGBoost>=2.0: device=cuda + tree_method=hist
+        params["device"] = "cuda"
+        params["tree_method"] = "hist"
+        params["n_jobs"] = 1
+    return params
 
 
 def _arrays(
@@ -73,7 +96,7 @@ def _predict_xgb(model: xgb.XGBRegressor, x: np.ndarray) -> np.ndarray:
 
 def train_xgb_default(arr: dict, model_dir: Path) -> xgb.XGBRegressor:
     model = xgb.XGBRegressor(
-        **XGB_DEFAULT,
+        **_xgb_base_params(),
         early_stopping_rounds=EARLY_STOPPING_ROUNDS,
     )
     model.fit(
@@ -104,11 +127,12 @@ def _suggest_xgb(trial: optuna.Trial) -> dict:
 
 def train_xgb_optuna(arr: dict, model_dir: Path) -> xgb.XGBRegressor:
     optuna.logging.set_verbosity(optuna.logging.WARNING)
+    base = _xgb_base_params()
 
     def objective(trial: optuna.Trial) -> float:
         params = _suggest_xgb(trial)
         model = xgb.XGBRegressor(
-            **XGB_DEFAULT,
+            **base,
             early_stopping_rounds=EARLY_STOPPING_ROUNDS,
             **params,
         )
@@ -132,7 +156,7 @@ def train_xgb_optuna(arr: dict, model_dir: Path) -> xgb.XGBRegressor:
     best["max_depth"] = int(best["max_depth"])
 
     model = xgb.XGBRegressor(
-        **XGB_DEFAULT,
+        **base,
         early_stopping_rounds=EARLY_STOPPING_ROUNDS,
         **best,
     )
@@ -199,6 +223,61 @@ def train_tabnet_model(arr: dict, model_dir: Path) -> Path:
     return model_dir
 
 
+def _outer_parts(bundle: ModalityBundle, target: str, genes: list[str]) -> list[tuple[str, np.ndarray, np.ndarray]]:
+    parts: list[tuple[str, np.ndarray, np.ndarray]] = [
+        (
+            "bulk",
+            select_features(bundle.x_outer_val_bulk, genes).to_numpy(dtype=np.float32),
+            bundle.y_outer_val_bulk[target].to_numpy(dtype=np.float64),
+        ),
+        (
+            "k1",
+            select_features(bundle.x_outer_val_k1, genes).to_numpy(dtype=np.float32),
+            bundle.y_outer_val_k1[target].to_numpy(dtype=np.float64),
+        ),
+    ]
+    for cohort in PB_COHORTS:
+        parts.append(
+            (
+                f"pb_{cohort}",
+                select_features(bundle.x_outer_val_pb[cohort], genes).to_numpy(dtype=np.float32),
+                bundle.y_outer_val_pb[cohort][target].to_numpy(dtype=np.float64),
+            )
+        )
+    return parts
+
+
+def train_tabr_model(arr: dict, model_dir: Path):
+    model, _info = train_tabr(
+        arr["x_train"],
+        arr["y_train"],
+        arr["x_val"],
+        arr["y_val"],
+        model_dir=model_dir,
+        device=DEVICE,
+        variant="tabr",
+    )
+    try:
+        save_tabr(model, model_dir)
+    except Exception:
+        # Metrics can still be computed from in-memory model; dump is best-effort.
+        pass
+    return model
+
+
+def train_tabpack_model(bundle: ModalityBundle, target: str, genes: list[str], model_dir: Path) -> dict:
+    arr = _arrays(bundle, target, genes)
+    return train_tabpack_screen(
+        arr["x_train"],
+        arr["y_train"],
+        arr["x_val"],
+        arr["y_val"],
+        _outer_parts(bundle, target, genes),
+        model_dir=model_dir,
+        target=target,
+    )
+
+
 def predict_model(model_name: str, artifact, x: np.ndarray) -> np.ndarray:
     if model_name.startswith("xgb"):
         return _predict_xgb(artifact, x)
@@ -212,7 +291,20 @@ def predict_model(model_name: str, artifact, x: np.ndarray) -> np.ndarray:
         return clip_nonneg(predict_tabm(artifact, x, DEVICE))
     if model_name == "tabnet":
         return clip_nonneg(predict_tabnet(artifact, x))
+    if model_name == "tabr":
+        return clip_nonneg(predict_tabr(artifact, x))
+    if model_name == "tabpack":
+        raise TypeError("tabpack uses cached outer preds; call eval_tabpack_row()")
     return clip_nonneg(predict_torch_model(artifact, x))
+
+
+def eval_tabpack_row(artifact: dict, y_val: np.ndarray) -> dict:
+    """Build metrics row pieces from TabPack cached predictions."""
+    row = {"inner_val_r2": r2(y_val, artifact["val_pred"]), "status": "ok"}
+    for name, pred in artifact["outer_preds"].items():
+        # y is not stored in artifact; caller fills outer_val_* via true labels
+        row[f"_pred_{name}"] = pred
+    return row
 
 
 def load_artifact(model_name: str, model_dir: Path):
@@ -226,6 +318,10 @@ def load_artifact(model_name: str, model_dir: Path):
         return load_lassonet(model_dir)
     if model_name == "gandalf":
         return load_gandalf(model_dir)
+    if model_name == "tabr":
+        return load_tabr(model_dir)
+    if model_name == "tabpack":
+        return load_tabpack_screen(model_dir)
     return model_dir
 
 
@@ -254,4 +350,8 @@ def train_one(
         return train_tabm_model(arr, model_dir)
     if model_name == "tabnet":
         return train_tabnet_model(arr, model_dir)
+    if model_name == "tabr":
+        return train_tabr_model(arr, model_dir)
+    if model_name == "tabpack":
+        return train_tabpack_model(bundle, target, genes, model_dir)
     raise ValueError(f"Unknown model {model_name!r}")

@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
-"""Stage03: unified 11-model screen on 50 miRNA (full protocol)."""
+"""Stage03: unified model screen on 50 miRNA (full protocol)."""
 
 from __future__ import annotations
 
 import json
+import logging
 import os
 import sys
 import time
 import traceback
+import warnings
 from pathlib import Path
 
 # Symlink-safe: this file may live under model_screen_final_11/ via symlink.
@@ -16,6 +18,17 @@ _ML_PIPELINE = _STAGE03.parents[1]  # ml_pipeline/
 for _p in (_STAGE03, _ML_PIPELINE):
     if str(_p) not in sys.path:
         sys.path.insert(0, str(_p))
+
+# Quiet noisy third-party logs (imputation empty-slice, Lightning, Optuna).
+warnings.filterwarnings("ignore", message="Mean of empty slice")
+warnings.filterwarnings("ignore", category=FutureWarning)
+for _name in (
+    "pytorch_lightning",
+    "lightning",
+    "lightning_fabric",
+    "torch.distributed",
+):
+    logging.getLogger(_name).setLevel(logging.ERROR)
 
 import numpy as np
 import pandas as pd
@@ -29,9 +42,10 @@ from model_screen_final_11.constants import (
     SCREEN_MODELS,
     SEED,
     STAGE,
+    K_COHORT_METRIC_COLS,
     OUTER_VAL_METRIC_COLS,
 )
-from model_screen_final_11.metrics import r2
+from model_screen_final_11.metrics import avg_k_cohort_scores, r2
 from model_screen_final_11.model_trainers import load_artifact, predict_model, train_one
 from model_screen_final_11.screen_journal import log
 from shared.data import build_modality_bundle, select_features
@@ -98,9 +112,25 @@ def eval_target(
 ) -> dict:
     x_val = select_features(bundle.x_val_inner, genes).to_numpy(dtype=np.float32)
     y_val = bundle.y_val_inner[target].to_numpy(dtype=np.float64)
+
+    # TabPack: predictions are cached from the official trainer (no live re-infer).
+    if model_name == "tabpack":
+        row: dict = {
+            "target": target,
+            "model": model_name,
+            "model_label": MODEL_LABELS[model_name],
+            "n_features": len(genes),
+            "inner_val_r2": r2(y_val, artifact["val_pred"]),
+            "status": "ok",
+        }
+        for name, _x_te, y_te in outer_val_sets(bundle, target, genes):
+            pred = artifact["outer_preds"][name]
+            row[f"outer_val_{name}_r2"] = r2(y_te, pred)
+        return row
+
     pred_val = predict_model(model_name, artifact, x_val)
 
-    row: dict = {
+    row = {
         "target": target,
         "model": model_name,
         "model_label": MODEL_LABELS[model_name],
@@ -119,14 +149,21 @@ def metrics_path(model_name: str) -> Path:
 
 
 def done_targets(model_name: str) -> set[str]:
-    path = metrics_path(model_name)
-    if not path.exists():
-        return set()
-    df = pd.read_csv(path)
-    if "target" not in df.columns:
-        return set()
-    ok = df[df.get("status", "ok") == "ok"] if "status" in df.columns else df
-    return set(ok["target"].astype(str))
+    """Targets already ok in this shard file and/or the merged main CSV (for resume)."""
+    done: set[str] = set()
+    paths = [metrics_path(model_name)]
+    main = RESULTS / model_name / "outer_val_metrics.csv"
+    if main not in paths:
+        paths.append(main)
+    for path in paths:
+        if not path.exists():
+            continue
+        df = pd.read_csv(path)
+        if "target" not in df.columns:
+            continue
+        ok = df[df.get("status", "ok") == "ok"] if "status" in df.columns else df
+        done |= set(ok["target"].astype(str))
+    return done
 
 
 def append_metric(model_name: str, row: dict) -> None:
@@ -156,6 +193,7 @@ def summarize_model(model_name: str) -> dict:
         if col in ok.columns:
             summary[f"mean_{col}"] = float(ok[col].mean()) if len(ok) else None
             summary[f"median_{col}"] = float(ok[col].median()) if len(ok) else None
+    summary.update(avg_k_cohort_scores(summary, K_COHORT_METRIC_COLS))
     return summary
 
 
@@ -181,7 +219,9 @@ def run_model(model_name: str, targets: list[str], features: dict[str, list[str]
             t1 = time.time()
             artifact = train_one(model_name, bundle, target, genes, model_dir)
             train_sec = round(time.time() - t1, 2)
-            artifact = load_artifact(model_name, model_dir)
+            # tabr/tabpack: keep in-memory artifact (disk save is best-effort for tabr).
+            if model_name not in ("tabr", "tabpack"):
+                artifact = load_artifact(model_name, model_dir)
             row = eval_target(model_name, artifact, bundle, target, genes)
             row["train_sec"] = train_sec
             append_metric(model_name, row)
@@ -254,6 +294,7 @@ def write_config(targets: list[str], models: list[str]) -> None:
         "features": str(FEATURES),
         "targets_file": str(PILOT_TARGETS),
         "n_targets": len(targets),
+        "metrics_suffix": METRICS_SUFFIX,
         "protocol": {
             "train": "stage00 train: bulk + K1_imp + PB all cohorts",
             "inner_split": "85/15 stratified by modality (bulk/k1/pb)",
@@ -263,7 +304,16 @@ def write_config(targets: list[str], models: list[str]) -> None:
             "sample_weights": "inverse modality frequency",
         },
     }
-    (STAGE03 / "config.json").write_text(json.dumps(cfg, indent=2), encoding="utf-8")
+    # Shard-specific name avoids multi-process races and root-owned config.json clashes.
+    name = f"config{METRICS_SUFFIX or ''}.json"
+    path = STAGE03 / name
+    try:
+        path.write_text(json.dumps(cfg, indent=2), encoding="utf-8")
+    except PermissionError:
+        alt = RESULTS / name
+        alt.parent.mkdir(parents=True, exist_ok=True)
+        alt.write_text(json.dumps(cfg, indent=2), encoding="utf-8")
+        log(f"config write to {path} denied; wrote {alt}")
 
 
 def main() -> None:

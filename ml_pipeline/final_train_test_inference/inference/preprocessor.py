@@ -9,13 +9,23 @@ import numpy as np
 import pandas as pd
 
 try:
-    from constants import K1_REF_PATH, CONFIG_PATH, resolve_gene_mapping_path
+    from constants import (
+        K1_REF_PATH,
+        CONFIG_PATH,
+        resolve_gene_mapping_path,
+        parse_prediction_config,
+    )
     from stack_predictor import StackPredictor
 except ImportError:
     _inf = Path(__file__).resolve().parent
     if str(_inf) not in sys.path:
         sys.path.insert(0, str(_inf))
-    from constants import K1_REF_PATH, CONFIG_PATH, resolve_gene_mapping_path
+    from constants import (
+        K1_REF_PATH,
+        CONFIG_PATH,
+        resolve_gene_mapping_path,
+        parse_prediction_config,
+    )
     from stack_predictor import StackPredictor
 
 ALLOWED_PSEUDOBULK_K = frozenset({2, 3, 4, 5, 10})
@@ -58,10 +68,13 @@ def _knn_impute_zeros_cpu(X_df, zero_mask, neighbor_indices, donor_df):
         if len(missing_idx) == 0:
             continue
         neigh_vals = donor[neighbor_indices[missing_idx], j]
+        # Zeros → NaN so they don't enter the mean; all-NaN rows stay 0
+        # (avoid np.nanmean → RuntimeWarning: Mean of empty slice).
         neigh_vals = np.where(neigh_vals == 0, np.nan, neigh_vals)
-        with np.errstate(all="ignore"):
-            imputed = np.nanmean(neigh_vals, axis=1)
-        imputed = np.where(np.isnan(imputed), 0.0, imputed)
+        counts = np.sum(np.isfinite(neigh_vals), axis=1)
+        sums = np.nansum(neigh_vals, axis=1)
+        imputed = np.zeros(len(missing_idx), dtype=np.float32)
+        np.divide(sums, counts, out=imputed, where=counts > 0)
         X[missing_idx, j] = imputed
     return pd.DataFrame(X, index=X_df.index, columns=X_df.columns)
 
@@ -109,8 +122,8 @@ class SingleCell:
     """
     Raw single-cell / pseudobulk preprocessing + final_train stack inference.
 
-    Pipeline: counts → TPM/log2 → (KNN impute for K1) → CatBoost+TabM+ResNet stack.
-  """
+    Pipeline: counts → TPM/log2 → (KNN impute for K1) → TabPack+DCNv2+TabM stack.
+    """
 
     def __init__(
         self,
@@ -118,7 +131,7 @@ class SingleCell:
         path_mrna="mRNA_names.json",
         config_path=None,
         device="cuda",
-        catboost_task="CPU",
+        catboost_task="CPU",  # unused; kept for API compatibility
         preload_models=False,
         log=True,
     ):
@@ -153,8 +166,10 @@ class SingleCell:
             )
 
         config = json.loads(self._config_path.read_text(encoding="utf-8"))
-        self._cohorts: dict[str, list[str]] = config["cohorts"]
-        self._available_mirnas: list[str] = list(config["eligible_mirs"])
+        eligible, cohorts, target_info = parse_prediction_config(config)
+        self._cohorts: dict[str, list[str]] = cohorts
+        self._available_mirnas: list[str] = eligible
+        self._target_info: dict[str, dict] = target_info
 
         self._knn_ref = None
         self._knn_ref_path = None
@@ -171,6 +186,11 @@ class SingleCell:
         """miRNA lists per inference cohort (K1 … K10)."""
         return {k: list(v) for k, v in self._cohorts.items()}
 
+    @property
+    def target_info(self) -> dict[str, dict]:
+        """Per-miRNA metadata (assigned_cohort, genes/features, metrics)."""
+        return {k: dict(v) for k, v in self._target_info.items()}
+
     def mirnas_for_cohort(self, cohort: str) -> list[str]:
         if cohort not in self._cohorts:
             raise KeyError(f"Unknown cohort {cohort!r}. Expected one of {list(self._cohorts)}.")
@@ -186,10 +206,10 @@ class SingleCell:
         return self._predictor
 
     def load_models(self) -> StackPredictor:
-        """Load (or return cached) CatBoost+TabM+ResNet stack predictor."""
+        """Load (or return cached) TabPack+DCNv2+TabM stack predictor."""
         if self._predictor is not None:
             return self._predictor
-        print("Loading final_train stack models...")
+        print("Loading final_train stack models (tabpack + dcnv2 + tabm)...")
         self._predictor = StackPredictor(
             config_path=self._config_path,
             device=self._device,
@@ -392,7 +412,7 @@ class SingleCell:
         if not path.is_file():
             raise FileNotFoundError(f"KNN reference not found: {path}")
 
-        print(f"Loading KNN reference from {path}...")
+        print(f"Loading KNN reference...")
         if path.suffix == ".parquet":
             ref = pd.read_parquet(path)
         else:
@@ -401,7 +421,7 @@ class SingleCell:
         ref = _auto_orient_cells_by_genes(ref)
         ref = ref.reindex(columns=self.standard_mrna, fill_value=0.0)
         ref = ref.apply(pd.to_numeric, errors="coerce").fillna(0.0)
-        print(f"✔ KNN reference ready: {ref.shape[0]} cells × {ref.shape[1]} genes")
+        print(f"KNN reference ready!")
 
         self._knn_ref = ref
         self._knn_ref_path = path
@@ -521,7 +541,7 @@ class SingleCell:
         """
         Full inference for all eligible miRNAs from raw counts.
 
-        Routing (from target_config.json):
+        Routing (from prediction_config.json):
         - **K1** cohort → single-cell + KNN impute
         - **K2, K3, K4, K5, K10** cohorts → KNN pseudobulk (within CellType)
 

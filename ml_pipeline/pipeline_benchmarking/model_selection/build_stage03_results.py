@@ -93,6 +93,12 @@ def _save_summary_table(summary: pd.DataFrame) -> None:
         "model_label",
         "n_targets_ok",
         "n_targets_fail",
+        "n_best_outer_val_k1",
+        "n_best_unique_outer_val_k1",
+        "n_best_outer_val_bulk",
+        "n_best_unique_outer_val_bulk",
+        "avg_of_medians_K",
+        "avg_of_means_K",
         "mean_inner_val_r2",
         "median_inner_val_r2",
         "mean_outer_val_bulk_r2",
@@ -110,6 +116,56 @@ def _save_summary_table(summary: pd.DataFrame) -> None:
         [c for c in summary.columns if c.startswith("mean_") or c.startswith("median_")]
     ]
     mean_med.to_csv(OUT / "mean_median_r2_by_model.csv")
+
+
+def _compute_best_counts(
+    df: pd.DataFrame,
+    model_order: list[str],
+    metric: str,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Per-target argmax wins for `metric`.
+
+    Ties: every model at the max counts toward n_best_*; only sole winners
+    toward n_best_unique_*.
+    """
+    short = metric.removesuffix("_r2")
+    pivot = df.pivot(index="target", columns="model", values=metric).reindex(columns=model_order)
+    n_best = {m: 0 for m in model_order}
+    n_unique = {m: 0 for m in model_order}
+    rows: list[dict] = []
+
+    for target, row in pivot.iterrows():
+        vals = row.dropna()
+        if vals.empty:
+            continue
+        best_val = float(vals.max())
+        winners = vals[np.isclose(vals.astype(float), best_val, rtol=0.0, atol=1e-12)].index.tolist()
+        if not winners:
+            winners = vals[vals == best_val].index.tolist()
+        for m in winners:
+            n_best[m] += 1
+        sole = winners[0] if len(winners) == 1 else ""
+        if sole:
+            n_unique[sole] += 1
+        rows.append(
+            {
+                "target": target,
+                "metric": metric,
+                "best_value": best_val,
+                "n_tied": len(winners),
+                "best_models": ",".join(winners),
+                "best_model_sole": sole,
+            }
+        )
+
+    stats = pd.DataFrame(
+        {
+            "model": model_order,
+            f"n_best_{short}": [n_best[m] for m in model_order],
+            f"n_best_unique_{short}": [n_unique[m] for m in model_order],
+        }
+    )
+    return stats, pd.DataFrame(rows)
 
 
 def _compute_k1_threshold_stats(df: pd.DataFrame, model_order: list[str]) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -392,9 +448,29 @@ def main() -> None:
     df.to_csv(OUT / "outer_val_metrics_all_ok.csv", index=False)
 
     k1_stats, exclusive_df = _compute_k1_threshold_stats(df, model_order)
-    summary = summary.drop(columns=["n_targets_k1_gt_0_4", "n_exclusive_k1_gt_0_4"], errors="ignore")
+    best_k1_stats, best_k1_detail = _compute_best_counts(df, model_order, "outer_val_k1_r2")
+    best_bulk_stats, best_bulk_detail = _compute_best_counts(df, model_order, "outer_val_bulk_r2")
+
+    drop_cols = [
+        "n_targets_k1_gt_0_4",
+        "n_exclusive_k1_gt_0_4",
+        "n_best_outer_val_k1",
+        "n_best_unique_outer_val_k1",
+        "n_best_outer_val_bulk",
+        "n_best_unique_outer_val_bulk",
+    ]
+    summary = summary.drop(columns=drop_cols, errors="ignore")
     summary = summary.merge(k1_stats, on="model", how="left")
+    summary = summary.merge(best_k1_stats, on="model", how="left")
+    summary = summary.merge(best_bulk_stats, on="model", how="left")
     _save_summary_table(summary)
+
+    best_k1_out = best_k1_detail.copy()
+    best_k1_out["best_model_labels"] = best_k1_out["best_models"].apply(
+        lambda s: ",".join(model_labels.get(m, m) for m in s.split(",") if m)
+    )
+    best_k1_out.to_csv(OUT / "best_model_per_target_k1.csv", index=False)
+    best_bulk_detail.to_csv(OUT / "best_model_per_target_bulk.csv", index=False)
 
     if not exclusive_df.empty:
         exclusive_out = exclusive_df.copy()
@@ -440,10 +516,22 @@ def main() -> None:
     _plot_k1_density(df, model_order, model_labels)
     _plot_k1_violin(df, model_order, model_labels)
 
-    threshold_df = summary[["model", "model_label", "n_targets_k1_gt_0_4", "n_exclusive_k1_gt_0_4"]].copy()
+    threshold_df = summary[
+        [
+            "model",
+            "model_label",
+            "n_best_outer_val_k1",
+            "n_best_unique_outer_val_k1",
+            "n_targets_k1_gt_0_4",
+            "n_exclusive_k1_gt_0_4",
+        ]
+    ].copy()
     if "n_targets_ok" in summary.columns:
         threshold_df["pct_targets_k1_gt_0_4"] = (
             100.0 * threshold_df["n_targets_k1_gt_0_4"] / summary.set_index("model").loc[threshold_df["model"], "n_targets_ok"].values
+        ).round(1)
+        threshold_df["pct_best_outer_val_k1"] = (
+            100.0 * threshold_df["n_best_outer_val_k1"] / summary.set_index("model").loc[threshold_df["model"], "n_targets_ok"].values
         ).round(1)
     threshold_df.to_csv(OUT / "k1_threshold_summary_0.4.csv", index=False)
 

@@ -1,12 +1,14 @@
-model,model_label,n_targets_k1_gt_0_4,n_exclusive_k1_gt_0_4,pct_targets_k1_gt_0_4
-xgb_default,XGB default,12,0,24.0
-xgb_optuna,XGB Optuna,15,0,30.0
-catboost_optuna,CatBoost Optuna,15,0,30.0
-dcnv2,DCNv2,12,0,24.0
-realmlp,RealMLP,11,0,22.0
-resnet,ResNet,14,0,28.0
-tabm,TabM,13,0,26.0
-tabnet,TabNet,10,0,20.0
-fttransformer,FT-Transformer,12,0,24.0
-gandalf,GANDALF,13,0,26.0
-lassonet,LassoNet,4,0,11.1
+model,model_label,n_best_outer_val_k1,n_best_unique_outer_val_k1,n_targets_k1_gt_0_4,n_exclusive_k1_gt_0_4,pct_targets_k1_gt_0_4,pct_best_outer_val_k1
+xgb_default,XGB default,1,1,13,0,26.0,2.0
+xgb_optuna,XGB Optuna,4,4,15,0,30.0,8.0
+catboost_optuna,CatBoost Optuna,3,3,14,0,28.0,6.0
+dcnv2,DCNv2,12,12,16,1,32.0,24.0
+realmlp,RealMLP,5,5,16,1,32.0,10.0
+resnet,ResNet,3,3,14,0,28.0,6.0
+tabm,TabM,8,8,18,1,36.0,16.0
+tabnet,TabNet,1,1,3,0,33.3,11.1
+fttransformer,FT-Transformer,0,0,14,0,28.0,0.0
+gandalf,GANDALF,1,1,15,0,30.0,2.0
+lassonet,LassoNet,3,3,2,0,7.4,11.1
+tabr,TabR,0,0,12,0,24.0,0.0
+tabpack,TabPack,9,9,17,0,34.0,18.0

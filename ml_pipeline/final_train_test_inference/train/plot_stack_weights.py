@@ -17,31 +17,41 @@ _SCRIPT = Path(__file__).resolve()
 TRAIN_DIR = _SCRIPT.parent
 BASE = TRAIN_DIR.parent  # final_train_test_inference/
 
-ENSEMBLE = "catboost_tabm_resnet_stack"
+ENSEMBLE = "tabpack_dcnv2_tabm_stack"
 STACK_DIR = TRAIN_DIR / "results" / "ensemble" / ENSEMBLE
 WEIGHTS_DIR = STACK_DIR / "weights"
-OUT = STACK_DIR / "weight_analysis"
-SORT_METRICS = TRAIN_DIR / "results" / "catboost_optuna" / "val_metrics.csv"
+# Canonical deliverables under train/{figures,tables}.
+FIGS = TRAIN_DIR / "figures"
+TABLES = TRAIN_DIR / "tables"
+SORT_METRICS = TRAIN_DIR / "results" / "tabpack" / "val_metrics.csv"
 SORT_COL = "val_k1_r2"
-SORT_LABEL = "CatBoost Optuna val K1 R²"
+SORT_LABEL = "TabPack Muon val K1 R²"
 
-MODELS = ["catboost_optuna", "tabm", "resnet"]
+MODELS = ["tabpack", "dcnv2", "tabm"]
 MODEL_LABELS = {
-    "catboost_optuna": "CatBoost Optuna",
-    "tabm": "TabM",
-    "resnet": "ResNet",
+    "tabpack": "TabPack Muon",
+    "dcnv2": "DCNv2 AdamW",
+    "tabm": "TabM AdamW",
 }
 MODEL_COLORS = {
-    "catboost_optuna": "#ff7f0e",
+    "tabpack": "#1f77b4",
+    "dcnv2": "#ff7f0e",
     "tabm": "#2ca02c",
-    "resnet": "#8c564b",
 }
 FALLBACK_COLOR = "#FF1493"
 DPI = 300
 
 
 def _save(fig: plt.Figure, name: str) -> None:
-    fig.savefig(OUT / f"{name}.pdf", format="pdf", bbox_inches="tight", facecolor="white")
+    FIGS.mkdir(parents=True, exist_ok=True)
+    fig.savefig(FIGS / f"{name}.pdf", format="pdf", bbox_inches="tight", facecolor="white")
+    fig.savefig(
+        FIGS / f"{name}.png",
+        format="png",
+        bbox_inches="tight",
+        facecolor="white",
+        dpi=DPI,
+    )
     plt.close(fig)
 
 
@@ -135,7 +145,7 @@ def _plot_coef_violin(df: pd.DataFrame) -> None:
     axes[1].set_title("Relative absolute contribution")
     axes[1].set_ylim(0, 1)
 
-    fig.suptitle("Stack weight distributions (CatBoost+TabM+ResNet)", fontsize=13, y=1.02)
+    fig.suptitle("Stack weight distributions (TabPack+DCNv2+TabM)", fontsize=13, y=1.02)
     fig.tight_layout()
     _save(fig, "stack_coef_distributions")
 
@@ -259,13 +269,15 @@ def _save_summary(df: pd.DataFrame) -> pd.DataFrame:
             }
         )
     summary = pd.DataFrame(rows)
-    summary.to_csv(OUT / "stack_weight_summary.csv", index=False)
-    df.to_csv(OUT / "stack_weights_per_target.csv", index=False)
+    TABLES.mkdir(parents=True, exist_ok=True)
+    summary.to_csv(TABLES / "stack_weight_summary.csv", index=False)
+    df.to_csv(TABLES / "stack_weights_per_target.csv", index=False)
     return summary
 
 
 def main() -> None:
-    OUT.mkdir(parents=True, exist_ok=True)
+    FIGS.mkdir(parents=True, exist_ok=True)
+    TABLES.mkdir(parents=True, exist_ok=True)
     mpl.rcParams["figure.dpi"] = DPI
     mpl.rcParams["savefig.dpi"] = DPI
     mpl.rcParams["pdf.fonttype"] = 42
@@ -281,7 +293,8 @@ def main() -> None:
     _plot_heatmap(df, order)
 
     n_fallback = int(df["fallback_best_solo"].sum())
-    print(f"Wrote stack weight analysis to {OUT}")
+    print(f"Wrote figures → {FIGS}")
+    print(f"Wrote tables  → {TABLES}")
     print(f"targets: {len(df)}, fallback: {n_fallback}")
     print(summary.to_string(index=False))
 

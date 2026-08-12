@@ -1,0 +1,51 @@
+target,metric,best_value,n_tied,best_models,best_model_sole,best_model_labels
+hsa-mir-1180-3p,outer_val_k1_r2,0.2388386426403878,1,tabpack,tabpack,TabPack
+hsa-mir-1185-1-3p,outer_val_k1_r2,0.4988762531624183,1,tabnet,tabnet,TabNet
+hsa-mir-124-3p,outer_val_k1_r2,0.3715599880976753,1,dcnv2,dcnv2,DCNv2
+hsa-mir-125a-3p,outer_val_k1_r2,0.2936338966889587,1,realmlp,realmlp,RealMLP
+hsa-mir-125a-5p,outer_val_k1_r2,0.350247472758131,1,dcnv2,dcnv2,DCNv2
+hsa-mir-129-1-3p,outer_val_k1_r2,0.1983451345219959,1,tabpack,tabpack,TabPack
+hsa-mir-135a-5p,outer_val_k1_r2,0.2927039735966201,1,lassonet,lassonet,LassoNet
+hsa-mir-138-5p,outer_val_k1_r2,0.6442181956537779,1,tabpack,tabpack,TabPack
+hsa-mir-142-3p,outer_val_k1_r2,0.9291796373020902,1,resnet,resnet,ResNet
+hsa-mir-15a-3p,outer_val_k1_r2,0.4042806564191271,1,dcnv2,dcnv2,DCNv2
+hsa-mir-18a-5p,outer_val_k1_r2,0.7063286972899984,1,tabpack,tabpack,TabPack
+hsa-mir-200c-3p,outer_val_k1_r2,0.0627854569024148,1,xgb_optuna,xgb_optuna,XGB Optuna
+hsa-mir-20a-5p,outer_val_k1_r2,0.9553666746749566,1,gandalf,gandalf,GANDALF
+hsa-mir-22-3p,outer_val_k1_r2,0.517922996762061,1,dcnv2,dcnv2,DCNv2
+hsa-mir-22-5p,outer_val_k1_r2,0.3985091042810503,1,tabm,tabm,TabM
+hsa-mir-25-3p,outer_val_k1_r2,0.5402655225110519,1,xgb_optuna,xgb_optuna,XGB Optuna
+hsa-mir-26a-5p,outer_val_k1_r2,0.6573460857828466,1,xgb_optuna,xgb_optuna,XGB Optuna
+hsa-mir-27a-5p,outer_val_k1_r2,0.3645243258937111,1,tabm,tabm,TabM
+hsa-mir-299-5p,outer_val_k1_r2,0.5598085757906361,1,dcnv2,dcnv2,DCNv2
+hsa-mir-301a-5p,outer_val_k1_r2,0.2365556109041904,1,tabpack,tabpack,TabPack
+hsa-mir-301b-3p,outer_val_k1_r2,0.2689685924075047,1,tabm,tabm,TabM
+hsa-mir-301b-5p,outer_val_k1_r2,0.45359897841052,1,tabm,tabm,TabM
+hsa-mir-3180-3p,outer_val_k1_r2,0.5296292907347189,1,dcnv2,dcnv2,DCNv2
+hsa-mir-326,outer_val_k1_r2,0.3860171585225362,1,dcnv2,dcnv2,DCNv2
+hsa-mir-340-3p,outer_val_k1_r2,0.2675135363204376,1,tabpack,tabpack,TabPack
+hsa-mir-363-3p,outer_val_k1_r2,0.0961112967132468,1,realmlp,realmlp,RealMLP
+hsa-mir-369-3p,outer_val_k1_r2,0.7490750209583333,1,tabm,tabm,TabM
+hsa-mir-374a-3p,outer_val_k1_r2,0.6575437302824945,1,tabpack,tabpack,TabPack
+hsa-mir-378a-3p,outer_val_k1_r2,0.1860782737068377,1,tabm,tabm,TabM
+hsa-mir-382-5p,outer_val_k1_r2,0.3710136508752725,1,realmlp,realmlp,RealMLP
+hsa-mir-3934-5p,outer_val_k1_r2,-0.004750536155514,1,dcnv2,dcnv2,DCNv2
+hsa-mir-411-5p,outer_val_k1_r2,0.3531950667835704,1,resnet,resnet,ResNet
+hsa-mir-423-5p,outer_val_k1_r2,0.486535793028563,1,xgb_optuna,xgb_optuna,XGB Optuna
+hsa-mir-449a,outer_val_k1_r2,0.0482684161929853,1,realmlp,realmlp,RealMLP
+hsa-mir-4731-3p,outer_val_k1_r2,0.1896041141799206,1,tabm,tabm,TabM
+hsa-mir-486-5p,outer_val_k1_r2,0.6721378307369138,1,tabm,tabm,TabM
+hsa-mir-487a-3p,outer_val_k1_r2,0.3911378727885004,1,catboost_optuna,catboost_optuna,CatBoost Optuna
+hsa-mir-495-3p,outer_val_k1_r2,0.8025949850984719,1,dcnv2,dcnv2,DCNv2
+hsa-mir-503-3p,outer_val_k1_r2,0.1306901351897864,1,dcnv2,dcnv2,DCNv2
+hsa-mir-532-3p,outer_val_k1_r2,0.3273295036892308,1,lassonet,lassonet,LassoNet
+hsa-mir-556-3p,outer_val_k1_r2,0.2752244310369237,1,dcnv2,dcnv2,DCNv2
+hsa-mir-582-5p,outer_val_k1_r2,0.6396191348379998,1,xgb_default,xgb_default,XGB default
+hsa-mir-590-5p,outer_val_k1_r2,0.2632158892721261,1,dcnv2,dcnv2,DCNv2
+hsa-mir-592,outer_val_k1_r2,0.1842810108604148,1,lassonet,lassonet,LassoNet
+hsa-mir-616-3p,outer_val_k1_r2,0.1185915815388356,1,resnet,resnet,ResNet
+hsa-mir-624-3p,outer_val_k1_r2,0.4346029515381288,1,realmlp,realmlp,RealMLP
+hsa-mir-642a-5p,outer_val_k1_r2,0.3395895297117414,1,catboost_optuna,catboost_optuna,CatBoost Optuna
+hsa-mir-708-5p,outer_val_k1_r2,0.831318275679329,1,catboost_optuna,catboost_optuna,CatBoost Optuna
+hsa-mir-887-3p,outer_val_k1_r2,0.7190495102106123,1,tabpack,tabpack,TabPack
+hsa-mir-99b-3p,outer_val_k1_r2,0.1035811857880366,1,tabpack,tabpack,TabPack

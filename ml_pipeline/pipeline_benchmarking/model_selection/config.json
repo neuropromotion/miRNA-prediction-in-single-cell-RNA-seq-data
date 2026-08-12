@@ -1,0 +1,19 @@
+{
+  "seed": 42,
+  "device": "cuda",
+  "models": [
+    "tabr"
+  ],
+  "optuna_trials": 15,
+  "features": "/workspace/ml_pipeline/data/frozen/selected_features.json",
+  "targets_file": "/workspace/ml_pipeline/data/frozen/selected_targets.txt",
+  "n_targets": 17,
+  "protocol": {
+    "train": "stage00 train: bulk + K1_imp + PB all cohorts",
+    "inner_split": "85/15 stratified by modality (bulk/k1/pb)",
+    "inner_val_metric": "mixed inner val R2",
+    "outer_val": "stage00 val fold (not sc_TEST): bulk, k1, pb K2/K3/K4/K5/K10",
+    "impute": "KNN k=5 on K1 only",
+    "sample_weights": "inverse modality frequency"
+  }
+}

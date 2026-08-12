@@ -1,44 +1,57 @@
-## Ensembling strategies
+# Ensemble selection v4
 
-### Selected Base Models
-For the ensembling phase, we selected the 4 top-performing architectures from the previous step (`model_selection`) that demonstrated the optimal trade-off between computational efficiency and predictive metrics:
-* **CatBoost** + Optuna
-* **XGBoost** + Optuna
-* **TabM**
-* **ResNet-like**
+## Protocol
 
----
+| Role | Data |
+|------|------|
+| **Tune** weights | `inner_val` **K1 + PB** only (bulk excluded) |
+| **Report / rank** | `outer_val` K1 + PB + bulk |
+| Primary rank | `median_outer_val_k1_r2` |
 
-### Ensembling Approaches
-We explored several blending and stacking techniques to build the combinations:
-1. **Ridge Stacking:** A meta-learner (Ridge regression) trained on base model predictions.
-2. **Weighted Blending:** Linear combinations of model predictions. 
+Summary also reports:
+- `avg_of_medians_K` — mean of per-cohort **medians** over K1 + PB K2–K10
+- `avg_of_means_K` — mean of per-cohort **means** over the same cohorts
+- `n_best_outer_val_k1` / `n_best_outer_val_bulk` — #targets where this ensemble is best (ties count for all)
+- `n_best_unique_*` — sole winners only (no ties)
 
-$$
-\text{Example (2 models): } \hat{y} = \alpha \cdot \mathrm{pred}_{\mathrm{model}_1} + (1-\alpha) \cdot \mathrm{pred}_{\mathrm{model}_2}
-$$
+Win counts are among ensembles in this stage (not vs solos). Per-target winners: `results/best_per_target_outer_val_{k1,bulk}.csv`.
 
-3. **Model Soup:** Averaging weights or predictions across configurations using three distinct heuristics:
-   * *Uniform Soup:* Simple unweighted average of the selected models.
-   * *Greedy Soup:* Sequentially adding models only if they improve validation performance.
-   * *Pruned Soup:* Evaluating the full pool and iteratively dropping underperforming candidates.
+## Base models
 
-To comprehensively find the optimal combination, we evaluated **55 different ensemble configurations** by testing all possible model subsets across all 5 strategies:
-$$\Big( \binom{4}{2} + \binom{4}{3} + \binom{4}{4} \Big) \times 5 = (6 + 4 + 1) \times 5 = 55 \text{ configurations}$$
+| id | Source | Recipe |
+|----|--------|--------|
+| `xgb_optuna` | `model_selection` | XGB Optuna |
+| `tabpack` | `model_tuning` | TabPack Muon (paper) |
+| `dcnv2` | `model_selection` | DCNv2 AdamW |
+| `tabm` | `model_selection` | TabM AdamW |
 
----
+Sets = all pairs + triples (full quadruple excluded):
 
-### Results & Final Selection
-The ensembles successfully pushed the performance boundary beyond any individual model. When evaluated by **median $R^2$** on outer_val K1 cohort, the top-performing combinations were:
+- pairs (6): `xgb_tabpack`, `xgb_dcnv2`, `xgb_tabm`, `tabpack_dcnv2`, `tabpack_tabm`, `dcnv2_tabm`
+- triples (4): `xgb_tabpack_dcnv2`, `xgb_tabpack_tabm`, `xgb_dcnv2_tabm`, `tabpack_dcnv2_tabm`
 
-| Rank | Ensemble Architecture | Base Models Included | Median $R^2$ | Mean $R^2$ |
-| :---: | :--- | :--- | :---: | :---: |
-| **1** | **Ridge Stacking** | CatBoost + TabM + ResNet | **0.1729** | **0.2492** |
-| **2** | **Ridge Stacking** | CatBoost + TabM | 0.1715 | 0.2489 | 
-| **3** | **Uniform Soup** | All 4 models (CatBoost + XGBoost + TabM + ResNet) | 0.1714 | 0.2487 |
+→ **10 sets × 3 methods = 30** configs.
 
-![Single cell R2 Performance](figures/r2_by_target_k1_solo_vs_stack.png)
-![Weights of stacking CatBoost + ResNet + TabM](figures/stack_abs_share_by_target.png)
+## Methods
 
+| id | Meaning |
+|----|---------|
+| `blend` | non-negative weights on simplex (grid) |
+| `avg_uniform` | equal average of predictions |
+| `stack` | Ridge meta-learner (`RidgeCV`) |
 
-> **Final Decision:** The **Ridge Stacking ensemble comprising CatBoost, TabM, and ResNet** achieved the highest median $R^2$ score of **0.1729** (outperforming the best single-model baseline of 0.1570). This architecture has been selected as our final predictive model.
+TabPack uses cached `preds.npz` (no live re-inference).
+
+## Run
+
+```bash
+cd ml_pipeline/pipeline_benchmarking/ensembles_selection_v4
+bash run_docker.sh
+```
+
+Smoke:
+
+```bash
+STAGE04_SETS=xgb_tabpack STAGE04_METHODS=avg_uniform \
+  STAGE04_TARGETS=hsa-mir-1180-3p STAGE04_DEVICE=cuda bash run_docker.sh
+```

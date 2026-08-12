@@ -20,6 +20,17 @@ GANDALF_PATIENCE = int(__import__("os").environ.get("GANDALF_PATIENCE", "10"))
 GANDALF_STAGES = int(__import__("os").environ.get("GANDALF_STAGES", "6"))
 LASSONET_PATIENCE = int(__import__("os").environ.get("LASSONET_PATIENCE", "15"))
 CATBOOST_TASK = __import__("os").environ.get("CATBOOST_TASK", "CPU")
+# CatBoost GPU OOMs / segfaults on wide feature matrices (~800+); fall back to CPU.
+CATBOOST_GPU_MAX_FEATURES = int(__import__("os").environ.get("CATBOOST_GPU_MAX_FEATURES", "400"))
+
+
+def _resolve_catboost_task(n_features: int) -> str:
+    wanted = (CATBOOST_TASK or "CPU").strip().upper()
+    if wanted != "GPU":
+        return "CPU"
+    if n_features > CATBOOST_GPU_MAX_FEATURES:
+        return "CPU"
+    return "GPU"
 
 
 def _fit_scaler(x_train: np.ndarray) -> StandardScaler:
@@ -160,6 +171,9 @@ def train_catboost_optuna(arr: dict, model_dir: Path) -> CatBoostRegressor:
     import optuna
 
     optuna.logging.set_verbosity(optuna.logging.WARNING)
+    n_features = int(np.asarray(arr["x_train"]).shape[1])
+    task = _resolve_catboost_task(n_features)
+    devices = "0" if task == "GPU" else None
     train_pool = Pool(arr["x_train"], arr["y_train"], weight=arr["sw"])
     val_pool = Pool(arr["x_val"], arr["y_val"])
 
@@ -168,7 +182,9 @@ def train_catboost_optuna(arr: dict, model_dir: Path) -> CatBoostRegressor:
         model = CatBoostRegressor(
             loss_function="RMSE",
             random_seed=SEED,
-            task_type=CATBOOST_TASK,
+            task_type=task,
+            devices=devices,
+            thread_count=-1,
             verbose=False,
             early_stopping_rounds=EARLY_STOPPING_ROUNDS,
             **params,
@@ -188,7 +204,9 @@ def train_catboost_optuna(arr: dict, model_dir: Path) -> CatBoostRegressor:
     model = CatBoostRegressor(
         loss_function="RMSE",
         random_seed=SEED,
-        task_type=CATBOOST_TASK,
+        task_type=task,
+        devices=devices,
+        thread_count=-1,
         verbose=False,
         early_stopping_rounds=EARLY_STOPPING_ROUNDS,
         **best,
@@ -196,7 +214,10 @@ def train_catboost_optuna(arr: dict, model_dir: Path) -> CatBoostRegressor:
     model.fit(train_pool, eval_set=val_pool, verbose=False)
     model_dir.mkdir(parents=True, exist_ok=True)
     model.save_model(str(model_dir / "model.cbm"))
-    (model_dir / "best_params.json").write_text(json.dumps(best, indent=2), encoding="utf-8")
+    meta = dict(best)
+    meta["task_type_used"] = task
+    meta["n_features"] = n_features
+    (model_dir / "best_params.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     return model
 
 

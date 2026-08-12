@@ -1,1 +1,4 @@
 model,model_label,target,outer_val_k1_r2
+dcnv2,DCNv2,hsa-mir-15a-3p,0.4042806564191271
+tabm,TabM,hsa-mir-301b-5p,0.45359897841052
+realmlp,RealMLP,hsa-mir-624-3p,0.4346029515381288

@@ -13,8 +13,9 @@ from metrics import clip_nonneg, r2
 RIDGE_ALPHAS = tuple(float(x) for x in np.logspace(-2, 4, 40))
 SAFETY_GATE = True
 
-# Ensemble tuning: K1 val + all PB val cohorts (no bulk).
-TUNE_SPLITS = ("val_k1", "val_pb", *(f"val_pb_{c}" for c in PB_COHORTS))
+# Ensemble tuning: K1 val + PB cohorts (no bulk). Do NOT include pooled val_pb —
+# that would double-count cohort rows already listed as val_pb_K*.
+TUNE_SPLITS = ("val_k1", *(f"val_pb_{c}" for c in PB_COHORTS))
 
 
 @dataclass

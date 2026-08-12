@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stage04 v2: tune and evaluate ensembles of 4 stage03 winners."""
+"""ensembles_selection_v4: tune on inner_val K1+PB; evaluate on outer_val."""
 
 from __future__ import annotations
 
@@ -12,8 +12,9 @@ from pathlib import Path
 
 _STAGE = Path(__file__).resolve().parent
 _ML_PIPELINE = _STAGE.parents[1]
-if str(_ML_PIPELINE) not in sys.path:
-    sys.path.insert(0, str(_ML_PIPELINE))
+for _p in (_STAGE, _ML_PIPELINE):
+    if str(_p) not in sys.path:
+        sys.path.insert(0, str(_p))
 
 import numpy as np
 import pandas as pd
@@ -24,12 +25,16 @@ from constants import (
     ENSEMBLE_METHODS,
     ENSEMBLE_SETS,
     EVAL_SPLITS,
+    K_COHORT_METRIC_COLS,
     METHOD_LABELS,
+    MODEL_ARTIFACT_ROOTS,
+    PRIMARY_RANK_COL,
     R2_THRESHOLD,
+    REPORT_METRIC_COLS,
     RESULTS,
     STAGE,
-    OUTER_VAL_METRIC_COLS,
     TUNE_SPLITS,
+    TABLES
 )
 from ensemble import apply_fit, ensemble_id, fit_ensemble, fit_to_dict
 from metrics import r2
@@ -51,6 +56,18 @@ def parse_list(raw: str, allowed) -> list[str]:
     return items
 
 
+def filter_targets(targets: list[str]) -> list[str]:
+    raw = os.environ.get("STAGE04_TARGETS", "").strip()
+    if not raw:
+        return targets
+    wanted = {t.strip() for t in raw.split(",") if t.strip()}
+    return [t for t in targets if t in wanted]
+
+
+def metrics_path(eid: str) -> Path:
+    return RESULTS / eid / "outer_val_metrics.csv"
+
+
 def all_ensemble_ids() -> list[str]:
     ids: list[str] = []
     for model_set in ENSEMBLE_SETS:
@@ -59,29 +76,6 @@ def all_ensemble_ids() -> list[str]:
             if metrics_path(eid).exists():
                 ids.append(eid)
     return sorted(ids)
-
-
-def rebuild_global_outputs() -> None:
-    eids = all_ensemble_ids()
-    if not eids:
-        return
-    parts = [pd.read_csv(metrics_path(eid)) for eid in eids]
-    pd.concat(parts, ignore_index=True).to_csv(RESULTS / "outer_val_metrics_all.csv", index=False)
-
-    summaries: list[dict] = []
-    for eid in eids:
-        summary = summarize_ensemble(eid)
-        sj = RESULTS / eid / "summary.json"
-        if sj.exists():
-            saved = json.loads(sj.read_text(encoding="utf-8"))
-            if "elapsed_sec" in saved:
-                summary["elapsed_sec"] = saved["elapsed_sec"]
-        summaries.append(summary)
-    write_integral_summary(summaries)
-
-
-def metrics_path(eid: str) -> Path:
-    return RESULTS / eid / "outer_val_metrics.csv"
 
 
 def done_targets(eid: str) -> set[str]:
@@ -164,11 +158,27 @@ def run_one_target(
 
 
 def _threshold_stats(df_ok: pd.DataFrame) -> dict:
-    out: dict = {}
     if "outer_val_k1_r2" not in df_ok.columns or df_ok.empty:
-        return {"n_targets_k1_gt_0_4": 0, "n_exclusive_k1_gt_0_4": 0}
-    out["n_targets_k1_gt_0_4"] = int((df_ok["outer_val_k1_r2"] > R2_THRESHOLD).sum())
-    out["n_exclusive_k1_gt_0_4"] = 0
+        return {"n_targets_k1_gt_0_4": 0}
+    return {"n_targets_k1_gt_0_4": int((df_ok["outer_val_k1_r2"] > R2_THRESHOLD).sum())}
+
+
+def _avg_k_cohort_scores(summary_row: dict) -> dict:
+    """Average of per-cohort means/medians over K1 + PB (exclude bulk)."""
+    means: list[float] = []
+    medians: list[float] = []
+    for col in K_COHORT_METRIC_COLS:
+        m = summary_row.get(f"mean_{col}")
+        d = summary_row.get(f"median_{col}")
+        if m is not None and m == m:  # not None / NaN
+            means.append(float(m))
+        if d is not None and d == d:
+            medians.append(float(d))
+    out: dict = {}
+    if means:
+        out["avg_of_means_K"] = float(sum(means) / len(means))
+    if medians:
+        out["avg_of_medians_K"] = float(sum(medians) / len(medians))
     return out
 
 
@@ -186,11 +196,93 @@ def summarize_ensemble(eid: str) -> dict:
         row["mean_tune_r2"] = float(ok["tune_r2"].mean())
         row["median_tune_r2"] = float(ok["tune_r2"].median())
     row.update(_threshold_stats(ok))
-    for col in OUTER_VAL_METRIC_COLS:
+    for col in REPORT_METRIC_COLS:
         if col in ok.columns:
             row[f"mean_{col}"] = float(ok[col].mean()) if len(ok) else None
             row[f"median_{col}"] = float(ok[col].median()) if len(ok) else None
+    row.update(_avg_k_cohort_scores(row))
     return row
+
+
+def _compute_best_counts(
+    df: pd.DataFrame,
+    ensemble_order: list[str],
+    metric: str,
+) -> tuple[dict[str, dict[str, int]], pd.DataFrame]:
+    """Per-target argmax wins among ensembles for `metric`.
+
+    Ties: every ensemble at the max counts toward n_best_*; only sole winners
+    toward n_best_unique_*.
+    """
+    short = metric.removesuffix("_r2")
+    ok = df[df.get("status", "ok") == "ok"].copy() if "status" in df.columns else df.copy()
+    if ok.empty or metric not in ok.columns or "ensemble" not in ok.columns:
+        empty = {
+            eid: {f"n_best_{short}": 0, f"n_best_unique_{short}": 0} for eid in ensemble_order
+        }
+        return empty, pd.DataFrame()
+
+    pivot = ok.pivot_table(index="target", columns="ensemble", values=metric, aggfunc="first")
+    pivot = pivot.reindex(columns=ensemble_order)
+    n_best = {eid: 0 for eid in ensemble_order}
+    n_unique = {eid: 0 for eid in ensemble_order}
+    rows: list[dict] = []
+
+    for target, row in pivot.iterrows():
+        vals = row.dropna()
+        if vals.empty:
+            continue
+        best_val = float(vals.max())
+        winners = vals[np.isclose(vals.astype(float), best_val, rtol=0.0, atol=1e-12)].index.tolist()
+        if not winners:
+            winners = vals[vals == best_val].index.tolist()
+        for eid in winners:
+            if eid in n_best:
+                n_best[eid] += 1
+        sole = winners[0] if len(winners) == 1 else ""
+        if sole and sole in n_unique:
+            n_unique[sole] += 1
+        rows.append(
+            {
+                "target": target,
+                "metric": metric,
+                "best_value": best_val,
+                "n_tied": len(winners),
+                "best_ensembles": ",".join(winners),
+                "best_ensemble_sole": sole,
+            }
+        )
+
+    by_eid = {
+        eid: {
+            f"n_best_{short}": n_best[eid],
+            f"n_best_unique_{short}": n_unique[eid],
+        }
+        for eid in ensemble_order
+    }
+    return by_eid, pd.DataFrame(rows)
+
+
+def attach_best_counts(summaries: list[dict], metrics_all: pd.DataFrame) -> list[dict]:
+    """Add top-K1 / top-bulk win counts (among ensembles) to each summary row."""
+    eids = [s["ensemble"] for s in summaries]
+    k1_counts, k1_detail = _compute_best_counts(metrics_all, eids, "outer_val_k1_r2")
+    bulk_counts, bulk_detail = _compute_best_counts(metrics_all, eids, "outer_val_bulk_r2")
+
+    TABLES.mkdir(parents=True, exist_ok=True)
+    if len(k1_detail):
+        k1_detail.to_csv(TABLES / "best_per_target_outer_val_k1.csv", index=False)
+    if len(bulk_detail):
+        bulk_detail.to_csv(TABLES / "best_per_target_outer_val_bulk.csv", index=False)
+
+    out: list[dict] = []
+    for s in summaries:
+        eid = s["ensemble"]
+        row = dict(s)
+        row.update(k1_counts.get(eid, {}))
+        row.update(bulk_counts.get(eid, {}))
+        out.append(row)
+    return out
 
 
 def write_integral_summary(summaries: list[dict]) -> None:
@@ -200,31 +292,62 @@ def write_integral_summary(summaries: list[dict]) -> None:
         "n_targets_ok",
         "n_targets_fail",
         "n_fallback_solo",
+        "n_best_outer_val_k1",
+        "n_best_unique_outer_val_k1",
+        "n_best_outer_val_bulk",
+        "n_best_unique_outer_val_bulk",
         "mean_tune_r2",
         "median_tune_r2",
-        "mean_inner_val_r2",
-        "median_inner_val_r2",
-        "mean_outer_val_bulk_r2",
-        "median_outer_val_bulk_r2",
+        "avg_of_medians_K",
+        "avg_of_means_K",
         "mean_outer_val_k1_r2",
         "median_outer_val_k1_r2",
-        "n_targets_k1_gt_0_4",
-        "n_exclusive_k1_gt_0_4",
+        "mean_outer_val_bulk_r2",
+        "median_outer_val_bulk_r2",
     ]
-    for col in OUTER_VAL_METRIC_COLS:
+    for col in REPORT_METRIC_COLS:
         if col.startswith("outer_val_pb"):
             cols.extend([f"mean_{col}", f"median_{col}"])
-    cols.append("elapsed_sec")
+    cols.extend(["n_targets_k1_gt_0_4", "elapsed_sec"])
     df = df[[c for c in cols if c in df.columns]]
-    df = df.sort_values("median_outer_val_k1_r2", ascending=False, na_position="last")
+    df = df.sort_values(PRIMARY_RANK_COL, ascending=False, na_position="last")
     df.to_csv(RESULTS / "summary_by_ensemble.csv", index=False)
+
+
+def rebuild_global_outputs() -> None:
+    eids = all_ensemble_ids()
+    if not eids:
+        return
+    parts = [pd.read_csv(metrics_path(eid)) for eid in eids]
+    metrics_all = pd.concat(parts, ignore_index=True)
+    metrics_all.to_csv(RESULTS / "outer_val_metrics_all.csv", index=False)
+
+    summaries: list[dict] = []
+    for eid in eids:
+        summary = summarize_ensemble(eid)
+        sj = RESULTS / eid / "summary.json"
+        if sj.exists():
+            saved = json.loads(sj.read_text(encoding="utf-8"))
+            if "elapsed_sec" in saved:
+                summary["elapsed_sec"] = saved["elapsed_sec"]
+        summaries.append(summary)
+
+    summaries = attach_best_counts(summaries, metrics_all)
+    for summary in summaries:
+        sj = RESULTS / summary["ensemble"] / "summary.json"
+        if sj.parent.exists():
+            # Keep elapsed_sec from prior write; refresh best-count fields.
+            prev = json.loads(sj.read_text(encoding="utf-8")) if sj.exists() else {}
+            prev.update(summary)
+            sj.write_text(json.dumps(prev, indent=2), encoding="utf-8")
+    write_integral_summary(summaries)
 
 
 def main() -> None:
     RESULTS.mkdir(parents=True, exist_ok=True)
     methods = parse_list(METHODS_RAW, ENSEMBLE_METHODS)
     model_sets = parse_list(SETS_RAW, ENSEMBLE_SETS)
-    targets = load_pilot_targets()
+    targets = filter_targets(load_pilot_targets())
     features = load_features()
 
     cfg = {
@@ -233,14 +356,28 @@ def main() -> None:
         "methods": methods,
         "n_targets": len(targets),
         "tune_splits": list(TUNE_SPLITS),
+        "eval_splits": list(EVAL_SPLITS),
         "protocol": {
-            "tune": "pooled K1 + pseudo-bulk PB (K2-K10), no real bulk",
-            "tune_metric": "R2 on pooled tune samples (+ mean per-split for reporting)",
-            "outer_val_reporting": "inner val, bulk (held-out), K1, PB K2-K10",
-            "base_artifacts": "pipeline_benchmarking/model_selection/results/{model}/models/{target}/",
+            "tune": "inner_val K1 + PB cohorts only (bulk excluded from weight fitting)",
+            "primary_rank": "median outer_val_k1_r2",
+            "report_metrics": list(REPORT_METRIC_COLS),
+            "note": "All pairs + triples from 4-model pool; full quadruple excluded",
+            "base_artifacts": {
+                name: str(root / "models" / "{target}")
+                for name, root in MODEL_ARTIFACT_ROOTS.items()
+            },
         },
     }
     (STAGE / "config.json").write_text(json.dumps(cfg, indent=2), encoding="utf-8")
+
+    print(
+        f"v4 ensembles: {len(model_sets)} sets × {len(methods)} methods = {len(model_sets) * len(methods)}",
+        flush=True,
+    )
+    print(f"sets: {', '.join(model_sets)}", flush=True)
+    print(f"base: {', '.join(BASE_MODELS)}", flush=True)
+    print(f"tune={TUNE_SPLITS}", flush=True)
+    print(f"eval={EVAL_SPLITS}", flush=True)
 
     print("Building data bundle...", flush=True)
     t0 = time.time()

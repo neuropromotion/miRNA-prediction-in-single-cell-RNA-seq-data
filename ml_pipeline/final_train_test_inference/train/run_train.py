@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Train CatBoost / TabM / ResNet on 327 miRNA targets."""
+"""Train TabPack / DCNv2 / TabM on 327 miRNA targets (final_train)."""
 
 from __future__ import annotations
 
@@ -15,10 +15,11 @@ import pandas as pd
 
 from constants import MODELS, RESULTS, ROOT
 from data import build_train_bundle, select_features
-from io_splits import load_features, load_targets
+from io_splits import load_features, load_targets, load_zero_expressed_mirs
 from metrics import r2
 from journal import log
 from model_trainers import (
+    eval_tabpack_row,
     load_artifact,
     model_dir,
     model_exists,
@@ -46,6 +47,13 @@ def filter_targets(targets: list[str]) -> list[str]:
         idx, n = int(idx_s), int(n_s)
         return [t for j, t in enumerate(targets) if j % n == idx]
     return targets
+
+
+def metrics_path_for(model_name: str) -> Path:
+    """Shard-safe metrics file (avoid races when FINAL_METRICS_SUFFIX is set)."""
+    suffix = os.environ.get("FINAL_METRICS_SUFFIX", "").strip()
+    name = f"val_metrics{suffix}.csv" if suffix else "val_metrics.csv"
+    return RESULTS / model_name / name
 
 
 def val_eval_sets(bundle, target: str, genes: list[str]) -> list[tuple[str, np.ndarray, np.ndarray]]:
@@ -83,6 +91,11 @@ def val_eval_sets(bundle, target: str, genes: list[str]) -> list[tuple[str, np.n
 
 
 def eval_target(model_name: str, artifact, bundle, target: str, genes: list[str]) -> dict:
+    if model_name == "tabpack":
+        row = eval_tabpack_row(artifact, bundle, target)
+        row["n_features"] = len(genes)
+        return row
+
     x_val = select_features(bundle.x_val, genes).to_numpy(dtype=np.float32)
     y_val = bundle.y_val[target].to_numpy(dtype=np.float64)
     pred_val = predict_one(model_name, artifact, x_val)
@@ -108,10 +121,11 @@ def main() -> None:
     out_root.mkdir(parents=True, exist_ok=True)
 
     log("=== final_train model training ===", model_name)
-    log(f"device={DEVICE}", model_name)
+    log(f"device={DEVICE} winner_stack={MODELS}", model_name)
     features = load_features()
+    excluded = load_zero_expressed_mirs()
     targets = filter_targets(load_targets())
-    log(f"targets={len(targets)}", model_name)
+    log(f"targets={len(targets)} (excluded_zero_expressed={len(excluded)})", model_name)
 
     bundle = build_train_bundle()
     log(
@@ -119,11 +133,11 @@ def main() -> None:
         model_name,
     )
 
-    metrics_path = out_root / "val_metrics.csv"
+    metrics_path = metrics_path_for(model_name)
     done: set[str] = set()
     if metrics_path.exists():
         prev = pd.read_csv(metrics_path)
-        done = set(prev.loc[prev["status"] == "ok", "target"])
+        done = set(prev.loc[prev["status"] == "ok", "target"].astype(str))
 
     rows: list[dict] = []
     if metrics_path.exists():
@@ -167,6 +181,8 @@ def main() -> None:
         "n_fail": fail,
         "n_skip": skip,
         "device": DEVICE,
+        "metrics_path": str(metrics_path),
+        "model_dir_pattern": str(model_dir(model_name, "{target}")),
     }
     (out_root / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     log(f"done ok={ok} fail={fail} skip={skip}", model_name)

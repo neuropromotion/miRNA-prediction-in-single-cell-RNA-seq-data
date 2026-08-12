@@ -1,0 +1,6 @@
+model,model_label,n_best_outer_val_k1,n_best_unique_outer_val_k1,n_targets_k1_gt_0_4,n_exclusive_k1_gt_0_4,pct_targets_k1_gt_0_4,pct_best_outer_val_k1
+xgb_optuna,XGB Optuna,6,6,15,1,30.0,12.0
+tabm_muon,TabM Muon,3,3,19,0,38.0,6.0
+tabm_adamw_ema,TabM AdamW+EMA,3,3,19,0,38.0,6.0
+dcnv2_muon,DCNv2 Muon,5,5,6,0,12.0,10.0
+tabpack,TabPack Muon,33,33,20,2,40.0,66.0

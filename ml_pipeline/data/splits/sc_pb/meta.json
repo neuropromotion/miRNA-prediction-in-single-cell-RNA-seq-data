@@ -1,7 +1,5 @@
 {
   "dataset": "sc_pb",
-  "source_x": "sc_TRAIN/X_TRAIN_PB.parquet",
-  "source_y": "sc_TRAIN/Y_TRAIN_PB.parquet",
   "n_total": 9235,
   "n_train": 7849,
   "n_val": 1386,
@@ -9,5 +7,6 @@
   "n_features": 17392,
   "n_targets": 327,
   "transform": "log2(x+1)",
-  "seed": 42
+  "seed": 42,
+  "role_val_fold": "outer_val (benchmarking holdout; not sc_TEST)"
 }

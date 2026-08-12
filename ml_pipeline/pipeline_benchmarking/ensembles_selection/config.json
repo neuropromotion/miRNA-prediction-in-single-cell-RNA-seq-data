@@ -1,0 +1,97 @@
+{
+  "base_models": [
+    "xgb_optuna",
+    "tabpack",
+    "dcnv2",
+    "tabm"
+  ],
+  "model_sets": {
+    "xgb_tabpack": [
+      "xgb_optuna",
+      "tabpack"
+    ],
+    "xgb_dcnv2": [
+      "xgb_optuna",
+      "dcnv2"
+    ],
+    "xgb_tabm": [
+      "xgb_optuna",
+      "tabm"
+    ],
+    "tabpack_dcnv2": [
+      "tabpack",
+      "dcnv2"
+    ],
+    "tabpack_tabm": [
+      "tabpack",
+      "tabm"
+    ],
+    "dcnv2_tabm": [
+      "dcnv2",
+      "tabm"
+    ],
+    "xgb_tabpack_dcnv2": [
+      "xgb_optuna",
+      "tabpack",
+      "dcnv2"
+    ],
+    "xgb_tabpack_tabm": [
+      "xgb_optuna",
+      "tabpack",
+      "tabm"
+    ],
+    "xgb_dcnv2_tabm": [
+      "xgb_optuna",
+      "dcnv2",
+      "tabm"
+    ],
+    "tabpack_dcnv2_tabm": [
+      "tabpack",
+      "dcnv2",
+      "tabm"
+    ]
+  },
+  "methods": [
+    "blend",
+    "avg_uniform",
+    "stack"
+  ],
+  "n_targets": 50,
+  "tune_splits": [
+    "inner_val_k1",
+    "inner_val_pb_K2",
+    "inner_val_pb_K3",
+    "inner_val_pb_K4",
+    "inner_val_pb_K5",
+    "inner_val_pb_K10"
+  ],
+  "eval_splits": [
+    "outer_val_k1",
+    "outer_val_bulk",
+    "outer_val_pb_K2",
+    "outer_val_pb_K3",
+    "outer_val_pb_K4",
+    "outer_val_pb_K5",
+    "outer_val_pb_K10"
+  ],
+  "protocol": {
+    "tune": "inner_val K1 + PB cohorts only (bulk excluded from weight fitting)",
+    "primary_rank": "median outer_val_k1_r2",
+    "report_metrics": [
+      "outer_val_k1_r2",
+      "outer_val_bulk_r2",
+      "outer_val_pb_K2_r2",
+      "outer_val_pb_K3_r2",
+      "outer_val_pb_K4_r2",
+      "outer_val_pb_K5_r2",
+      "outer_val_pb_K10_r2"
+    ],
+    "note": "All pairs + triples from 4-model pool; full quadruple excluded",
+    "base_artifacts": {
+      "xgb_optuna": "/workspace/ml_pipeline/pipeline_benchmarking/model_selection/results/xgb_optuna/models/{target}",
+      "tabpack": "/workspace/ml_pipeline/pipeline_benchmarking/model_tuning/results/tabpack/models/{target}",
+      "dcnv2": "/workspace/ml_pipeline/pipeline_benchmarking/model_selection/results/dcnv2/models/{target}",
+      "tabm": "/workspace/ml_pipeline/pipeline_benchmarking/model_selection/results/tabm/models/{target}"
+    }
+  }
+}

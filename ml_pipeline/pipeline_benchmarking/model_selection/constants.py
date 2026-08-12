@@ -36,6 +36,8 @@ SCREEN_MODELS = (
     "fttransformer",
     "gandalf",
     "lassonet",
+    "tabr",
+    "tabpack",
 )
 
 MODEL_LABELS = {
@@ -50,6 +52,8 @@ MODEL_LABELS = {
     "fttransformer": "FT-Transformer",
     "gandalf": "GANDALF",
     "lassonet": "LassoNet",
+    "tabr": "TabR",
+    "tabpack": "TabPack",
 }
 
 # Training groups used by shell launchers (can run in parallel across groups).
@@ -74,6 +78,16 @@ MODEL_GROUPS = {
 OUTER_VAL_METRIC_COLS = (
     "inner_val_r2",
     "outer_val_bulk_r2",
+    "outer_val_k1_r2",
+    "outer_val_pb_K2_r2",
+    "outer_val_pb_K3_r2",
+    "outer_val_pb_K4_r2",
+    "outer_val_pb_K5_r2",
+    "outer_val_pb_K10_r2",
+)
+
+# SC cohorts for cross-K aggregate scores (exclude bulk).
+K_COHORT_METRIC_COLS = (
     "outer_val_k1_r2",
     "outer_val_pb_K2_r2",
     "outer_val_pb_K3_r2",

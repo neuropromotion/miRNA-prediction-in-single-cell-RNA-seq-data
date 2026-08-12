@@ -11,24 +11,31 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from constants import ENSEMBLE_RESULTS, PB_COHORTS, RESULTS, STACK_MODELS
+from constants import ENSEMBLE_ID, ENSEMBLE_RESULTS, PB_COHORTS, RESULTS, STACK_MODELS
 from stack import TUNE_SPLITS, apply_fit, fit_stack, fit_to_dict
 from data import build_train_bundle, select_features
-from io_splits import load_features, load_targets
+from io_splits import load_features, load_targets, load_zero_expressed_mirs
 from metrics import r2
-from model_trainers import load_artifact, model_exists, predict_one
-
-ENSEMBLE_ID = "catboost_tabm_resnet_stack"
+from model_trainers import load_artifact, model_exists, predict_one, tabpack_preds_by_split
 
 
-def _predict_splits(bundle, target: str, genes: list[str]) -> tuple[dict[str, np.ndarray], dict[str, np.ndarray]]:
+def _predict_splits(bundle, target: str, genes: list[str]) -> tuple[dict[str, dict[str, np.ndarray]], dict[str, np.ndarray]]:
     preds_by_model: dict[str, dict[str, np.ndarray]] = {m: {} for m in STACK_MODELS}
     y_true: dict[str, np.ndarray] = {}
+
+    # TabPack: cached preds for all val splits at once.
+    if "tabpack" in STACK_MODELS:
+        art = load_artifact("tabpack", target)
+        preds_by_model["tabpack"] = tabpack_preds_by_split(art, bundle)
 
     def add_split(name: str, x_df, y_df):
         y_true[name] = y_df[target].to_numpy(dtype=np.float64)
         x = select_features(x_df, genes).to_numpy(dtype=np.float32)
         for m in STACK_MODELS:
+            if m == "tabpack":
+                if name not in preds_by_model["tabpack"]:
+                    raise KeyError(f"tabpack missing cached split {name!r}")
+                continue
             art = load_artifact(m, target)
             preds_by_model[m][name] = predict_one(m, art, x)
 
@@ -44,6 +51,9 @@ def _predict_splits(bundle, target: str, genes: list[str]) -> tuple[dict[str, np
 
 
 def filter_targets(targets: list[str]) -> list[str]:
+    if os.environ.get("FINAL_TARGETS"):
+        wanted = {t.strip() for t in os.environ["FINAL_TARGETS"].split(",") if t.strip()}
+        return [t for t in targets if t in wanted]
     if os.environ.get("FINAL_SHARD"):
         idx_s, n_s = os.environ["FINAL_SHARD"].split("/")
         idx, n = int(idx_s), int(n_s)
@@ -64,18 +74,27 @@ def main() -> None:
         with journal.open("a", encoding="utf-8") as f:
             f.write(line + "\n")
 
-    jlog("=== final_train ridge stack ensemble ===")
+    jlog(f"=== final_train ridge stack: {ENSEMBLE_ID} ===")
+    jlog(f"models={STACK_MODELS} tune={TUNE_SPLITS}")
     features = load_features()
+    excluded = load_zero_expressed_mirs()
     targets = filter_targets(load_targets())
+    jlog(f"targets={len(targets)} excluded_zero_expressed={len(excluded)}")
     bundle = build_train_bundle()
 
     rows: list[dict] = []
     metrics_path = out_dir / "val_metrics.csv"
     if metrics_path.exists():
         rows = pd.read_csv(metrics_path).to_dict("records")
+        done = {str(r["target"]) for r in rows if r.get("status") == "ok"}
+    else:
+        done = set()
 
-    ok = fail = 0
+    ok = fail = skip = 0
     for i, target in enumerate(targets, 1):
+        if target in done:
+            skip += 1
+            continue
         for m in STACK_MODELS:
             if not model_exists(m, target):
                 raise SystemExit(f"Missing model {m} for {target}; train base models first.")
@@ -105,13 +124,23 @@ def main() -> None:
         rows.append(row)
         pd.DataFrame(rows).to_csv(metrics_path, index=False)
 
-    summary = {"ensemble": ENSEMBLE_ID, "n_ok": ok, "n_fail": fail, "n_targets": len(targets)}
+    summary = {
+        "ensemble": ENSEMBLE_ID,
+        "models": list(STACK_MODELS),
+        "n_ok": ok,
+        "n_fail": fail,
+        "n_skip": skip,
+        "n_targets": len(targets),
+        "tune_splits": list(TUNE_SPLITS),
+        "results_root": str(RESULTS),
+    }
     (out_dir / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
-    jlog(f"done ok={ok} fail={fail}")
+    jlog(f"done ok={ok} fail={fail} skip={skip}")
 
 
 def _pool_from_preds(preds_by_model, y_true, splits):
     from stack import pool_tune_data
+
     return pool_tune_data(preds_by_model, y_true, STACK_MODELS, splits)
 
 

@@ -1,0 +1,4 @@
+model,model_label,target,outer_val_k1_r2
+tabpack,TabPack Muon,hsa-mir-27a-5p,0.4276502136435448
+xgb_optuna,XGB Optuna,hsa-mir-423-5p,0.486535793028563
+tabpack,TabPack Muon,hsa-mir-487a-3p,0.4466973135054082

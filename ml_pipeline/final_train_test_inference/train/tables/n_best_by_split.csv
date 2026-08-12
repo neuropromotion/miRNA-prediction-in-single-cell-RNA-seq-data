@@ -1,0 +1,13 @@
+split,model,n_best,frac_best
+val K1,TabPack Muon,54,0.17307692307692307
+val K1,DCNv2 AdamW,21,0.0673076923076923
+val K1,TabM AdamW,12,0.038461538461538464
+val K1,Ridge stack,225,0.7211538461538461
+val PB (all),TabPack Muon,52,0.16666666666666666
+val PB (all),DCNv2 AdamW,0,0.0
+val PB (all),TabM AdamW,19,0.060897435897435896
+val PB (all),Ridge stack,241,0.7724358974358975
+val bulk,TabPack Muon,269,0.8621794871794872
+val bulk,DCNv2 AdamW,0,0.0
+val bulk,TabM AdamW,22,0.07051282051282051
+val bulk,Ridge stack,21,0.0673076923076923

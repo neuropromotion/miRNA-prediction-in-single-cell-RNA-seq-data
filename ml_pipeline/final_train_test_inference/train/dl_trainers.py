@@ -1,4 +1,4 @@
-"""ResNet + TabM trainers with modality-weighted loss (final_train)."""
+"""DCNv2 + TabM trainers with modality-weighted loss (final_train)."""
 
 from __future__ import annotations
 
@@ -6,10 +6,9 @@ import json
 import math
 import sys
 from copy import deepcopy
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
-
-from dataclasses import dataclass
 
 import joblib
 import numpy as np
@@ -51,12 +50,12 @@ def _resolve_device(device: str) -> torch.device:
     return torch.device("cpu")
 
 
-def _fit_standard_scaler(x_train: np.ndarray) -> sklearn.preprocessing.StandardScaler:
-    noise = np.random.default_rng(SEED).normal(0.0, 1e-5, x_train.shape).astype(np.float32)
-    return sklearn.preprocessing.StandardScaler().fit(x_train + noise)
+def _shared_dir() -> Path:
+    return Path(__file__).resolve().parents[2] / "shared"
 
 
-def _make_tabm_preprocessing(x_train: np.ndarray) -> sklearn.preprocessing.QuantileTransformer:
+def _fit_noisy_quantile(x_train: np.ndarray) -> sklearn.preprocessing.QuantileTransformer:
+    """Shared numerical policy for TabM / DCNv2 (noisy quantile → N(0,1))."""
     noise = np.random.default_rng(SEED).normal(0.0, 1e-5, x_train.shape).astype(np.float32)
     n_quantiles = max(min(len(x_train) // 30, 1000), 10)
     return sklearn.preprocessing.QuantileTransformer(
@@ -64,6 +63,10 @@ def _make_tabm_preprocessing(x_train: np.ndarray) -> sklearn.preprocessing.Quant
         output_distribution="normal",
         subsample=10**9,
     ).fit(x_train + noise)
+
+
+# Alias kept for readability in TabM path.
+_make_tabm_preprocessing = _fit_noisy_quantile
 
 
 def _weighted_mse(pred: Tensor, target: Tensor, weight: Tensor) -> Tensor:
@@ -86,7 +89,7 @@ def _train_torch_regressor(
     y_val: np.ndarray,
     sw_train: np.ndarray,
     sw_val: np.ndarray,
-    preprocessing: sklearn.preprocessing.StandardScaler,
+    preprocessing: Any,
     device: str,
     arch: str,
     batch_size: int = 512,
@@ -191,6 +194,8 @@ def save_torch_artifacts(model_dir: Path, artifacts: dict[str, Any]) -> None:
         "val_rmse": artifacts["val_rmse"],
         "val_metric": artifacts.get("val_metric", "rmse"),
     }
+    if artifacts.get("num_policy"):
+        meta["num_policy"] = artifacts["num_policy"]
     (model_dir / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 
 
@@ -213,19 +218,21 @@ def load_torch_artifacts(model_dir: Path) -> dict[str, Any]:
 
 def _predict_torch_regressor(artifacts: dict[str, Any], x: np.ndarray, batch_size: int = 2048) -> np.ndarray:
     dev = torch.device(artifacts["device"])
-    preprocessing: sklearn.preprocessing.StandardScaler = artifacts["preprocessing"]
+    preprocessing = artifacts["preprocessing"]
     label_stats = LabelStats(**artifacts["label_stats"])
     x_t = preprocessing.transform(np.asarray(x, dtype=np.float32)).astype(np.float32)
 
     arch = artifacts["arch"]
     hparams = artifacts["model_hparams"]
-    if arch == "ResNet":
-        from rtdl_revisiting_models import ResNet
+    if arch != "DCNv2":
+        raise ValueError(f"Unknown arch: {arch} (final_train supports DCNv2 only)")
 
-        model = ResNet(d_in=x.shape[1], d_out=1, **hparams)
-    else:
-        raise ValueError(f"Unknown arch: {arch}")
+    shared = _shared_dir()
+    if str(shared) not in sys.path:
+        sys.path.insert(0, str(shared))
+    from dcnv2_model import DCNv2
 
+    model = DCNv2(d_in=x.shape[1], d_out=1, **hparams)
     model.load_state_dict(artifacts["model_state"])
     model.to(dev)
     model.eval()
@@ -242,7 +249,7 @@ def predict_torch_model(model_dir: Path, x: np.ndarray) -> np.ndarray:
     return _predict_torch_regressor(load_torch_artifacts(model_dir), x)
 
 
-def train_resnet(
+def train_dcnv2(
     x_train: np.ndarray,
     y_train: np.ndarray,
     x_val: np.ndarray,
@@ -252,19 +259,29 @@ def train_resnet(
     model_dir: Path,
     device: str,
     batch_size: int,
+    *,
+    lr: float = 2e-3,
+    weight_decay: float = 3e-4,
+    patience: int = 20,
+    max_epochs: int = 200,
 ) -> dict[str, float]:
-    from rtdl_revisiting_models import ResNet
+    """DCNv2 AdamW + modality sample weights; X = noisy-quantile (same as TabM)."""
+    shared = _shared_dir()
+    if str(shared) not in sys.path:
+        sys.path.insert(0, str(shared))
+    from dcnv2_model import DCNv2
 
     n_features = x_train.shape[1]
+    low_rank = min(32, max(8, n_features // 4))
     hparams = {
-        "n_blocks": 4,
-        "d_block": 256,
-        "d_hidden_multiplier": 2.0,
-        "dropout1": 0.1,
-        "dropout2": 0.1,
+        "n_cross_layers": 3,
+        "cross_low_rank": low_rank,
+        "d_deep": 256,
+        "n_deep_layers": 3,
+        "dropout": 0.1,
     }
-    model = ResNet(d_in=n_features, d_out=1, **hparams)
-    preprocessing = _fit_standard_scaler(x_train)
+    model = DCNv2(d_in=n_features, d_out=1, **hparams)
+    preprocessing = _fit_noisy_quantile(x_train)
     artifacts, info = _train_torch_regressor(
         model,
         x_train,
@@ -275,10 +292,15 @@ def train_resnet(
         sw_val,
         preprocessing,
         device=device,
-        arch="ResNet",
+        arch="DCNv2",
         batch_size=batch_size,
+        patience=patience,
+        max_epochs=max_epochs,
+        lr=lr,
+        weight_decay=weight_decay,
     )
     artifacts["model_hparams"] = hparams
+    artifacts["num_policy"] = "noisy-quantile"
     save_torch_artifacts(model_dir, artifacts)
     return info
 
@@ -343,6 +365,7 @@ def train_tabm(
     best_rmse = math.inf
     best_epoch = -1
     remaining_patience = patience
+    epoch = -1
 
     for epoch in range(max_epochs):
         model.train()

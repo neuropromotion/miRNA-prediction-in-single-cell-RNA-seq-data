@@ -5,7 +5,9 @@ __pycache__/
 # Data
 data/splits/**/*.parquet
 data/bulk_TRAIN/
+data/bulk_TEST/
 data/sc_TRAIN/
+data/sc_TEST/
 final_train_test_inference/test_metrics/test_evaluating/bulk_TEST/
 final_train_test_inference/test_metrics/test_evaluating/sc_TEST/
 final_train_test_inference/test_metrics/test_evaluating/bulk_test_run/
@@ -14,13 +16,74 @@ final_train_test_inference/test_metrics/test_evaluating/sc_test_run/
 # models
 final_train_test_inference/models/*
 
-# inference
-data/inference_inputs/**/*.parquet
-data/inference_outputs/**/*.csv
+# Local jupyter launcher lives at repo root — see ../.gitignore (run_jupyter.sh).
+# Absolute paths and ../ patterns do NOT work reliably from this file.
+
+# inference I/O (keep README.md tracked)
+data/inference_inputs/**
+!data/inference_inputs/README.md
+data/inference_outputs/**
+
+# Jupyter checkpoints anywhere under ml_pipeline
+**/.ipynb_checkpoints/
 
 # Pipeline artifacts (trained model weights / intermediate outputs)
 pipeline_benchmarking/model_selection/results/**
+pipeline_benchmarking/model_tuning/results/**
+pipeline_benchmarking/model_tuning/*.log
+pipeline_benchmarking/model_tuning/logs/**
 pipeline_benchmarking/ensembles_selection/results/**
+pipeline_benchmarking/model_selection/*.sh
+pipeline_benchmarking/ensembles_selection/*.sh
+pipeline_benchmarking/model_selection/.pt_tmp
+pipeline_benchmarking/ensembles_selection/catboost_info
+pipeline_benchmarking/model_selection/figures_pre_retrain_20260729_224202
+pipeline_benchmarking/model_selection/lightning_logs
+pipeline_benchmarking/model_selection/smoke_tmp
+pipeline_benchmarking/model_selection/tables_pre_retrain_20260729_224202
+pipeline_benchmarking/ensembles_selection/*.log
+pipeline_benchmarking/diagnostics
+pipeline_benchmarking/ensembles_selection_deprecated
+pipeline_benchmarking/ensembles_selection_v2
+pipeline_benchmarking/ensembles_selection_v3
+pipeline_benchmarking/model_diagnostics
+pipeline_benchmarking/sc_imputation_selection/run_docker.sh
+pipeline_benchmarking/model_selection/config_*.json
+pipeline_benchmarking/model_selection/*.log
+pipeline_benchmarking/model_selection/smoke_tmp
+pipeline_benchmarking/model_selection/results_pre_retrain_20260729_224202
+pipeline_benchmarking/model_selection/catboost_info
+pipeline_benchmarking/model_selection/checkpoints
+pipeline_benchmarking/model_selection/logs
+pipeline_benchmarking/model_selection/saved_models
+pipeline_benchmarking/model_selection/smoke_test.py
+pipeline_benchmarking/model_tuning/config_*.json
+pipeline_benchmarking/model_tuning/*.log
+pipeline_benchmarking/model_tuning/*.sh
+
 
 # Final-stack base models (trained weights live under train/results in this repo)
 final_train_test_inference/train/results/**
+final_train_test_inference/train/logs
+final_train_test_inference/train/*.sh
+final_train_test_inference/train/journal.py
+final_train_test_inference/train/figures/*.pdf
+final_train_test_inference/Optimal_K/*.sh
+final_train_test_inference/Optimal_K/results/*.log
+final_train_test_inference/Optimal_K/results/pred_cache
+final_train_test_inference/Optimal_K/logs
+final_train_test_inference/Optimal_K/figures/*.pdf
+
+final_train_test_inference/test_metrics/*.sh
+final_train_test_inference/test_metrics/results/*.log
+final_train_test_inference/test_metrics/logs
+final_train_test_inference/test_metrics/figures/*.pdf
+final_train_test_inference/test_metrics/figures/.ipynb_checkpoints
+
+# Vendored upstream repos (clone locally; do NOT git-add as embedded repos)
+deps/tabpack/
+deps/tabular-dl-tabr/
+
+# Local logs / scratch
+data/prepare_splits/*.log
+data/splits/*_old/

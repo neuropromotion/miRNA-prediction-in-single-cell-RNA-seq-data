@@ -16,7 +16,14 @@ for _p in (_STAGE03, _ML_PIPELINE):
 
 import pandas as pd
 
-from model_screen_final_11.constants import MODEL_LABELS, RESULTS, SCREEN_MODELS, OUTER_VAL_METRIC_COLS
+from model_screen_final_11.constants import (
+    K_COHORT_METRIC_COLS,
+    MODEL_LABELS,
+    OUTER_VAL_METRIC_COLS,
+    RESULTS,
+    SCREEN_MODELS,
+)
+from model_screen_final_11.metrics import avg_k_cohort_scores
 from model_screen_final_11.screen_journal import log
 
 
@@ -32,22 +39,34 @@ def summarize_from_metrics(model_name: str, df: pd.DataFrame) -> dict:
         if col in ok.columns and len(ok):
             summary[f"mean_{col}"] = float(ok[col].mean())
             summary[f"median_{col}"] = float(ok[col].median())
+    summary.update(avg_k_cohort_scores(summary, K_COHORT_METRIC_COLS))
     if "train_sec" in ok.columns and len(ok):
         summary["elapsed_sec"] = round(float(ok["train_sec"].sum()), 1)
     return summary
 
 
-def merge_ft_shards() -> int:
-    model_name = "fttransformer"
+def merge_model_shards(model_name: str) -> int:
+    """Merge outer_val_metrics_shard*.csv (+ keep prior main ok rows) into outer_val_metrics.csv."""
     out_dir = RESULTS / model_name
     parts = sorted(out_dir.glob("outer_val_metrics_shard*.csv"))
-    if not parts:
-        log("no FT shards to merge", "merge")
+    frames: list[pd.DataFrame] = []
+    main_path = out_dir / "outer_val_metrics.csv"
+    if main_path.exists():
+        frames.append(pd.read_csv(main_path))
+    frames.extend(pd.read_csv(p) for p in parts)
+    if not frames:
+        log(f"no shards/metrics to merge for {model_name}", "merge")
         return 0
 
-    merged = pd.concat([pd.read_csv(p) for p in parts], ignore_index=True)
-    merged = merged.drop_duplicates(subset=["target"], keep="last")
-    merged.to_csv(out_dir / "outer_val_metrics.csv", index=False)
+    merged = pd.concat(frames, ignore_index=True)
+    if "status" in merged.columns:
+        # Prefer ok rows over fail when duplicates
+        merged["_ok"] = (merged["status"] == "ok").astype(int)
+        merged = merged.sort_values("_ok").drop_duplicates(subset=["target"], keep="last")
+        merged = merged.drop(columns=["_ok"])
+    else:
+        merged = merged.drop_duplicates(subset=["target"], keep="last")
+    merged.to_csv(main_path, index=False)
 
     summary = summarize_from_metrics(model_name, merged)
     shard_summaries = sorted(out_dir.glob("summary_shard*.json"))
@@ -55,8 +74,19 @@ def merge_ft_shards() -> int:
         walls = [json.loads(p.read_text(encoding="utf-8")).get("elapsed_sec", 0) for p in shard_summaries]
         summary["elapsed_wall_sec"] = round(max(walls), 1)
     (out_dir / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
-    log(f"merged FT: {len(merged)} targets from {len(parts)} shards", "merge")
+    log(f"merged {model_name}: {len(merged)} targets from {len(parts)} shards (+main)", "merge")
     return len(merged)
+
+
+def merge_ft_shards() -> int:
+    return merge_model_shards("fttransformer")
+
+
+def merge_all_pending_shards() -> None:
+    for model_name in SCREEN_MODELS:
+        out_dir = RESULTS / model_name
+        if list(out_dir.glob("outer_val_metrics_shard*.csv")):
+            merge_model_shards(model_name)
 
 
 def refresh_model_summaries(models: tuple[str, ...] = SCREEN_MODELS) -> None:
@@ -72,8 +102,34 @@ def refresh_model_summaries(models: tuple[str, ...] = SCREEN_MODELS) -> None:
         )
 
 
+def add_best_target_counts(df_sum: pd.DataFrame, combined: pd.DataFrame) -> pd.DataFrame:
+    """Count targets where each model hits the max outer_val K1 / bulk R²."""
+    ok = combined[combined["status"] == "ok"] if "status" in combined.columns else combined
+    out = df_sum.copy()
+    for metric, short in (("outer_val_k1_r2", "outer_val_k1"), ("outer_val_bulk_r2", "outer_val_bulk")):
+        if metric not in ok.columns:
+            continue
+        pivot = ok.pivot_table(index="target", columns="model", values=metric, aggfunc="first")
+        n_best = {m: 0 for m in out["model"]}
+        n_unique = {m: 0 for m in out["model"]}
+        for _, row in pivot.iterrows():
+            vals = row.dropna()
+            if vals.empty:
+                continue
+            best_val = float(vals.max())
+            winners = [m for m, v in vals.items() if abs(float(v) - best_val) <= 1e-12]
+            for m in winners:
+                if m in n_best:
+                    n_best[m] += 1
+            if len(winners) == 1 and winners[0] in n_unique:
+                n_unique[winners[0]] += 1
+        out[f"n_best_{short}"] = out["model"].map(n_best).fillna(0).astype(int)
+        out[f"n_best_unique_{short}"] = out["model"].map(n_unique).fillna(0).astype(int)
+    return out
+
+
 def write_combined_outputs() -> tuple[int, int]:
-    merge_ft_shards()
+    merge_all_pending_shards()
     refresh_model_summaries()
 
     all_metrics: list[pd.DataFrame] = []
@@ -87,6 +143,7 @@ def write_combined_outputs() -> tuple[int, int]:
             summaries.append(json.loads(summary_path.read_text(encoding="utf-8")))
 
     n_metrics = 0
+    combined = None
     if all_metrics:
         combined = pd.concat(all_metrics, ignore_index=True)
         combined.to_csv(RESULTS / "outer_val_metrics_all.csv", index=False)
@@ -96,7 +153,20 @@ def write_combined_outputs() -> tuple[int, int]:
     n_models = 0
     if summaries:
         df_sum = pd.DataFrame(summaries)
-        std_cols = ["model", "model_label", "n_targets_ok", "n_targets_fail"]
+        if combined is not None:
+            df_sum = add_best_target_counts(df_sum, combined)
+        std_cols = [
+            "model",
+            "model_label",
+            "n_targets_ok",
+            "n_targets_fail",
+            "n_best_outer_val_k1",
+            "n_best_unique_outer_val_k1",
+            "n_best_outer_val_bulk",
+            "n_best_unique_outer_val_bulk",
+            "avg_of_medians_K",
+            "avg_of_means_K",
+        ]
         for col in OUTER_VAL_METRIC_COLS:
             std_cols.extend([f"mean_{col}", f"median_{col}"])
         std_cols.append("elapsed_sec")
@@ -113,10 +183,20 @@ def write_combined_outputs() -> tuple[int, int]:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Merge stage03 model screen outputs")
     parser.add_argument("--ft-only", action="store_true", help="Only merge FT shards")
+    parser.add_argument(
+        "--model",
+        action="append",
+        default=[],
+        help="Merge shards for a specific model (repeatable). Default: all with shard files.",
+    )
     args = parser.parse_args()
 
     if args.ft_only:
         merge_ft_shards()
+        return
+    if args.model:
+        for m in args.model:
+            merge_model_shards(m)
         return
 
     n_metrics, n_models = write_combined_outputs()

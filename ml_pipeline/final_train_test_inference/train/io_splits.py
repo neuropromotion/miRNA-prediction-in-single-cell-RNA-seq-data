@@ -7,16 +7,29 @@ import re
 
 import pandas as pd
 
-from constants import FEATURES, PB_COHORTS, SPLITS
+from constants import FEATURES, PB_COHORTS, SPLITS, ZERO_EXPRESSED_MIRS
 
 
 def load_features() -> dict[str, list[str]]:
     return json.loads(FEATURES.read_text(encoding="utf-8"))
 
 
+def load_zero_expressed_mirs() -> set[str]:
+    """Targets that must not be trained (from zero_expressed_mirs.txt)."""
+    if not ZERO_EXPRESSED_MIRS.is_file():
+        return set()
+    return {
+        line.strip()
+        for line in ZERO_EXPRESSED_MIRS.read_text(encoding="utf-8").splitlines()
+        if line.strip() and not line.strip().startswith("#")
+    }
+
+
 def load_targets() -> list[str]:
+    """All Y columns minus zero-expressed exclude list (327 → 312 by default)."""
     y = pd.read_parquet(SPLITS / "bulk" / "Y_train.parquet")
-    return list(y.columns)
+    exclude = load_zero_expressed_mirs()
+    return [t for t in y.columns if t not in exclude]
 
 
 def _load_xy(split_dir: str) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:

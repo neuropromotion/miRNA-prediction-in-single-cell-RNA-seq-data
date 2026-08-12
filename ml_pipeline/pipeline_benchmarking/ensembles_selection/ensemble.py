@@ -1,4 +1,4 @@
-"""Ensemble fit/apply: blend, soup variants, Ridge stack."""
+"""Ensemble fit/apply: blend, uniform average, Ridge stack."""
 
 from __future__ import annotations
 
@@ -11,8 +11,6 @@ from constants import (
     BLEND_GRID_STEP,
     RIDGE_ALPHAS,
     SAFETY_GATE,
-    SOUP_MIX_STEP,
-    SOUP_PRUNE_PASSES,
     TUNE_SPLITS,
 )
 from metrics import clip_nonneg, r2
@@ -42,8 +40,13 @@ def pool_tune_data(
     y_parts: list[np.ndarray] = []
     cols: list[np.ndarray] = []
     for split in splits:
-        y_parts.append(y_true[split])
+        y = y_true[split]
+        if len(y) == 0:
+            continue
+        y_parts.append(y)
         cols.append(np.column_stack([preds_by_model[m][split] for m in models]))
+    if not y_parts:
+        raise ValueError("No non-empty tune splits available")
     y = np.concatenate(y_parts)
     matrix = np.concatenate(cols, axis=0)
     return y, matrix
@@ -54,8 +57,12 @@ def mean_r2_on_splits(
     pred_by_split: dict[str, np.ndarray],
     splits: tuple[str, ...] = TUNE_SPLITS,
 ) -> float:
-    scores = [r2(y_true[s], pred_by_split[s]) for s in splits]
-    return float(np.mean(scores))
+    scores = []
+    for s in splits:
+        if len(y_true[s]) == 0:
+            continue
+        scores.append(r2(y_true[s], pred_by_split[s]))
+    return float(np.mean(scores)) if scores else float("nan")
 
 
 def split_predictions_from_pooled(
@@ -66,6 +73,9 @@ def split_predictions_from_pooled(
 ) -> dict[str, np.ndarray]:
     out: dict[str, np.ndarray] = {}
     for split in splits:
+        if preds_by_model[models[0]][split].shape[0] == 0:
+            out[split] = np.zeros(0, dtype=np.float64)
+            continue
         mat = np.column_stack([preds_by_model[m][split] for m in models])
         out[split] = apply_fit(fit, mat, models)
     return out
@@ -73,26 +83,22 @@ def split_predictions_from_pooled(
 
 def _simplex_weight_grid(n_models: int, step: float = BLEND_GRID_STEP) -> list[tuple[float, ...]]:
     grid = np.arange(0.0, 1.0 + step / 2, step)
-    if n_models == 2:
-        return [(float(a), float(1.0 - a)) for a in grid]
-    if n_models == 3:
-        out: list[tuple[float, ...]] = []
-        for w0 in grid:
-            for w1 in grid:
-                w2 = 1.0 - w0 - w1
-                if w2 >= -1e-9:
-                    out.append((float(w0), float(w1), float(max(0.0, w2))))
-        return out
-    if n_models == 4:
-        out = []
-        for w0 in grid:
-            for w1 in grid:
-                for w2 in grid:
-                    w3 = 1.0 - w0 - w1 - w2
-                    if w3 >= -1e-9:
-                        out.append((float(w0), float(w1), float(w2), float(max(0.0, w3))))
-        return out
-    raise ValueError(f"simplex grid not implemented for n={n_models}")
+    if n_models < 2 or n_models > 5:
+        raise ValueError(f"simplex grid not implemented for n={n_models}")
+
+    out: list[tuple[float, ...]] = []
+
+    def rec(prefix: list[float], remaining: float, left: int) -> None:
+        if left == 1:
+            out.append(tuple(prefix + [float(max(0.0, remaining))]))
+            return
+        for w in grid:
+            if w > remaining + 1e-9:
+                break
+            rec(prefix + [float(w)], remaining - float(w), left - 1)
+
+    rec([], 1.0, n_models)
+    return out
 
 
 def _combine(preds: list[np.ndarray], weights: list[float]) -> np.ndarray:
@@ -183,7 +189,7 @@ def fit_blend(
     return _finalize_fit(y_pool, pred_matrix, models, fit, ens_pred, preds_by_model, y_true)
 
 
-def fit_soup_uniform(
+def fit_avg_uniform(
     y_pool: np.ndarray,
     pred_matrix: np.ndarray,
     models: tuple[str, ...],
@@ -192,90 +198,7 @@ def fit_soup_uniform(
 ) -> FitResult:
     w = 1.0 / len(models)
     weights = {m: w for m in models}
-    fit = FitResult(method="soup_uniform", models=models, weights=weights, active_models=list(models))
-    ens_pred = apply_fit(fit, pred_matrix, models)
-    return _finalize_fit(y_pool, pred_matrix, models, fit, ens_pred, preds_by_model, y_true)
-
-
-def fit_soup_greedy(
-    y_pool: np.ndarray,
-    pred_matrix: np.ndarray,
-    models: tuple[str, ...],
-    preds_by_model: dict[str, dict[str, np.ndarray]] | None = None,
-    y_true: dict[str, np.ndarray] | None = None,
-) -> FitResult:
-    solo = _solo_scores(y_pool, pred_matrix, models)
-    order = sorted(models, key=lambda m: solo[m], reverse=True)
-
-    current = pred_matrix[:, models.index(order[0])].astype(np.float64)
-    active = [order[0]]
-    best_r2 = solo[order[0]]
-
-    for cand in order[1:]:
-        j = models.index(cand)
-        best_lam = 0.0
-        best_local = best_r2
-        best_mix = current
-        for lam in np.arange(0.0, 1.0 + SOUP_MIX_STEP / 2, SOUP_MIX_STEP):
-            if lam <= 0.0:
-                continue
-            mix = (1.0 - lam) * current + lam * pred_matrix[:, j]
-            score = r2(y_pool, mix)
-            if score > best_local:
-                best_local = score
-                best_lam = float(lam)
-                best_mix = mix
-        if best_lam > 0.0:
-            active.append(cand)
-            current = best_mix
-            best_r2 = best_local
-
-    if len(active) == 1:
-        weights = {m: (1.0 if m == active[0] else 0.0) for m in models}
-    else:
-        idx = [models.index(m) for m in active]
-        sub_fit = fit_blend(y_pool, pred_matrix[:, idx], tuple(active))
-        weights = {m: sub_fit.weights.get(m, 0.0) for m in models}
-
-    fit = FitResult(method="soup_greedy", models=models, weights=weights, active_models=active)
-    ens_pred = apply_fit(fit, pred_matrix, models)
-    return _finalize_fit(y_pool, pred_matrix, models, fit, ens_pred, preds_by_model, y_true)
-
-
-def fit_soup_pruned(
-    y_pool: np.ndarray,
-    pred_matrix: np.ndarray,
-    models: tuple[str, ...],
-    preds_by_model: dict[str, dict[str, np.ndarray]] | None = None,
-    y_true: dict[str, np.ndarray] | None = None,
-) -> FitResult:
-    solo = _solo_scores(y_pool, pred_matrix, models)
-    active = list(models)
-    weights = {m: 1.0 / len(models) for m in models}
-
-    for _ in range(SOUP_PRUNE_PASSES):
-        improved = False
-        baseline = apply_fit(
-            FitResult(method="soup_pruned", models=models, weights=weights, active_models=active),
-            pred_matrix,
-            models,
-        )
-        base_score = r2(y_pool, baseline)
-        for cand in sorted(active, key=lambda m: solo[m]):
-            if len(active) <= 1:
-                break
-            trial = [m for m in active if m != cand]
-            w = 1.0 / len(trial)
-            trial_w = [w] * len(trial)
-            pred = _combine([pred_matrix[:, models.index(m)] for m in trial], trial_w)
-            if r2(y_pool, pred) >= base_score:
-                active = trial
-                weights = {m: (1.0 / len(active) if m in active else 0.0) for m in models}
-                improved = True
-        if not improved:
-            break
-
-    fit = FitResult(method="soup_pruned", models=models, weights=weights, active_models=active)
+    fit = FitResult(method="avg_uniform", models=models, weights=weights, active_models=list(models))
     ens_pred = apply_fit(fit, pred_matrix, models)
     return _finalize_fit(y_pool, pred_matrix, models, fit, ens_pred, preds_by_model, y_true)
 
@@ -313,9 +236,7 @@ def fit_ensemble(
     y_pool, pred_matrix = pool_tune_data(preds_by_model, y_true, models)
     fn = {
         "blend": fit_blend,
-        "soup_uniform": fit_soup_uniform,
-        "soup_greedy": fit_soup_greedy,
-        "soup_pruned": fit_soup_pruned,
+        "avg_uniform": fit_avg_uniform,
         "stack": fit_stack,
     }[method]
     return fn(y_pool, pred_matrix, models, preds_by_model, y_true)

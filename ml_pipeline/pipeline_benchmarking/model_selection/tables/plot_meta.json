@@ -1,0 +1,53 @@
+{
+  "source_metrics": "/home/amismailov/mirna-repo/ml_pipeline/pipeline_benchmarking/model_selection/results/outer_val_metrics_all.csv",
+  "source_summary": "/home/amismailov/mirna-repo/ml_pipeline/pipeline_benchmarking/model_selection/results/summary_by_model.csv",
+  "models": [
+    "tabpack",
+    "tabm",
+    "dcnv2",
+    "realmlp",
+    "gandalf",
+    "xgb_optuna",
+    "tabnet",
+    "resnet",
+    "catboost_optuna",
+    "fttransformer",
+    "tabr",
+    "xgb_default",
+    "lassonet"
+  ],
+  "model_labels": {
+    "xgb_default": "XGB default",
+    "xgb_optuna": "XGB Optuna",
+    "catboost_optuna": "CatBoost Optuna",
+    "dcnv2": "DCNv2",
+    "realmlp": "RealMLP",
+    "resnet": "ResNet",
+    "tabm": "TabM",
+    "tabnet": "TabNet",
+    "fttransformer": "FT-Transformer",
+    "gandalf": "GANDALF",
+    "lassonet": "LassoNet",
+    "tabr": "TabR",
+    "tabpack": "TabPack"
+  },
+  "models_count": 13,
+  "targets_count": 50,
+  "r2_metrics": [
+    "inner_val_r2",
+    "outer_val_bulk_r2",
+    "outer_val_k1_r2"
+  ],
+  "baseline_model": "xgb_default",
+  "r2_threshold": 0.4,
+  "line_plots": [
+    "r2_by_target_inner_val.png",
+    "r2_by_target_bulk.png",
+    "r2_by_target_k1.png"
+  ],
+  "heatmap_dpi": 300,
+  "heatmap_cell_size_in": [
+    0.72,
+    0.34
+  ]
+}

@@ -1,64 +1,36 @@
-## Overview
+# TEST metrics (eval half)
 
-Model performance was evaluated across **327 target miRNAs**.  
-Only targets achieving a minimum predictive performance threshold (**R² > 0.4**) at any resolution (K = 1, 2–5, 10) or on bulk-level metrics were retained for downstream analysis. 15 from 327 miRNAs were exluded due to zero expression on GTEx train data. 
+Final holdout evaluation for **Optimal_K-eligible** miRNAs only.
 
-In total, **152 miRNAs** passed this criterion and were defined as *eligible targets*.
+## Protocol
 
----
+- Split: `../Optimal_K/results/test_split.json` — **eval** indices only
+- Assignments: `../Optimal_K/results/proto_prediction_config.json`
+- Predictions: reuse `../Optimal_K/results/pred_cache/`
+- Per target:
+  - **SC** on assigned K only (no K1–K10 menu)
+  - **bulk** on eval bulk half
+  - B=1000 bootstrap → R² and MSE distributions
+  - Summary stats: mean / median / std / q05 / q25 / q75 / q95  
+    plus point estimate on the full eval slice (`*_full`)
 
-## Optimal pseudobulk resolution selection
+## Run
 
-Predictive performance generally improved with increasing pseudobulk aggregation level which was expected gived abundance of bulk data in train set. However, for a subset of miRNAs, performance differences between single-cell resolution (K = 1) and higher pseudobulk levels were minimal.
+```bash
+bash run.sh
+```
 
-To fix it we implemented an adaptive selection strategy (see `vizualization_and_config.ipynb`):
+## Outputs
 
-1. For each eligible miRNA, the maximum R² across all K values was identified  
-2. A tolerance threshold was defined as **−7.5% from the maximum R²**  
-3. The **smallest K** satisfying this criterion was selected as the optimal resolution  
+- `tables/per_target_bootstrap_summary.csv` — one row per eligible target
+- `tables/sc_summary.csv`, `bulk_summary.csv`, `overall_summary.csv`
+- `figures/*.png` + `*.pdf`
+- `results/prediction_config.json` — **production** config for inference  
+  (`features` + `test_bulk` / `test_optimal_k` = eval-half bootstrap median R²;  
+  no `version` / `assignment_rule` / `thresholds` / `split_path` / `features_source`)
 
-This ensures preference for lower K when performance is comparable.
+Copy to inference when ready:
 
----
-
-## Distribution of selected targets
-
-Final assignment of optimal pseudobulk resolution:
-
-- **K1 (single-cell level):** 10 targets  
-- **K2:** 18 targets  
-- **K3:** 16 targets  
-- **K4:** 19 targets  
-- **K5:** 20 targets  
-- **K10:** 69 targets  
-
----
-
-## Model performance summary across eligible miRNAs
-
-### scRNA-seq test metrics (optimal K selected)
-
-- Mean R²: **0.78**  
-- Median R²: **0.82**  
-- Max R²: **0.97**  
-- Min R²: **0.4**
-
-### Bulk-level test metrics
-
-- Mean R²: **0.75**  
-- Median R²: **0.77**  
-- Max R²: **0.96**  
-- Min R²: **0.42**
-
----
-The selection strategy is implemented in `vizualization_and_config.ipynb`.
-Building final target config: `build_target_config.ipynb`
----
-
-![R2 Performance](figures/mean_median_by_K.png)
-![R2 Performance](figures/eligible_vs_rest_k1.png)
-![R2 Performance](figures/r2_mean_median_by_k.png)
-![R2 Performance](figures/r2_lines_by_target.png)
-
-# Correlation between number of selected features on single-cell and R2 perfomance on K1 (single cell level)
-![R2 Performance](figures/n_sc_vs_k1.png)
+```bash
+cp results/prediction_config.json ../inference/prediction_config.json
+```
