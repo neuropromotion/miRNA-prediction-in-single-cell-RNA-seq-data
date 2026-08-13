@@ -1,3 +1,0 @@
-# Repo-root local helpers (ml_pipeline/.gitignore cannot ignore parent paths)
-run_jupyter.sh
-git_push.sh

@@ -28,38 +28,38 @@ data/inference_outputs/**
 **/.ipynb_checkpoints/
 
 # Pipeline artifacts (trained model weights / intermediate outputs)
-pipeline_benchmarking/model_selection/results/**
-pipeline_benchmarking/model_tuning/results/**
-pipeline_benchmarking/model_tuning/*.log
-pipeline_benchmarking/model_tuning/logs/**
-pipeline_benchmarking/ensembles_selection/results/**
-pipeline_benchmarking/model_selection/*.sh
-pipeline_benchmarking/ensembles_selection/*.sh
-pipeline_benchmarking/model_selection/.pt_tmp
-pipeline_benchmarking/ensembles_selection/catboost_info
-pipeline_benchmarking/model_selection/figures_pre_retrain_20260729_224202
-pipeline_benchmarking/model_selection/lightning_logs
-pipeline_benchmarking/model_selection/smoke_tmp
-pipeline_benchmarking/model_selection/tables_pre_retrain_20260729_224202
-pipeline_benchmarking/ensembles_selection/*.log
+pipeline_benchmarking/02_model_selection/results/**
+pipeline_benchmarking/03_optimizer_selection/results/**
+pipeline_benchmarking/03_optimizer_selection/*.log
+pipeline_benchmarking/03_optimizer_selection/logs/**
+pipeline_benchmarking/04_ensembles_selection/results/**
+pipeline_benchmarking/02_model_selection/*.sh
+pipeline_benchmarking/04_ensembles_selection/*.sh
+pipeline_benchmarking/02_model_selection/.pt_tmp
+pipeline_benchmarking/04_ensembles_selection/catboost_info
+pipeline_benchmarking/02_model_selection/figures_pre_retrain_20260729_224202
+pipeline_benchmarking/02_model_selection/lightning_logs
+pipeline_benchmarking/02_model_selection/smoke_tmp
+pipeline_benchmarking/02_model_selection/tables_pre_retrain_20260729_224202
+pipeline_benchmarking/04_ensembles_selection/*.log
 pipeline_benchmarking/diagnostics
 pipeline_benchmarking/ensembles_selection_deprecated
 pipeline_benchmarking/ensembles_selection_v2
 pipeline_benchmarking/ensembles_selection_v3
 pipeline_benchmarking/model_diagnostics
-pipeline_benchmarking/sc_imputation_selection/run_docker.sh
-pipeline_benchmarking/model_selection/config_*.json
-pipeline_benchmarking/model_selection/*.log
-pipeline_benchmarking/model_selection/smoke_tmp
-pipeline_benchmarking/model_selection/results_pre_retrain_20260729_224202
-pipeline_benchmarking/model_selection/catboost_info
-pipeline_benchmarking/model_selection/checkpoints
-pipeline_benchmarking/model_selection/logs
-pipeline_benchmarking/model_selection/saved_models
-pipeline_benchmarking/model_selection/smoke_test.py
-pipeline_benchmarking/model_tuning/config_*.json
-pipeline_benchmarking/model_tuning/*.log
-pipeline_benchmarking/model_tuning/*.sh
+pipeline_benchmarking/01_imputation_selection/run_docker.sh
+pipeline_benchmarking/02_model_selection/config_*.json
+pipeline_benchmarking/02_model_selection/*.log
+pipeline_benchmarking/02_model_selection/smoke_tmp
+pipeline_benchmarking/02_model_selection/results_pre_retrain_20260729_224202
+pipeline_benchmarking/02_model_selection/catboost_info
+pipeline_benchmarking/02_model_selection/checkpoints
+pipeline_benchmarking/02_model_selection/logs
+pipeline_benchmarking/02_model_selection/saved_models
+pipeline_benchmarking/02_model_selection/smoke_test.py
+pipeline_benchmarking/03_optimizer_selection/config_*.json
+pipeline_benchmarking/03_optimizer_selection/*.log
+pipeline_benchmarking/03_optimizer_selection/*.sh
 
 
 # Final-stack base models (trained weights live under train/results in this repo)
@@ -79,6 +79,7 @@ final_train_test_inference/test_metrics/results/*.log
 final_train_test_inference/test_metrics/logs
 final_train_test_inference/test_metrics/figures/*.pdf
 final_train_test_inference/test_metrics/figures/.ipynb_checkpoints
+final_train_test_inference/inference/.ipynb_checkpoints
 
 # Vendored upstream repos (clone locally; do NOT git-add as embedded repos)
 deps/tabpack/
@@ -87,3 +88,7 @@ deps/tabular-dl-tabr/
 # Local logs / scratch
 data/prepare_splits/*.log
 data/splits/*_old/
+
+# local scripts
+git_push.sh
+run_jupyter.sh

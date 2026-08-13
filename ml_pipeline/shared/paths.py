@@ -1,5 +1,3 @@
-"""Central paths for the ml_pipeline workspace (GITHUB / future ml_pipeline/)."""
-
 from __future__ import annotations
 
 from pathlib import Path
@@ -13,14 +11,11 @@ SPLITS = DATA / "splits"
 FROZEN = DATA / "frozen"
 
 PIPELINE_BENCH = ML_PIPELINE / "pipeline_benchmarking"
-FEATURE_SELECTION = PIPELINE_BENCH / "feature_selection"
-SC_IMPUTATION = PIPELINE_BENCH / "sc_imputation_selection"
-MODEL_SELECTION = PIPELINE_BENCH / "model_selection"
-MODEL_TUNING = PIPELINE_BENCH / "model_tuning"
-ENSEMBLES = PIPELINE_BENCH / "ensembles_selection"
-ENSEMBLES_V2 = PIPELINE_BENCH / "ensembles_selection_v2"
-ENSEMBLES_V3 = PIPELINE_BENCH / "ensembles_selection_v3"
-ENSEMBLES_V4 = PIPELINE_BENCH / "ensembles_selection_v4"
+FEATURE_SELECTION = PIPELINE_BENCH / "00_feature_selection"
+SC_IMPUTATION = PIPELINE_BENCH / "01_imputation_selection"
+MODEL_SELECTION = PIPELINE_BENCH / "02_model_selection"
+MODEL_TUNING = PIPELINE_BENCH / "03_optimizer_selection"
+ENSEMBLES = PIPELINE_BENCH / "04_ensembles_selection"
 
 FINAL = ML_PIPELINE / "final_train_test_inference"
 FINAL_TRAIN = FINAL / "train"

@@ -15,7 +15,7 @@ from scipy.cluster import hierarchy
 from scipy.spatial.distance import pdist
 
 _SCRIPT = Path(__file__).resolve()
-# ml_pipeline: .../pipeline_benchmarking/model_selection/build_stage03_results.py
+# ml_pipeline: .../pipeline_benchmarking/02_model_selection/build_stage03_results.py
 BASE = _SCRIPT.parent
 SRC = BASE / "results"
 OUT = BASE / "tables"
