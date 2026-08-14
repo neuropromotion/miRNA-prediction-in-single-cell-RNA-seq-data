@@ -12,7 +12,7 @@ final_train_test_inference/test_metrics/test_evaluating/bulk_TEST/
 final_train_test_inference/test_metrics/test_evaluating/sc_TEST/
 final_train_test_inference/test_metrics/test_evaluating/bulk_test_run/
 final_train_test_inference/test_metrics/test_evaluating/sc_test_run/
-
+data/RCC_new/
 # models
 final_train_test_inference/models/*
 
@@ -80,7 +80,7 @@ final_train_test_inference/test_metrics/logs
 final_train_test_inference/test_metrics/figures/*.pdf
 final_train_test_inference/test_metrics/figures/.ipynb_checkpoints
 final_train_test_inference/inference/.ipynb_checkpoints
-
+final_train_test_inference/train/model.tar.gz
 # Vendored upstream repos (clone locally; do NOT git-add as embedded repos)
 deps/tabpack/
 deps/tabular-dl-tabr/
