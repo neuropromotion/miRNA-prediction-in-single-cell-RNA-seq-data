@@ -2,7 +2,6 @@
   "base_models": [
     "xgb_optuna",
     "tabpack",
-    "dcnv2",
     "tabm"
   ],
   "model_sets": {
@@ -10,44 +9,17 @@
       "xgb_optuna",
       "tabpack"
     ],
-    "xgb_dcnv2": [
-      "xgb_optuna",
-      "dcnv2"
-    ],
     "xgb_tabm": [
       "xgb_optuna",
       "tabm"
-    ],
-    "tabpack_dcnv2": [
-      "tabpack",
-      "dcnv2"
     ],
     "tabpack_tabm": [
       "tabpack",
       "tabm"
     ],
-    "dcnv2_tabm": [
-      "dcnv2",
-      "tabm"
-    ],
-    "xgb_tabpack_dcnv2": [
-      "xgb_optuna",
-      "tabpack",
-      "dcnv2"
-    ],
     "xgb_tabpack_tabm": [
       "xgb_optuna",
       "tabpack",
-      "tabm"
-    ],
-    "xgb_dcnv2_tabm": [
-      "xgb_optuna",
-      "dcnv2",
-      "tabm"
-    ],
-    "tabpack_dcnv2_tabm": [
-      "tabpack",
-      "dcnv2",
       "tabm"
     ]
   },
@@ -88,10 +60,9 @@
     ],
     "note": "All pairs + triples from 4-model pool; full quadruple excluded",
     "base_artifacts": {
-      "xgb_optuna": "/workspace/ml_pipeline/pipeline_benchmarking/model_selection/results/xgb_optuna/models/{target}",
-      "tabpack": "/workspace/ml_pipeline/pipeline_benchmarking/model_tuning/results/tabpack/models/{target}",
-      "dcnv2": "/workspace/ml_pipeline/pipeline_benchmarking/model_selection/results/dcnv2/models/{target}",
-      "tabm": "/workspace/ml_pipeline/pipeline_benchmarking/model_selection/results/tabm/models/{target}"
+      "xgb_optuna": "/home/amismailov/mirna-repo/ml_pipeline/pipeline_benchmarking/02_model_selection/results/xgb_optuna/models/{target}",
+      "tabpack": "/home/amismailov/mirna-repo/ml_pipeline/pipeline_benchmarking/03_optimizer_selection/results/tabpack/models/{target}",
+      "tabm": "/home/amismailov/mirna-repo/ml_pipeline/pipeline_benchmarking/02_model_selection/results/tabm/models/{target}"
     }
   }
 }

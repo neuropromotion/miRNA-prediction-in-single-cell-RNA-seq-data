@@ -17,7 +17,7 @@ TOTAL_INFERENCE = INFERENCE_DIR
 FINAL = FTTI_ROOT
 FINAL_VERSION = FTTI_ROOT
 
-ENSEMBLE_ID = "tabpack_dcnv2_tabm_stack"
+ENSEMBLE_ID = "tabpack_tabm_xgb_stack"
 
 # Prefer packaged ../models (publish via train/publish_models.sh); else train/results.
 _PACKAGED = FTTI_ROOT / "models"
@@ -43,7 +43,7 @@ MRNA_NAMES_PATH = INFERENCE_DIR / "mRNA_names.json"
 GENE_MAPPING_PATH = INFERENCE_DIR / "ensembl_gene_mapping.csv"
 GENE_MAPPING_CANDIDATES = (GENE_MAPPING_PATH,)
 
-STACK_MODELS = ("tabpack", "dcnv2", "tabm")
+STACK_MODELS = ("tabpack", "tabm", "xgb_optuna")
 MANIFEST_PATH = CONFIG_PATH
 
 

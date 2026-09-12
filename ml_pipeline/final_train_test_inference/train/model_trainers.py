@@ -1,4 +1,4 @@
-"""Dispatch train/predict for final_train base models: tabpack / dcnv2 / tabm."""
+"""Dispatch train/predict for final_train base models: tabpack / tabm / xgb_optuna."""
 
 from __future__ import annotations
 
@@ -38,8 +38,13 @@ def model_exists(model_name: str, target: str) -> bool:
         )
     if model_name == "tabm":
         return (d / "tabm.pt").exists() and (d / "meta.json").exists()
-    if model_name == "dcnv2":
-        return (d / "model.pt").exists() and (d / "meta.json").exists()
+    if model_name == "xgb_optuna":
+        try:
+            from .xgb_trainer import xgb_exists
+        except ImportError:
+            from final_train_test_inference.train.xgb_trainer import xgb_exists
+
+        return xgb_exists(d)
     return False
 
 
@@ -66,19 +71,24 @@ def train_one(model_name: str, bundle: TrainBundle, target: str, genes: list[str
         return train_tabpack_model(bundle, target, genes, out_dir)
 
     arr = _arrays(bundle, target, genes)
-    try:
-        from .torch_trainers import train_dcnv2_model, train_tabm_model
-    except ImportError:
-        from final_train_test_inference.train.torch_trainers import (
-            train_dcnv2_model,
-            train_tabm_model,
-        )
+
+    if model_name == "xgb_optuna":
+        try:
+            from .xgb_trainer import train_xgb_optuna
+        except ImportError:
+            from final_train_test_inference.train.xgb_trainer import train_xgb_optuna
+
+        return train_xgb_optuna(arr, out_dir)
 
     if model_name == "tabm":
+        try:
+            from .torch_trainers import train_tabm_model
+        except ImportError:
+            from final_train_test_inference.train.torch_trainers import train_tabm_model
+
         return train_tabm_model(arr, out_dir, DEVICE, BATCH_SIZE)
-    if model_name == "dcnv2":
-        return train_dcnv2_model(arr, out_dir, DEVICE, BATCH_SIZE)
-    raise ValueError(f"Unknown model {model_name!r}; expected tabpack / dcnv2 / tabm")
+
+    raise ValueError(f"Unknown model {model_name!r}; expected tabpack / tabm / xgb_optuna")
 
 
 def load_artifact(model_name: str, target: str):
@@ -90,11 +100,18 @@ def load_artifact(model_name: str, target: str):
             from final_train_test_inference.train.tabpack_trainer import load_tabpack
 
         return load_tabpack(d)
+    if model_name == "xgb_optuna":
+        try:
+            from .xgb_trainer import load_xgb
+        except ImportError:
+            from final_train_test_inference.train.xgb_trainer import load_xgb
+
+        return load_xgb(d)
     return d
 
 
 def predict_one(model_name: str, artifact, x: np.ndarray) -> np.ndarray:
-    """Live predict for tabpack / dcnv2 / tabm."""
+    """Live predict for tabpack / tabm / xgb_optuna."""
     if model_name == "tabpack":
         try:
             from shared.tabpack_trainer import predict_tabpack
@@ -109,22 +126,28 @@ def predict_one(model_name: str, artifact, x: np.ndarray) -> np.ndarray:
         else:
             md = Path(artifact)
         return predict_tabpack(md, x, device=DEVICE)
-    try:
-        from .torch_trainers import predict_dcnv2_model, predict_tabm_model
-    except ImportError:
-        from final_train_test_inference.train.torch_trainers import (
-            predict_dcnv2_model,
-            predict_tabm_model,
-        )
+
+    if model_name == "xgb_optuna":
+        try:
+            from .xgb_trainer import load_xgb, predict_xgb
+        except ImportError:
+            from final_train_test_inference.train.xgb_trainer import load_xgb, predict_xgb
+
+        if isinstance(artifact, (str, Path)):
+            artifact = load_xgb(Path(artifact))
+        return predict_xgb(artifact, x)
 
     if model_name == "tabm":
+        try:
+            from .torch_trainers import predict_tabm_model
+        except ImportError:
+            from final_train_test_inference.train.torch_trainers import predict_tabm_model
+
         return predict_tabm_model(artifact, x, DEVICE)
-    if model_name == "dcnv2":
-        return predict_dcnv2_model(artifact, x)
+
     raise ValueError(f"Unknown model {model_name!r}")
 
 
-# Re-exports for run_train / run_stack
 def tabpack_preds_by_split(artifact: dict, bundle: TrainBundle | None = None):
     try:
         from .tabpack_trainer import preds_by_split

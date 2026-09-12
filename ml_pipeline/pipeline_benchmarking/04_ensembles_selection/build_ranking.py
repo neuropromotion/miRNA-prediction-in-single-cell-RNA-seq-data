@@ -53,7 +53,7 @@ def load_solo_baselines() -> pd.DataFrame:
         ]
     )
     if sel is not None:
-        parts.append(sel[sel["model"].isin(("xgb_optuna", "dcnv2", "tabm"))].copy())
+        parts.append(sel[sel["model"].isin(("xgb_optuna", "tabm"))].copy())
 
     tun = _read_summary_csv(
         [

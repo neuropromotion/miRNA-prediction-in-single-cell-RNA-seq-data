@@ -36,7 +36,6 @@ TABLES = STAGE / "tables"
 BASE_MODELS = (
     "xgb_optuna",
     "tabpack",
-    "dcnv2",
     "tabm",
 )
 
@@ -44,21 +43,18 @@ BASE_MODELS = (
 MODEL_ARTIFACT_ROOTS: dict[str, Path] = {
     "xgb_optuna": STAGE03_RESULTS / "xgb_optuna",
     "tabpack": MODEL_TUNING_RESULTS / "tabpack",
-    "dcnv2": STAGE03_RESULTS / "dcnv2",
     "tabm": STAGE03_RESULTS / "tabm",
 }
 
 MODEL_SHORT = {
     "xgb_optuna": "xgb",
     "tabpack": "tabpack",
-    "dcnv2": "dcnv2",
     "tabm": "tabm",
 }
 
 BASE_MODEL_LABELS = {
     "xgb_optuna": "XGB Optuna",
     "tabpack": "TabPack Muon",
-    "dcnv2": "DCNv2 AdamW",
     "tabm": "TabM AdamW",
 }
 

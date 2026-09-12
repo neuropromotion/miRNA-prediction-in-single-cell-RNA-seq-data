@@ -2,7 +2,7 @@
 
 Protocol (fixed):
   B=1000, split 50/50 (shared positional idx for all SC cohorts + separate bulk),
-  eligible iff median(R²_bulk)≥0.5 AND max_K median(R²_K)≥0.5,
+  eligible iff median(R²_bulk)≥0.4 AND max_K median(R²_K)≥0.4,
   optimal_K = smallest K among those with m_K ≥ max(m) − δ (δ=0.05).
 
 Split is persisted to results/test_split.json for reuse by test_metrics (eval half).
@@ -18,7 +18,7 @@ ML_PIPELINE = FTTI.parent
 TRAIN_DIR = FTTI / "train"
 
 # --- Protocol knobs ---
-SEED = 42
+SEED = 142
 SPLIT_FRAC_TUNE = 0.5
 N_BOOTSTRAP = 1000
 MEDIAN_THRESHOLD = 0.4
@@ -26,8 +26,8 @@ DELTA = 0.05
 
 COHORTS = ("K1", "K2", "K3", "K4", "K5", "K10")  # preference order (small → large)
 PB_COHORTS = ("K2", "K3", "K4", "K5", "K10")
-STACK_MODELS = ("tabpack", "dcnv2", "tabm")
-ENSEMBLE_ID = "tabpack_dcnv2_tabm_stack"
+STACK_MODELS = ("tabpack", "tabm", "xgb_optuna")
+ENSEMBLE_ID = "tabpack_tabm_xgb_stack"
 
 # Data
 SC_TEST = ML_PIPELINE / "data" / "sc_TEST"

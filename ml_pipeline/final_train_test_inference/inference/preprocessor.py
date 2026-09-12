@@ -119,11 +119,6 @@ def align_and_knn_impute(X_query, required_cols, X_ref_knn, n_neighbors=5):
 
 
 class SingleCell:
-    """
-    Raw single-cell / pseudobulk preprocessing + final_train stack inference.
-
-    Pipeline: counts → TPM/log2 → (KNN impute for K1) → TabPack+DCNv2+TabM stack.
-    """
 
     def __init__(
         self,
@@ -206,28 +201,33 @@ class SingleCell:
         return self._predictor
 
     def load_models(self) -> StackPredictor:
-        """Load (or return cached) TabPack+DCNv2+TabM stack predictor."""
+
         if self._predictor is not None:
             return self._predictor
-        print("Loading final_train stack models (tabpack + dcnv2 + tabm)...")
+        #print("Loading models...")
         self._predictor = StackPredictor(
             config_path=self._config_path,
             device=self._device,
             catboost_task=self._catboost_task,
             preload_all=False,
         )
-        print(f"✔ Stack ready: {len(self._predictor.available_mirnas)} eligible miRNAs")
+        #print(f"✔ Stack ready: {len(self._predictor.available_mirnas)} eligible miRNAs")
         return self._predictor
 
     def _detect_gene_axis(self, data):
-        index_hits = sum(idx in self.standard_mrna_set for idx in data.index)
-        col_hits = sum(col in self.standard_mrna_set for col in data.columns)
+        genes = pd.read_csv(resolve_gene_mapping_path())
+        
+        gene_ens = set(genes['feature_id'].tolist())
+        gene_names = set(genes['feature_name'].tolist())
+        all_gene_names = gene_ens | gene_names
+        
+        index_hits = len(set(data.index) & all_gene_names)
+        col_hits = len(set(data.columns) & all_gene_names)
+        
         if index_hits == 0 and col_hits == 0:
-            # Fallback when input uses gene symbols instead of ENSG IDs.
-            return "columns" if len(data.columns) >= len(data.index) else "index"
-        if index_hits >= col_hits:
-            return "index"
-        return "columns"
+            raise ValueError('Genes were not found neither in columns not in index')
+            
+        return "index" if index_hits > col_hits else "columns"
 
     @staticmethod
     def _looks_like_ens_id(value):
@@ -276,7 +276,7 @@ class SingleCell:
 
         mapping_path = resolve_gene_mapping_path(mapping_path)
         if self._needs_symbol_to_ens_mapping(df.index):
-            print("Detected gene symbols. Mapping to ENSG IDs...")
+            #print("Detected gene symbols. Mapping to ENSG IDs...")
             df = self.replace_genes_names(df, mapping_path=mapping_path)
 
         return self.standardize_mrna(df)
@@ -290,10 +290,10 @@ class SingleCell:
         
         share = sorted(list(set(df.index) & set(self.gene_lengths['gene_id'])))
         percent = len(share)*100/len(df.index)
-        print(f"✔ Found length for {len(share)}/{len(df.index)} genes ({percent:.2f}%)")
+        #print(f"✔ Found length for {len(share)}/{len(df.index)} genes ({percent:.2f}%)")
         
         if len(share) == 0:
-            raise ValueError("❌ Нет общих генов между данными и gene_lengths!")
+            raise ValueError("❌ Could not find genes lengths!")
         
         df_filtered = df.loc[share].copy()  
         gene_lengths_filtered = self.gene_lengths[
@@ -319,7 +319,7 @@ class SingleCell:
         mapping_path=None,
     ):
         mapping_path = resolve_gene_mapping_path(mapping_path)
-        print("Loading HGNC → ENSG mapping...")
+        #print("Loading HGNC → ENSG mapping...")
     
         mapping = pd.read_csv(mapping_path)
         mapping = mapping.dropna(subset=["feature_name", "feature_id"])
@@ -334,7 +334,7 @@ class SingleCell:
         #df["original_symbol"] = df.index
     
         total_genes = df.shape[0]
-        print(f"Replacing {total_genes} genes...")
+        #print(f"Replacing {total_genes} genes...")
     
         # маппинг index → ENSG
         df["ensembl_id"] = df.index.map(ens_map)
@@ -353,8 +353,8 @@ class SingleCell:
         df_clean.index = df_clean.pop("ensembl_id")
         df_clean = df_clean.sort_index()
     
-        print(f"✔ Found ENSG for {found}/{total_genes} genes ({percent:.2f}%)")
-        print(f"✔ After removing duplicates: {len(df_clean)} unique ENSG")
+        #print(f"✔ Found ENSG for {found}/{total_genes} genes ({percent:.2f}%)")
+        #print(f"✔ After removing duplicates: {len(df_clean)} unique ENSG")
     
         return df_clean
     
@@ -386,7 +386,7 @@ class SingleCell:
                 print(f"Note: {len(missing)} standard genes absent from input (filled with 0).")
 
         df = df.reindex(columns=self.standard_mrna, fill_value=0.0)
-        print(f"Stack prediction for {len(mirnas)} miRNAs...")
+        #print(f"Stack prediction for {len(mirnas)} miRNAs...")
         predictor = self._get_predictor()
         return predictor.predict_many(df, mirnas)
 
@@ -410,9 +410,9 @@ class SingleCell:
             return self._knn_ref
 
         if not path.is_file():
-            raise FileNotFoundError(f"KNN reference not found: {path}")
+            raise FileNotFoundError(f"❌ KNN reference not found: {path}")
 
-        print(f"Loading KNN reference...")
+        #print(f"Loading KNN reference...")
         if path.suffix == ".parquet":
             ref = pd.read_parquet(path)
         else:
@@ -421,7 +421,7 @@ class SingleCell:
         ref = _auto_orient_cells_by_genes(ref)
         ref = ref.reindex(columns=self.standard_mrna, fill_value=0.0)
         ref = ref.apply(pd.to_numeric, errors="coerce").fillna(0.0)
-        print(f"KNN reference ready!")
+        #print(f"KNN reference ready!")
 
         self._knn_ref = ref
         self._knn_ref_path = path
@@ -494,10 +494,10 @@ class SingleCell:
     def _validate_mirna_targets(self, mirnas):
         requested = list(mirnas)
         if not requested:
-            raise ValueError("mirnas must be a non-empty list of miRNA names.")
+            raise ValueError("❌ mirnas must be a non-empty list of miRNA names.")
         unknown = sorted(set(requested) - set(self._available_mirnas))
         if unknown:
-            raise ValueError(f"Unknown miRNAs (not in available_mirnas): {unknown}")
+            raise ValueError(f"❌ Unknown miRNAs (not in available_mirnas): {unknown}")
         return requested
 
     @staticmethod
@@ -508,7 +508,7 @@ class SingleCell:
         elif isinstance(data, (str, Path)):
             path = Path(data)
             if not path.is_file():
-                raise FileNotFoundError(f"Input file not found: {path}")
+                raise FileNotFoundError(f"❌ Input file not found: {path}")
             suffix = path.suffix.lower()
             if suffix == ".parquet":
                 df = pd.read_parquet(path)
@@ -516,7 +516,7 @@ class SingleCell:
                 df = pd.read_csv(path)
             else:
                 raise ValueError(
-                    f"Unsupported input format {suffix!r}. Expected .csv or .parquet."
+                    f"❌ Unsupported input format {suffix!r}. Expected .csv or .parquet."
                 )
         else:
             raise TypeError(
@@ -559,7 +559,8 @@ class SingleCell:
         """
         raw = self._load_raw_input(data)
         n_cells = raw.shape[0]
-        print(f"Full inference: {n_cells} cells, {len(self._available_mirnas)} eligible miRNAs")
+        n_genes = raw.shape[1]
+        print(f"Full inference: {n_cells} cells, {n_genes} genes, {len(self._available_mirnas)} eligible miRNAs")
 
         parts: list[pd.DataFrame] = []
 

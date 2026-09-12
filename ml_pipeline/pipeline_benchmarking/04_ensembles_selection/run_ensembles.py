@@ -311,7 +311,7 @@ def write_integral_summary(summaries: list[dict]) -> None:
     cols.extend(["n_targets_k1_gt_0_4", "elapsed_sec"])
     df = df[[c for c in cols if c in df.columns]]
     df = df.sort_values(PRIMARY_RANK_COL, ascending=False, na_position="last")
-    df.to_csv(RESULTS / "summary_by_ensemble.csv", index=False)
+    df.to_csv(TABLES / "summary_by_ensemble.csv", index=False)
 
 
 def rebuild_global_outputs() -> None:
@@ -320,7 +320,7 @@ def rebuild_global_outputs() -> None:
         return
     parts = [pd.read_csv(metrics_path(eid)) for eid in eids]
     metrics_all = pd.concat(parts, ignore_index=True)
-    metrics_all.to_csv(RESULTS / "outer_val_metrics_all.csv", index=False)
+    metrics_all.to_csv(TABLES / "outer_val_metrics_all.csv", index=False)
 
     summaries: list[dict] = []
     for eid in eids:
@@ -427,11 +427,11 @@ def main() -> None:
 
     parts = [pd.read_csv(metrics_path(eid)) for eid in all_eids if metrics_path(eid).exists()]
     if parts:
-        pd.concat(parts, ignore_index=True).to_csv(RESULTS / "outer_val_metrics_all.csv", index=False)
+        pd.concat(parts, ignore_index=True).to_csv(TABLES / "outer_val_metrics_all.csv", index=False)
 
     rebuild_global_outputs()
     print("\n=== summary_by_ensemble.csv ===")
-    print(pd.read_csv(RESULTS / "summary_by_ensemble.csv").to_string(index=False))
+    print(pd.read_csv(TABLES / "summary_by_ensemble.csv").to_string(index=False))
     print("=== done ===")
 
 

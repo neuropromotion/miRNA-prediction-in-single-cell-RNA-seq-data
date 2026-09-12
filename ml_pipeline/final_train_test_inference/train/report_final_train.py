@@ -13,23 +13,23 @@ import seaborn as sns
 
 TRAIN_DIR = Path(__file__).resolve().parent
 RESULTS = TRAIN_DIR / "results"
-ENSEMBLE = "tabpack_dcnv2_tabm_stack"
+ENSEMBLE = "tabpack_tabm_xgb_stack"
 STACK_DIR = RESULTS / "ensemble" / ENSEMBLE
 # Canonical deliverables live under train/{figures,tables} (not nested under results/).
 FIGS = TRAIN_DIR / "figures"
 TABLES = TRAIN_DIR / "tables"
 
-MODELS = ["tabpack", "dcnv2", "tabm", "stack"]
+MODELS = ["tabpack", "tabm", "xgb_optuna", "stack"]
 MODEL_LABELS = {
     "tabpack": "TabPack Muon",
-    "dcnv2": "DCNv2 AdamW",
     "tabm": "TabM AdamW",
+    "xgb_optuna": "XGB Optuna",
     "stack": "Ridge stack",
 }
 MODEL_COLORS = {
     "tabpack": "#1f77b4",
-    "dcnv2": "#ff7f0e",
     "tabm": "#2ca02c",
+    "xgb_optuna": "#ff7f0e",
     "stack": "#d62728",
 }
 
@@ -66,7 +66,7 @@ def _save(fig: plt.Figure, name: str) -> None:
 
 def load_all() -> pd.DataFrame:
     parts: list[pd.DataFrame] = []
-    for model in ("tabpack", "dcnv2", "tabm"):
+    for model in ("tabpack", "tabm", "xgb_optuna"):
         df = pd.read_csv(RESULTS / model / "val_metrics.csv")
         df = df[df["status"] == "ok"].copy()
         df["model"] = model
@@ -129,7 +129,7 @@ def per_target_wide(df: pd.DataFrame) -> pd.DataFrame:
         out = out.merge(p, on="target", how="outer")
     # deltas vs best solo on K1 / PB / bulk
     for split in PRIMARY:
-        solo_cols = [f"{m}__{split}" for m in ("tabpack", "dcnv2", "tabm")]
+        solo_cols = [f"{m}__{split}" for m in ("tabpack", "tabm", "xgb_optuna")]
         out[f"best_solo__{split}"] = out[solo_cols].max(axis=1)
         out[f"stack_minus_best_solo__{split}"] = out[f"stack__{split}"] - out[f"best_solo__{split}"]
         out[f"best_solo_model__{split}"] = out[solo_cols].idxmax(axis=1).str.replace(f"__{split}", "", regex=False)
@@ -213,7 +213,7 @@ def plot_median_bars(full: pd.DataFrame) -> None:
 
 def plot_k1_scatter(wide: pd.DataFrame) -> None:
     fig, axes = plt.subplots(1, 3, figsize=(13.5, 4.3), sharex=True, sharey=True)
-    for ax, model in zip(axes, ("tabpack", "dcnv2", "tabm")):
+    for ax, model in zip(axes, ("tabpack", "tabm", "xgb_optuna")):
         x = wide[f"{model}__val_k1_r2"]
         y = wide["stack__val_k1_r2"]
         ax.scatter(x, y, s=14, alpha=0.55, color=MODEL_COLORS[model], edgecolors="none")
@@ -310,7 +310,7 @@ def write_readme(full: pd.DataFrame, wide: pd.DataFrame, n_best: pd.DataFrame) -
         "# Final train report — Stage00 validation",
         "",
         f"Ensemble: `{ENSEMBLE}`  ",
-        "Bases: TabPack Muon + DCNv2 AdamW + TabM AdamW → Ridge stack  ",
+        "Bases: TabPack Muon + TabM AdamW + XGB Optuna → Ridge stack  ",
         f"Targets: **312** (15 zero-expressed excluded)  ",
         f"Stack fallbacks to best solo: **{fb}** / 312  ",
         "Tune splits: `val_k1` + `val_pb_K*` (no bulk)",

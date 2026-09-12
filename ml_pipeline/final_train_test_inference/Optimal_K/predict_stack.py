@@ -1,4 +1,4 @@
-"""Stack predictions on TEST cohorts (tabpack+dcnv2+tabm) with disk cache."""
+"""Stack predictions on TEST cohorts (tabpack+tabm+xgb_optuna) with disk cache."""
 
 from __future__ import annotations
 

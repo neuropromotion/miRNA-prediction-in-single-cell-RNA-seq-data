@@ -13,9 +13,10 @@ OPTIMAL_K_DIR = FTTI / "Optimal_K"
 # Protocol (match Optimal_K)
 SEED = 42
 N_BOOTSTRAP = 1000
+R2_THRESHOLD = 0.4
 
-ENSEMBLE_ID = "tabpack_dcnv2_tabm_stack"
-STACK_MODELS = ("tabpack", "dcnv2", "tabm")
+ENSEMBLE_ID = "tabpack_tabm_xgb_stack"
+STACK_MODELS = ("tabpack", "tabm", "xgb_optuna")
 COHORTS = ("K1", "K2", "K3", "K4", "K5", "K10")
 
 # Inputs from Optimal_K (proto = assignments from tune half; not production config)

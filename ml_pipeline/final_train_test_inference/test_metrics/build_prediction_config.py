@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from config import COHORTS, PREDICTION_CONFIG_PATH, PROTO_PREDICTION_CONFIG
+from config import COHORTS, PREDICTION_CONFIG_PATH, PROTO_PREDICTION_CONFIG, PER_TARGET_PATH
 
 
 # Meta keys kept only in Optimal_K proto — stripped from production config.
@@ -89,3 +89,23 @@ def load_proto_path() -> Path:
     raise FileNotFoundError(
         f"missing {PROTO_PREDICTION_CONFIG} (or legacy prediction_config.json)"
     )
+
+def main():
+    proto_path = load_proto_path()
+
+    with proto_path.open("r", encoding="utf-8") as f:
+        proto = json.load(f)
+
+    per_target = pd.read_csv(PER_TARGET_PATH)
+
+    output_path = write_prediction_config(
+        proto,
+        per_target,
+        PREDICTION_CONFIG_PATH,
+    )
+
+    print(f"Prediction config written to: {output_path}")
+
+
+if __name__ == "__main__":
+    main()

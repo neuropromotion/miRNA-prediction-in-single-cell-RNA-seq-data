@@ -1,8 +1,6 @@
 """Constants for final model training.
 
-Winner from ensembles_selection_v4 (median outer_val K1):
-  tabpack_dcnv2_tabm_stack
-  = TabPack Muon (paper) + DCNv2 AdamW + TabM AdamW, Ridge stack
+Final stack: TabPack Muon (paper) + TabM AdamW + XGB Optuna → Ridge.
 """
 
 from __future__ import annotations
@@ -38,16 +36,19 @@ ZERO_EXPRESSED_MIRS = TRAIN_DIR / "zero_expressed_mirs.txt"
 RESULTS = ROOT / "results"
 ENSEMBLE_RESULTS = RESULTS / "ensemble"
 
-# Base models for the v4 winner stack.
-MODELS = ("tabpack", "dcnv2", "tabm")
-STACK_MODELS = ("tabpack", "dcnv2", "tabm")
-ENSEMBLE_ID = "tabpack_dcnv2_tabm_stack"
+# Base models for the production stack.
+MODELS = ("tabpack", "tabm", "xgb_optuna")
+STACK_MODELS = ("tabpack", "tabm", "xgb_optuna")
+ENSEMBLE_ID = "tabpack_tabm_xgb_stack"
 
 # Recipes (match model_selection / model_tuning winners).
 TABPACK_PROTOCOL = "paper"  # MuonAdamWPack
 TABPACK_N_MODELS = 32
 # v2: persists inference_bundle.pt (ensemble weights) for live predict / production.
 TABPACK_EXPERIMENT_NAMESPACE = "mirna_final_v2"
+
+# XGB Optuna — same as 02_model_selection
+OPTUNA_TRIALS = 15
 
 SEED = 42
 VAL_FRAC = 0.2

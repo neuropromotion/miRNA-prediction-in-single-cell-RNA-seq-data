@@ -17,7 +17,7 @@ _SCRIPT = Path(__file__).resolve()
 TRAIN_DIR = _SCRIPT.parent
 BASE = TRAIN_DIR.parent  # final_train_test_inference/
 
-ENSEMBLE = "tabpack_dcnv2_tabm_stack"
+ENSEMBLE = "tabpack_tabm_xgb_stack"
 STACK_DIR = TRAIN_DIR / "results" / "ensemble" / ENSEMBLE
 WEIGHTS_DIR = STACK_DIR / "weights"
 # Canonical deliverables under train/{figures,tables}.
@@ -27,16 +27,16 @@ SORT_METRICS = TRAIN_DIR / "results" / "tabpack" / "val_metrics.csv"
 SORT_COL = "val_k1_r2"
 SORT_LABEL = "TabPack Muon val K1 R²"
 
-MODELS = ["tabpack", "dcnv2", "tabm"]
+MODELS = ["tabpack", "tabm", "xgb_optuna"]
 MODEL_LABELS = {
     "tabpack": "TabPack Muon",
-    "dcnv2": "DCNv2 AdamW",
     "tabm": "TabM AdamW",
+    "xgb_optuna": "XGB Optuna",
 }
 MODEL_COLORS = {
     "tabpack": "#1f77b4",
-    "dcnv2": "#ff7f0e",
     "tabm": "#2ca02c",
+    "xgb_optuna": "#ff7f0e",
 }
 FALLBACK_COLOR = "#FF1493"
 DPI = 300
@@ -145,7 +145,7 @@ def _plot_coef_violin(df: pd.DataFrame) -> None:
     axes[1].set_title("Relative absolute contribution")
     axes[1].set_ylim(0, 1)
 
-    fig.suptitle("Stack weight distributions (TabPack+DCNv2+TabM)", fontsize=13, y=1.02)
+    fig.suptitle("Stack weight distributions (TabPack+TabM+XGB)", fontsize=13, y=1.02)
     fig.tight_layout()
     _save(fig, "stack_coef_distributions")
 

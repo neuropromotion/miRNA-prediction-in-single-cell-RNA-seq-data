@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-from config import COHORTS, FIGURES
+from config import COHORTS, FIGURES, R2_THRESHOLD
 
 DPI = 300
 K_COLORS = {
@@ -59,7 +59,7 @@ def _plot_r2_box(ok: pd.DataFrame) -> None:
     fig, ax = plt.subplots(figsize=(7, 5))
     sns.boxplot(data=long, x="modality", y="median_r2", ax=ax, showfliers=False)
     sns.stripplot(data=long, x="modality", y="median_r2", ax=ax, color="0.3", size=3, alpha=0.45)
-    ax.axhline(0.5, color="black", linestyle="--", linewidth=1, alpha=0.6)
+    ax.axhline(R2_THRESHOLD, color="black", linestyle="--", linewidth=1, alpha=0.6)
     ax.set_ylabel("Bootstrap median R² (eval)")
     ax.set_xlabel("")
     ax.set_title(f"Final TEST R² (n={len(ok)} eligible)")
@@ -130,7 +130,7 @@ def _plot_by_assigned_k(ok: pd.DataFrame) -> None:
     axes[0].set_title("SC median R² by assigned K")
     axes[0].set_xlabel("")
     axes[0].set_ylabel("Bootstrap median R²")
-    axes[0].axhline(0.5, color="black", linestyle="--", linewidth=1, alpha=0.5)
+    axes[0].axhline(R2_THRESHOLD, color="black", linestyle="--", linewidth=1, alpha=0.5)
 
     sns.boxplot(
         data=ok,
