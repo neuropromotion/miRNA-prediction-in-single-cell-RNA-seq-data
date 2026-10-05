@@ -12,19 +12,46 @@ See `../../data/README.md`:
    Outputs → `data/inference_outputs/`
 
 
-`SingleCell` - main class for inference, lives in `preprocessor.py`:
+`miRPredictor` — main inference class (`mirpredictor.py`):
 
 ```python
-from preprocessor import SingleCell
+from mirpredictor import miRPredictor
+import scanpy as sc
+
+mp = miRPredictor(device="cpu")
+mp.get_mirs()
+mp.get_features()
+mp.get_metrics(["hsa-let-7b-5p"])
+
+pred_df = mp.predict_csv("counts.csv")   # DataFrame: cells × miRNAs
+adata = sc.read_h5ad("data.h5ad")
+adata = mp.predict(adata)                # AnnData with miRNA columns in .obs
+# also: adata.obsm['X_mirna'], adata.uns['mirna_prediction']
 ```
+
+### Conda environment
+
+```bash
+conda env create -f environment.yml
+conda activate mir_inference
+# TabPack (required for TabPack base model):
+#   git clone https://github.com/yandex-research/tabpack /tmp/yandex_tabpack_312
+export TABPACK_ROOT=/tmp/yandex_tabpack_312
+export PYTHONPATH="$TABPACK_ROOT/src:$PYTHONPATH"
+```
+
+`preprocessor.py` remains a thin back-compat shim (`SingleCell` alias).
 
 ## Repository Structure
 
 | File | Description |
 |------|-------------|
-| `target_config.json` | Eligible miRNA targets (R² > 0.4), features, test metrics, optimal K |
-| `stack_predictor.py` | Stacking ensemble (CatBoost + TabM + ResNet, Ridge meta-learner) |
-| `preprocessor.py` | `SingleCell` pipeline (align, ENSG, pseudobulk, TPM, log) |
+| `prediction_config.json` | Eligible miRNAs, feature panels, bulk/sc R² & MSE, optimal K |
+| `robustness_config.json` | Minimal SC feature sets; gates whether a miRNA can be predicted |
+| `environment.yml` | Conda env `mir_inference` (scanpy, optuna, torch, xgboost, …) |
+| `stack_predictor.py` | TabPack + TabM + XGB ridge stack |
+| `mirpredictor.py` | `miRPredictor` (align, ENSG, KNN impute/pseudobulk, TPM, predict) |
+| `preprocessor.py` | Back-compat shim → `miRPredictor` |
 | `mRNA_names.json` | Reference mRNA feature list |
 | `ensembl_gene_mapping.csv` | Gene symbol → ENSG map |
 | `df_gene_mapping.parquet` | Gene lengths for TPM |

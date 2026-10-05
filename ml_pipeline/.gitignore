@@ -18,6 +18,7 @@ data/RCC_h/
 data/rcc_inference/
 data/*.csv
 data/*.gz
+data/*.h5ad
 # models
 final_train_test_inference/models/*
 

@@ -1,10 +1,10 @@
-"""Inference package: SingleCell preprocessor + StackPredictor."""
+"""Inference package: miRPredictor + StackPredictor."""
 
 try:
-    from .preprocessor import SingleCell
+    from .mirpredictor import miRPredictor, SingleCell
     from .stack_predictor import StackPredictor
 except ImportError:
-    from preprocessor import SingleCell
+    from mirpredictor import miRPredictor, SingleCell
     from stack_predictor import StackPredictor
 
-__all__ = ["SingleCell", "StackPredictor"]
+__all__ = ["miRPredictor", "SingleCell", "StackPredictor"]

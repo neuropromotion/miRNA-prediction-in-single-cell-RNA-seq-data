@@ -1,0 +1,49 @@
+# Conda environment for miRNA scRNA-seq inference (miRPredictor + stack models).
+# Create / refresh:
+#   conda env create -f environment.yml
+#   # or, if the env already exists:
+#   conda env update -f environment.yml --prune
+#   conda activate mir_inference
+#
+# TabPack (required for the TabPack base model):
+#   git clone https://github.com/yandex-research/tabpack /tmp/yandex_tabpack_312
+#   export TABPACK_ROOT=/tmp/yandex_tabpack_312
+#   export PYTHONPATH="${TABPACK_ROOT}/src:${PYTHONPATH}"
+
+name: mir_inference
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip
+  - numpy>=1.26,<2
+  - pandas
+  - scipy
+  - scikit-learn
+  - pyarrow
+  - h5py
+  - matplotlib
+  - seaborn
+  - tqdm
+  - joblib
+  - pyyaml
+  - requests
+  - anndata
+  - scanpy
+  - leidenalg
+  - python-igraph
+  - umap-learn
+  - optuna
+  - xgboost
+  - pip:
+      # Torch must be recent enough for tabm / BufferMeta (avoid conda pytorch 2.2).
+      - torch>=2.4
+      - tabm
+      - rtdl-num-embeddings
+      - rtdl-revisiting-models
+      - delu
+      - loguru
+      - alembic
+      - colorlog
+      - sqlalchemy
+      - Mako

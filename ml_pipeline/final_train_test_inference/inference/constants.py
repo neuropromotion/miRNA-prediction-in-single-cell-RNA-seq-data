@@ -38,6 +38,7 @@ INFERENCE_INPUT_DIR = ML_PIPELINE / "data" / "inference_inputs"
 INFERENCE_OUTPUT_DIR = ML_PIPELINE / "data" / "inference_outputs"
 
 CONFIG_PATH = INFERENCE_DIR / "prediction_config.json"
+ROBUSTNESS_CONFIG_PATH = INFERENCE_DIR / "robustness_config.json"
 GENE_LENGTHS_PATH = INFERENCE_DIR / "df_gene_mapping.parquet"
 MRNA_NAMES_PATH = INFERENCE_DIR / "mRNA_names.json"
 GENE_MAPPING_PATH = INFERENCE_DIR / "ensembl_gene_mapping.csv"

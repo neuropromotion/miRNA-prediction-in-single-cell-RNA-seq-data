@@ -50,8 +50,11 @@ def build_prediction_config(proto: dict, per_target: pd.DataFrame) -> dict:
             row = metrics.loc[mir]
             by_k[cohort][mir] = {
                 "features": list(info.get("features") or info.get("genes") or []),
-                "test_bulk": float(row["bulk_r2_median"]),
-                "test_optimal_k": float(row["sc_r2_median"]),
+                "test_bulk_r2": float(row["bulk_r2_full"]),
+                "test_sc_r2": float(row["sc_r2_full"]),
+                "test_bulk_mse": float(row["bulk_mse_full"]),
+                "test_sc_mse": float(row["sc_mse_full"]),
+
             }
 
     out = {

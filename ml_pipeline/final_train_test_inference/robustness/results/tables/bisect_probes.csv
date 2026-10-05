@@ -1,0 +1,10 @@
+target,cohort,absent_frac,phase,stat,ok,n_masks
+hsa-mir-615-3p,K4,0.0,search,0.43906037113426566,True,30
+hsa-mir-615-3p,K4,0.475,search,-0.07730081513143905,False,30
+hsa-mir-615-3p,K4,0.2375,search,0.39564878129834613,True,30
+hsa-mir-615-3p,K4,0.3562,search,0.2293468391696098,True,30
+hsa-mir-615-3p,K4,0.4156,search,0.2112063120058416,False,30
+hsa-mir-615-3p,K4,0.3859,search,0.22187396172291873,True,30
+hsa-mir-615-3p,K4,0.4008,search,0.2461240390854994,True,30
+hsa-mir-615-3p,K4,0.4082,search,0.1776183289303484,False,30
+hsa-mir-615-3p,K4,0.4008,confirm,0.14239978939992498,False,50

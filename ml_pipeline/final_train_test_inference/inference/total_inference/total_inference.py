@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Batch predict_all on every scRNA-seq dataset (parquet/csv)."""
+"""Batch predict_csv on every scRNA-seq dataset (parquet/csv)."""
 
 from __future__ import annotations
 
@@ -13,12 +13,12 @@ INFERENCE_DIR = Path(__file__).resolve().parents[1]
 if str(INFERENCE_DIR) not in sys.path:
     sys.path.insert(0, str(INFERENCE_DIR))
 
-from preprocessor import SingleCell  # noqa: E402
+from mirpredictor import miRPredictor  # noqa: E402
 from constants import INFERENCE_INPUT_DIR, INFERENCE_OUTPUT_DIR  # noqa: E402
 
 
 def main() -> None:
-    p = argparse.ArgumentParser(description="Run predict_all on all parquet/csv datasets.")
+    p = argparse.ArgumentParser(description="Run predict_csv on all parquet/csv datasets.")
     p.add_argument(
         "--input-dir",
         type=Path,
@@ -52,8 +52,8 @@ def main() -> None:
             "Place scRNA count matrices there (see ml_pipeline/data/README.md)."
         )
 
-    sc = SingleCell(device=args.device, catboost_task="CPU", log=False)
-    print(f"Datasets: {len(files)} | miRNAs: {len(sc.available_mirnas)} | out: {args.output_dir}")
+    sc = miRPredictor(device=args.device, catboost_task="CPU", log=False)
+    print(f"Datasets: {len(files)} | miRNAs: {len(sc.get_mirs())} | out: {args.output_dir}")
 
     ok, skipped, failed = 0, 0, 0
     t_all = time.time()
@@ -68,7 +68,7 @@ def main() -> None:
         print(f"[{i}/{len(files)}] {path.name}")
         t0 = time.time()
         try:
-            pred = sc.predict_all(path, mapping_path=args.mapping_path)
+            pred = sc.predict_csv(path, mapping_path=args.mapping_path)
             pred.to_csv(out)
             print(f"  -> {out.name} {pred.shape} ({time.time() - t0:.1f}s)")
             ok += 1

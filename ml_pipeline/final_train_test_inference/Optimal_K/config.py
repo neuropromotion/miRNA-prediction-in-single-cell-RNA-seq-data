@@ -21,7 +21,7 @@ TRAIN_DIR = FTTI / "train"
 SEED = 142
 SPLIT_FRAC_TUNE = 0.5
 N_BOOTSTRAP = 1000
-MEDIAN_THRESHOLD = 0.4
+MEDIAN_THRESHOLD = 0.3
 DELTA = 0.05
 
 COHORTS = ("K1", "K2", "K3", "K4", "K5", "K10")  # preference order (small → large)

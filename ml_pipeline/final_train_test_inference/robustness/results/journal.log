@@ -1,0 +1,344 @@
+[2026-10-02 14:12:24] run start n_todo=1 stat=median
+[2026-10-02 14:12:25] [start] (1/1) hsa-mir-615-3p
+[2026-10-02 14:13:24] [done] hsa-mir-615-3p (59.1s) max_absent=0.40 median@limit=0.142 τ=0.220
+[2026-10-02 14:59:29] run start n_todo=10 stat=median
+[2026-10-02 14:59:29] [start] (1/10) hsa-let-7a-3p
+[2026-10-02 15:02:28] [done] hsa-let-7a-3p (178.5s) max_absent=0.28 median@limit=0.213 τ=0.186
+[2026-10-02 15:02:28] [start] (2/10) hsa-let-7d-5p
+[2026-10-02 15:06:18] [done] hsa-let-7d-5p (229.9s) max_absent=0.55 median@limit=0.422 τ=0.398
+[2026-10-02 15:06:18] [start] (3/10) hsa-let-7e-5p
+[2026-10-02 15:09:40] [done] hsa-let-7e-5p (202.3s) max_absent=0.08 median@limit=0.449 τ=0.402
+[2026-10-02 15:09:40] [start] (4/10) hsa-let-7g-5p
+[2026-10-02 15:12:59] [done] hsa-let-7g-5p (198.6s) max_absent=0.37 median@limit=0.336 τ=0.350
+[2026-10-02 15:12:59] [start] (5/10) hsa-let-7i-5p
+[2026-10-02 15:16:19] [done] hsa-let-7i-5p (200.6s) max_absent=0.36 median@limit=0.460 τ=0.456
+[2026-10-02 15:16:19] [start] (6/10) hsa-mir-106a-5p
+[2026-10-02 15:19:18] [done] hsa-mir-106a-5p (178.2s) max_absent=0.11 median@limit=0.543 τ=0.472
+[2026-10-02 15:19:18] [start] (7/10) hsa-mir-107
+[2026-10-02 15:22:55] [done] hsa-mir-107 (217.5s) max_absent=0.08 median@limit=0.410 τ=0.397
+[2026-10-02 15:22:55] [start] (8/10) hsa-mir-1180-3p
+[2026-10-02 15:25:32] [done] hsa-mir-1180-3p (156.3s) max_absent=0.04 median@limit=0.499 τ=0.367
+[2026-10-02 15:25:32] [start] (9/10) hsa-mir-1185-1-3p
+[2026-10-02 15:32:45] [done] hsa-mir-1185-1-3p (433.2s) max_absent=0.48 median@limit=0.202 τ=0.170
+[2026-10-02 15:32:45] [start] (10/10) hsa-mir-1185-2-3p
+[2026-10-02 15:34:46] [done] hsa-mir-1185-2-3p (121.2s) max_absent=0.13 median@limit=0.300 τ=0.314
+[2026-10-02 15:42:55] run start n_todo=10 stat=median
+[2026-10-02 15:42:55] [start] (1/10) hsa-mir-124-3p
+[2026-10-02 15:48:28] [done] hsa-mir-124-3p (332.1s) max_absent=0.14 median@limit=0.118 τ=0.119
+[2026-10-02 15:48:28] [start] (2/10) hsa-mir-125a-5p
+[2026-10-02 15:50:40] [done] hsa-mir-125a-5p (132.0s) max_absent=0.19 median@limit=0.426 τ=0.446
+[2026-10-02 15:50:40] [start] (3/10) hsa-mir-127-3p
+[2026-10-02 15:53:02] [done] hsa-mir-127-3p (142.5s) max_absent=0.52 median@limit=0.414 τ=0.419
+[2026-10-02 15:53:02] [start] (4/10) hsa-mir-1271-5p
+[2026-10-02 16:00:01] [done] hsa-mir-1271-5p (419.2s) max_absent=0.36 median@limit=0.464 τ=0.485
+[2026-10-02 16:00:01] [start] (5/10) hsa-mir-128-3p
+[2026-10-02 16:02:37] [done] hsa-mir-128-3p (155.7s) max_absent=0.12 median@limit=0.355 τ=0.442
+[2026-10-02 16:02:37] [start] (6/10) hsa-mir-129-5p
+[2026-10-02 16:04:47] [done] hsa-mir-129-5p (129.9s) max_absent=0.39 median@limit=0.245 τ=0.247
+[2026-10-02 16:04:47] [start] (7/10) hsa-mir-1301-3p
+[2026-10-02 16:08:56] [done] hsa-mir-1301-3p (248.5s) max_absent=0.50 median@limit=0.404 τ=0.407
+[2026-10-02 16:08:56] [start] (8/10) hsa-mir-1307-3p
+[2026-10-02 16:12:24] [done] hsa-mir-1307-3p (208.9s) max_absent=0.12 median@limit=0.550 τ=0.449
+[2026-10-02 16:12:25] [start] (9/10) hsa-mir-130a-3p
+[2026-10-02 16:15:44] [done] hsa-mir-130a-3p (199.0s) max_absent=0.33 median@limit=0.467 τ=0.452
+[2026-10-02 16:15:44] [start] (10/10) hsa-mir-130b-3p
+[2026-10-02 16:18:31] [done] hsa-mir-130b-3p (167.1s) max_absent=0.04 median@limit=0.494 τ=0.440
+[2026-10-02 16:18:52] run start n_todo=149 stat=median
+[2026-10-02 16:18:52] [start] (1/149) hsa-mir-132-3p
+[2026-10-02 16:25:28] [done] hsa-mir-132-3p (396.6s) max_absent=0.11 median@limit=0.404 τ=0.348
+[2026-10-02 16:25:29] [start] (2/149) hsa-mir-134-5p
+[2026-10-02 16:27:25] [done] hsa-mir-134-5p (116.7s) max_absent=0.36 median@limit=0.380 τ=0.406
+[2026-10-02 16:27:25] [start] (3/149) hsa-mir-135a-5p
+[2026-10-02 16:29:37] [done] hsa-mir-135a-5p (132.0s) max_absent=0.15 median@limit=0.490 τ=0.462
+[2026-10-02 16:29:37] [start] (4/149) hsa-mir-135b-5p
+[2026-10-02 16:38:29] [done] hsa-mir-135b-5p (531.4s) max_absent=0.42 median@limit=0.405 τ=0.391
+[2026-10-02 16:38:29] [start] (5/149) hsa-mir-138-5p
+[2026-10-02 16:41:20] [done] hsa-mir-138-5p (171.4s) max_absent=0.28 median@limit=0.320 τ=0.352
+[2026-10-02 16:41:20] [start] (6/149) hsa-mir-144-3p
+[2026-10-02 16:44:08] [done] hsa-mir-144-3p (167.3s) max_absent=0.27 median@limit=0.475 τ=0.471
+[2026-10-02 16:44:08] [start] (7/149) hsa-mir-145-5p
+[2026-10-02 16:46:32] [done] hsa-mir-145-5p (144.3s) max_absent=0.36 median@limit=0.326 τ=0.387
+[2026-10-02 16:46:32] [start] (8/149) hsa-mir-146b-3p
+[2026-10-02 16:48:42] [done] hsa-mir-146b-3p (129.6s) max_absent=0.33 median@limit=0.022 τ=0.033
+[2026-10-02 16:48:42] [start] (9/149) hsa-mir-148a-3p
+[2026-10-02 16:51:18] [done] hsa-mir-148a-3p (156.3s) max_absent=0.34 median@limit=0.420 τ=0.477
+[2026-10-02 16:51:18] [start] (10/149) hsa-mir-148a-5p
+[2026-10-02 16:53:21] [done] hsa-mir-148a-5p (123.4s) max_absent=0.07 median@limit=0.389 τ=0.362
+[2026-10-02 16:53:21] [start] (11/149) hsa-mir-148b-3p
+[2026-10-02 16:56:09] [done] hsa-mir-148b-3p (167.8s) max_absent=0.36 median@limit=0.466 τ=0.452
+[2026-10-02 16:56:09] [start] (12/149) hsa-mir-149-5p
+[2026-10-02 16:59:13] [done] hsa-mir-149-5p (184.1s) max_absent=0.13 median@limit=0.374 τ=0.371
+[2026-10-02 16:59:13] [start] (13/149) hsa-mir-152-3p
+[2026-10-02 17:03:38] [done] hsa-mir-152-3p (264.8s) max_absent=0.38 median@limit=0.426 τ=0.423
+[2026-10-02 17:03:38] [start] (14/149) hsa-mir-154-3p
+[2026-10-02 17:10:21] [done] hsa-mir-154-3p (403.1s) max_absent=0.91 median@limit=0.421 τ=0.372
+[2026-10-02 17:10:21] [start] (15/149) hsa-mir-15a-5p
+[2026-10-02 17:12:12] [done] hsa-mir-15a-5p (110.6s) max_absent=0.10 median@limit=0.472 τ=0.392
+[2026-10-02 17:12:12] [start] (16/149) hsa-mir-15b-5p
+[2026-10-02 17:16:32] [done] hsa-mir-15b-5p (259.8s) max_absent=0.23 median@limit=0.261 τ=0.389
+[2026-10-02 17:16:32] [start] (17/149) hsa-mir-181a-2-3p
+[2026-10-02 17:19:05] [done] hsa-mir-181a-2-3p (152.8s) max_absent=0.04 median@limit=0.324 τ=0.245
+[2026-10-02 17:19:05] [start] (18/149) hsa-mir-185-5p
+[2026-10-02 17:21:36] [done] hsa-mir-185-5p (151.7s) max_absent=0.04 median@limit=0.439 τ=0.393
+[2026-10-02 17:21:36] [start] (19/149) hsa-mir-18a-3p
+[2026-10-02 17:24:32] [done] hsa-mir-18a-3p (175.2s) max_absent=0.07 median@limit=0.497 τ=0.452
+[2026-10-02 17:24:32] [start] (20/149) hsa-mir-1908-5p
+[2026-10-02 17:27:59] [done] hsa-mir-1908-5p (207.7s) max_absent=0.08 median@limit=0.211 τ=0.191
+[2026-10-02 17:27:59] [start] (21/149) hsa-mir-191-5p
+[2026-10-02 17:30:14] [done] hsa-mir-191-5p (134.8s) max_absent=0.30 median@limit=0.467 τ=0.431
+[2026-10-02 17:30:14] [start] (22/149) hsa-mir-1910-5p
+[2026-10-02 17:34:34] [done] hsa-mir-1910-5p (259.3s) max_absent=0.09 median@limit=0.174 τ=0.168
+[2026-10-02 17:34:34] [start] (23/149) hsa-mir-193a-3p
+[2026-10-02 17:37:22] [done] hsa-mir-193a-3p (168.3s) max_absent=0.08 median@limit=0.422 τ=0.378
+[2026-10-02 17:37:22] [start] (24/149) hsa-mir-193a-5p
+[2026-10-02 17:40:47] [done] hsa-mir-193a-5p (205.3s) max_absent=0.33 median@limit=0.283 τ=0.293
+[2026-10-02 17:40:47] [start] (25/149) hsa-mir-193b-3p
+[2026-10-02 17:43:17] [done] hsa-mir-193b-3p (150.1s) max_absent=0.07 median@limit=0.487 τ=0.472
+[2026-10-02 17:43:17] [start] (26/149) hsa-mir-193b-5p
+[2026-10-02 17:46:19] [done] hsa-mir-193b-5p (181.8s) max_absent=0.01 median@limit=0.281 τ=0.240
+[2026-10-02 17:46:19] [start] (27/149) hsa-mir-194-5p
+[2026-10-02 17:49:23] [done] hsa-mir-194-5p (184.1s) max_absent=0.13 median@limit=0.533 τ=0.417
+[2026-10-02 17:49:23] [start] (28/149) hsa-mir-196a-5p
+[2026-10-02 17:56:33] [done] hsa-mir-196a-5p (430.0s) max_absent=0.28 median@limit=0.406 τ=0.445
+[2026-10-02 17:56:33] [start] (29/149) hsa-mir-197-3p
+[2026-10-02 17:59:13] [done] hsa-mir-197-3p (159.3s) max_absent=0.06 median@limit=0.315 τ=0.362
+[2026-10-02 17:59:13] [start] (30/149) hsa-mir-19b-1-5p
+[2026-10-02 18:01:49] [done] hsa-mir-19b-1-5p (156.3s) max_absent=0.07 median@limit=0.165 τ=0.155
+[2026-10-02 18:01:49] [start] (31/149) hsa-mir-19b-3p
+[2026-10-02 18:05:21] [done] hsa-mir-19b-3p (211.8s) max_absent=0.21 median@limit=0.445 τ=0.467
+[2026-10-02 18:05:21] [start] (32/149) hsa-mir-203a-3p
+[2026-10-02 18:07:13] [done] hsa-mir-203a-3p (112.0s) max_absent=0.27 median@limit=0.419 τ=0.433
+[2026-10-02 18:07:13] [start] (33/149) hsa-mir-21-3p
+[2026-10-02 18:10:10] [done] hsa-mir-21-3p (177.1s) max_absent=0.36 median@limit=0.387 τ=0.414
+[2026-10-02 18:10:10] [start] (34/149) hsa-mir-210-3p
+[2026-10-02 18:18:23] [done] hsa-mir-210-3p (493.4s) max_absent=0.19 median@limit=0.343 τ=0.373
+[2026-10-02 18:18:23] [start] (35/149) hsa-mir-22-3p
+[2026-10-02 18:25:42] [done] hsa-mir-22-3p (438.8s) max_absent=0.22 median@limit=0.477 τ=0.425
+[2026-10-02 18:25:42] [start] (36/149) hsa-mir-22-5p
+[2026-10-02 18:28:40] [done] hsa-mir-22-5p (178.0s) max_absent=0.01 median@limit=0.233 τ=0.153
+[2026-10-02 18:28:40] [start] (37/149) hsa-mir-221-3p
+[2026-10-02 18:31:34] [done] hsa-mir-221-3p (173.5s) max_absent=0.15 median@limit=0.345 τ=0.350
+[2026-10-02 18:31:34] [start] (38/149) hsa-mir-224-3p
+[2026-10-02 18:34:29] [done] hsa-mir-224-3p (174.9s) max_absent=0.16 median@limit=0.284 τ=0.301
+[2026-10-02 18:34:29] [start] (39/149) hsa-mir-224-5p
+[2026-10-02 18:37:55] [done] hsa-mir-224-5p (206.5s) max_absent=0.22 median@limit=0.348 τ=0.345
+[2026-10-02 18:37:55] [start] (40/149) hsa-mir-23b-3p
+[2026-10-02 18:43:42] [done] hsa-mir-23b-3p (346.2s) max_absent=0.51 median@limit=0.483 τ=0.480
+[2026-10-02 18:43:42] [start] (41/149) hsa-mir-24-3p
+[2026-10-02 18:46:20] [done] hsa-mir-24-3p (158.0s) max_absent=0.35 median@limit=0.506 τ=0.453
+[2026-10-02 18:46:20] [start] (42/149) hsa-mir-25-3p
+[2026-10-02 18:48:28] [done] hsa-mir-25-3p (127.9s) max_absent=0.29 median@limit=0.474 τ=0.461
+[2026-10-02 18:48:28] [start] (43/149) hsa-mir-26a-5p
+[2026-10-02 18:51:18] [done] hsa-mir-26a-5p (170.4s) max_absent=0.40 median@limit=0.508 τ=0.476
+[2026-10-02 18:51:18] [start] (44/149) hsa-mir-27a-3p
+[2026-10-02 18:53:59] [done] hsa-mir-27a-3p (160.8s) max_absent=0.30 median@limit=0.526 τ=0.480
+[2026-10-02 18:53:59] [start] (45/149) hsa-mir-27a-5p
+[2026-10-02 18:56:45] [done] hsa-mir-27a-5p (165.7s) max_absent=0.09 median@limit=0.524 τ=0.459
+[2026-10-02 18:56:45] [start] (46/149) hsa-mir-28-3p
+[2026-10-02 19:00:18] [done] hsa-mir-28-3p (213.5s) max_absent=0.17 median@limit=0.393 τ=0.331
+[2026-10-02 19:00:18] [start] (47/149) hsa-mir-28-5p
+[2026-10-02 19:04:08] [done] hsa-mir-28-5p (229.7s) max_absent=0.39 median@limit=0.533 τ=0.479
+[2026-10-02 19:04:08] [start] (48/149) hsa-mir-296-3p
+[2026-10-02 19:05:49] [done] hsa-mir-296-3p (101.1s) max_absent=0.04 median@limit=0.166 τ=0.181
+[2026-10-02 19:05:49] [start] (49/149) hsa-mir-296-5p
+[2026-10-02 19:09:40] [done] hsa-mir-296-5p (230.7s) max_absent=0.38 median@limit=0.412 τ=0.406
+[2026-10-02 19:09:40] [start] (50/149) hsa-mir-299-5p
+[2026-10-02 19:15:33] [done] hsa-mir-299-5p (353.0s) max_absent=0.50 median@limit=0.415 τ=0.436
+[2026-10-02 19:15:33] [start] (51/149) hsa-mir-29a-3p
+[2026-10-02 19:20:03] [done] hsa-mir-29a-3p (270.3s) max_absent=0.58 median@limit=0.471 τ=0.479
+[2026-10-02 19:20:04] [start] (52/149) hsa-mir-29b-1-5p
+[2026-10-02 19:22:17] [done] hsa-mir-29b-1-5p (133.5s) max_absent=0.10 median@limit=0.278 τ=0.308
+[2026-10-02 19:22:17] [start] (53/149) hsa-mir-301a-3p
+[2026-10-02 19:25:06] [done] hsa-mir-301a-3p (168.7s) max_absent=0.03 median@limit=0.473 τ=0.374
+[2026-10-02 19:25:06] [start] (54/149) hsa-mir-30a-3p
+[2026-10-02 19:28:39] [done] hsa-mir-30a-3p (213.0s) max_absent=0.59 median@limit=0.455 τ=0.437
+[2026-10-02 19:28:39] [start] (55/149) hsa-mir-30b-5p
+[2026-10-02 19:32:09] [done] hsa-mir-30b-5p (210.4s) max_absent=0.13 median@limit=0.439 τ=0.345
+[2026-10-02 19:32:09] [start] (56/149) hsa-mir-31-3p
+[2026-10-02 19:36:31] [done] hsa-mir-31-3p (261.7s) max_absent=0.30 median@limit=0.433 τ=0.457
+[2026-10-02 19:36:31] [start] (57/149) hsa-mir-31-5p
+[2026-10-02 19:40:08] [done] hsa-mir-31-5p (217.4s) max_absent=0.15 median@limit=0.505 τ=0.485
+[2026-10-02 19:40:08] [start] (58/149) hsa-mir-3180-3p
+[2026-10-02 19:42:45] [done] hsa-mir-3180-3p (156.7s) max_absent=0.15 median@limit=0.475 τ=0.473
+[2026-10-02 19:42:45] [start] (59/149) hsa-mir-32-5p
+[2026-10-02 19:50:12] [done] hsa-mir-32-5p (446.9s) max_absent=0.12 median@limit=0.338 τ=0.381
+[2026-10-02 19:50:12] [start] (60/149) hsa-mir-324-5p
+[2026-10-02 19:52:36] [done] hsa-mir-324-5p (143.7s) max_absent=0.04 median@limit=0.388 τ=0.401
+[2026-10-02 19:52:36] [start] (61/149) hsa-mir-329-3p
+[2026-10-02 19:55:09] [done] hsa-mir-329-3p (153.6s) max_absent=0.16 median@limit=0.504 τ=0.473
+[2026-10-02 19:55:10] [start] (62/149) hsa-mir-335-3p
+[2026-10-02 19:59:49] [done] hsa-mir-335-3p (279.5s) max_absent=0.59 median@limit=0.418 τ=0.430
+[2026-10-02 19:59:49] [start] (63/149) hsa-mir-337-3p
+[2026-10-02 20:02:42] [done] hsa-mir-337-3p (172.9s) max_absent=0.35 median@limit=0.461 τ=0.374
+[2026-10-02 20:02:42] [start] (64/149) hsa-mir-339-3p
+[2026-10-02 20:10:51] [done] hsa-mir-339-3p (489.1s) max_absent=0.50 median@limit=0.393 τ=0.361
+[2026-10-02 20:10:51] [start] (65/149) hsa-mir-340-5p
+[2026-10-02 20:18:57] [done] hsa-mir-340-5p (486.3s) max_absent=0.16 median@limit=0.462 τ=0.452
+[2026-10-02 20:18:57] [start] (66/149) hsa-mir-342-3p
+[2026-10-02 20:21:03] [done] hsa-mir-342-3p (125.6s) max_absent=0.05 median@limit=0.230 τ=0.215
+[2026-10-02 20:21:03] [start] (67/149) hsa-mir-345-5p
+[2026-10-02 20:24:04] [done] hsa-mir-345-5p (180.8s) max_absent=0.05 median@limit=0.197 τ=0.192
+[2026-10-02 20:24:04] [start] (68/149) hsa-mir-346
+[2026-10-02 20:27:23] [done] hsa-mir-346 (198.8s) max_absent=0.10 median@limit=0.464 τ=0.394
+[2026-10-02 20:27:23] [start] (69/149) hsa-mir-34c-3p
+[2026-10-02 20:33:33] [done] hsa-mir-34c-3p (370.0s) max_absent=0.39 median@limit=0.417 τ=0.425
+[2026-10-02 20:33:33] [start] (70/149) hsa-mir-34c-5p
+[2026-10-02 20:35:16] [done] hsa-mir-34c-5p (102.5s) max_absent=0.07 median@limit=0.303 τ=0.270
+[2026-10-02 20:35:16] [start] (71/149) hsa-mir-369-3p
+[2026-10-02 20:38:00] [done] hsa-mir-369-3p (164.7s) max_absent=0.61 median@limit=0.464 τ=0.459
+[2026-10-02 20:38:00] [start] (72/149) hsa-mir-374a-5p
+[2026-10-02 20:44:27] [done] hsa-mir-374a-5p (386.6s) max_absent=0.19 median@limit=0.495 τ=0.472
+[2026-10-02 20:44:27] [start] (73/149) hsa-mir-374b-5p
+[2026-10-02 20:47:02] [done] hsa-mir-374b-5p (154.9s) max_absent=0.11 median@limit=0.475 τ=0.468
+[2026-10-02 20:47:02] [start] (74/149) hsa-mir-375-3p
+[2026-10-02 20:49:53] [done] hsa-mir-375-3p (170.8s) max_absent=0.39 median@limit=0.245 τ=0.241
+[2026-10-02 20:49:53] [start] (75/149) hsa-mir-376a-3p
+[2026-10-02 20:52:05] [done] hsa-mir-376a-3p (131.8s) max_absent=0.18 median@limit=0.390 τ=0.449
+[2026-10-02 20:52:05] [start] (76/149) hsa-mir-376c-3p
+[2026-10-02 20:54:41] [done] hsa-mir-376c-3p (156.0s) max_absent=0.36 median@limit=0.391 τ=0.393
+[2026-10-02 20:54:41] [start] (77/149) hsa-mir-377-3p
+[2026-10-02 20:57:46] [done] hsa-mir-377-3p (185.3s) max_absent=0.36 median@limit=0.384 τ=0.415
+[2026-10-02 20:57:46] [start] (78/149) hsa-mir-378a-3p
+[2026-10-02 20:59:56] [done] hsa-mir-378a-3p (130.0s) max_absent=0.04 median@limit=0.552 τ=0.432
+[2026-10-02 20:59:56] [start] (79/149) hsa-mir-378a-5p
+[2026-10-02 21:08:00] [done] hsa-mir-378a-5p (483.6s) max_absent=0.13 median@limit=0.308 τ=0.292
+[2026-10-02 21:08:00] [start] (80/149) hsa-mir-379-5p
+[2026-10-02 21:11:29] [done] hsa-mir-379-5p (209.0s) max_absent=0.71 median@limit=0.467 τ=0.443
+[2026-10-02 21:11:29] [start] (81/149) hsa-mir-381-3p
+[2026-10-02 21:14:00] [done] hsa-mir-381-3p (151.2s) max_absent=0.41 median@limit=0.480 τ=0.450
+[2026-10-02 21:14:00] [start] (82/149) hsa-mir-382-5p
+[2026-10-02 21:17:20] [done] hsa-mir-382-5p (200.3s) max_absent=0.21 median@limit=0.520 τ=0.473
+[2026-10-02 21:17:20] [start] (83/149) hsa-mir-409-3p
+[2026-10-02 21:20:04] [done] hsa-mir-409-3p (163.2s) max_absent=0.56 median@limit=0.362 τ=0.376
+[2026-10-02 21:20:04] [start] (84/149) hsa-mir-409-5p
+[2026-10-02 21:22:34] [done] hsa-mir-409-5p (150.4s) max_absent=0.19 median@limit=0.507 τ=0.480
+[2026-10-02 21:22:34] [start] (85/149) hsa-mir-410-3p
+[2026-10-02 21:25:18] [done] hsa-mir-410-3p (163.7s) max_absent=0.23 median@limit=0.311 τ=0.305
+[2026-10-02 21:25:18] [start] (86/149) hsa-mir-423-5p
+[2026-10-02 21:27:55] [done] hsa-mir-423-5p (157.0s) max_absent=0.16 median@limit=0.308 τ=0.288
+[2026-10-02 21:27:55] [start] (87/149) hsa-mir-424-5p
+[2026-10-02 21:31:26] [done] hsa-mir-424-5p (211.6s) max_absent=0.22 median@limit=0.540 τ=0.471
+[2026-10-02 21:31:26] [start] (88/149) hsa-mir-425-5p
+[2026-10-02 21:37:38] [done] hsa-mir-425-5p (371.5s) max_absent=0.19 median@limit=0.445 τ=0.428
+[2026-10-02 21:37:38] [start] (89/149) hsa-mir-431-5p
+[2026-10-02 21:40:44] [done] hsa-mir-431-5p (185.6s) max_absent=0.19 median@limit=0.456 τ=0.450
+[2026-10-02 21:40:44] [start] (90/149) hsa-mir-432-5p
+[2026-10-02 21:42:54] [done] hsa-mir-432-5p (130.5s) max_absent=0.13 median@limit=0.475 τ=0.416
+[2026-10-02 21:42:54] [start] (91/149) hsa-mir-450a-5p
+[2026-10-02 21:50:55] [done] hsa-mir-450a-5p (481.3s) max_absent=0.30 median@limit=0.245 τ=0.238
+[2026-10-02 21:50:55] [start] (92/149) hsa-mir-455-5p
+[2026-10-02 21:54:18] [done] hsa-mir-455-5p (202.6s) max_absent=0.46 median@limit=0.408 τ=0.439
+[2026-10-02 21:54:18] [start] (93/149) hsa-mir-485-3p
+[2026-10-02 22:01:40] [done] hsa-mir-485-3p (442.2s) max_absent=0.30 median@limit=0.519 τ=0.456
+[2026-10-02 22:01:40] [start] (94/149) hsa-mir-486-3p
+[2026-10-02 22:04:36] [done] hsa-mir-486-3p (176.0s) max_absent=0.27 median@limit=0.376 τ=0.359
+[2026-10-02 22:04:36] [start] (95/149) hsa-mir-486-5p
+[2026-10-02 22:07:48] [done] hsa-mir-486-5p (191.4s) max_absent=0.04 median@limit=0.547 τ=0.438
+[2026-10-02 22:07:48] [start] (96/149) hsa-mir-487a-3p
+[2026-10-02 22:11:10] [done] hsa-mir-487a-3p (202.0s) max_absent=0.17 median@limit=0.576 τ=0.483
+[2026-10-02 22:11:10] [start] (97/149) hsa-mir-487b-3p
+[2026-10-02 22:14:10] [done] hsa-mir-487b-3p (180.1s) max_absent=0.44 median@limit=0.481 τ=0.454
+[2026-10-02 22:14:10] [start] (98/149) hsa-mir-493-3p
+[2026-10-02 22:16:31] [done] hsa-mir-493-3p (141.2s) max_absent=0.20 median@limit=0.479 τ=0.460
+[2026-10-02 22:16:31] [start] (99/149) hsa-mir-493-5p
+[2026-10-02 22:19:18] [done] hsa-mir-493-5p (166.8s) max_absent=0.36 median@limit=0.470 τ=0.475
+[2026-10-02 22:19:18] [start] (100/149) hsa-mir-495-3p
+[2026-10-02 22:27:42] [done] hsa-mir-495-3p (503.5s) max_absent=0.57 median@limit=0.383 τ=0.399
+[2026-10-02 22:27:42] [start] (101/149) hsa-mir-496
+[2026-10-02 22:29:26] [done] hsa-mir-496 (104.6s) max_absent=0.06 median@limit=0.575 τ=0.408
+[2026-10-02 22:29:27] [start] (102/149) hsa-mir-503-5p
+[2026-10-02 22:32:47] [done] hsa-mir-503-5p (200.3s) max_absent=0.22 median@limit=0.189 τ=0.165
+[2026-10-02 22:32:47] [start] (103/149) hsa-mir-532-3p
+[2026-10-02 22:39:59] [done] hsa-mir-532-3p (431.9s) max_absent=0.27 median@limit=0.383 τ=0.364
+[2026-10-02 22:39:59] [start] (104/149) hsa-mir-542-3p
+[2026-10-02 22:43:08] [done] hsa-mir-542-3p (189.3s) max_absent=0.26 median@limit=0.232 τ=0.217
+[2026-10-02 22:43:08] [start] (105/149) hsa-mir-543
+[2026-10-02 22:45:39] [done] hsa-mir-543 (150.3s) max_absent=0.28 median@limit=0.455 τ=0.466
+[2026-10-02 22:45:39] [start] (106/149) hsa-mir-551b-3p
+[2026-10-02 22:47:39] [done] hsa-mir-551b-3p (120.5s) max_absent=0.11 median@limit=0.211 τ=0.203
+[2026-10-02 22:47:39] [start] (107/149) hsa-mir-556-3p
+[2026-10-02 22:51:57] [done] hsa-mir-556-3p (257.9s) max_absent=0.16 median@limit=0.279 τ=0.292
+[2026-10-02 22:51:57] [start] (108/149) hsa-mir-574-3p
+[2026-10-02 22:59:12] [done] hsa-mir-574-3p (435.1s) max_absent=0.03 median@limit=0.161 τ=0.147
+[2026-10-02 22:59:12] [start] (109/149) hsa-mir-574-5p
+[2026-10-02 23:01:28] [done] hsa-mir-574-5p (136.3s) max_absent=0.01 median@limit=0.228 τ=0.158
+[2026-10-02 23:01:28] [start] (110/149) hsa-mir-582-3p
+[2026-10-02 23:10:42] [done] hsa-mir-582-3p (553.2s) max_absent=0.45 median@limit=0.411 τ=0.430
+[2026-10-02 23:10:42] [start] (111/149) hsa-mir-582-5p
+[2026-10-02 23:14:25] [done] hsa-mir-582-5p (223.4s) max_absent=0.31 median@limit=0.471 τ=0.456
+[2026-10-02 23:14:25] [start] (112/149) hsa-mir-584-5p
+[2026-10-02 23:16:06] [done] hsa-mir-584-5p (101.2s) max_absent=0.09 median@limit=0.324 τ=0.276
+[2026-10-02 23:16:06] [start] (113/149) hsa-mir-585-5p
+[2026-10-02 23:18:56] [done] hsa-mir-585-5p (169.4s) max_absent=0.05 median@limit=0.386 τ=0.360
+[2026-10-02 23:18:56] [start] (114/149) hsa-mir-590-3p
+[2026-10-02 23:22:00] [done] hsa-mir-590-3p (184.4s) max_absent=0.02 median@limit=0.566 τ=0.383
+[2026-10-02 23:22:00] [start] (115/149) hsa-mir-592
+[2026-10-02 23:24:17] [done] hsa-mir-592 (136.9s) max_absent=0.56 median@limit=0.300 τ=0.307
+[2026-10-02 23:24:17] [start] (116/149) hsa-mir-598-3p
+[2026-10-02 23:30:34] [done] hsa-mir-598-3p (376.7s) max_absent=0.94 median@limit=0.678 τ=0.470
+[2026-10-02 23:30:34] [start] (117/149) hsa-mir-629-3p
+[2026-10-02 23:32:37] [done] hsa-mir-629-3p (122.5s) max_absent=0.01 median@limit=0.217 τ=0.157
+[2026-10-02 23:32:37] [start] (118/149) hsa-mir-642a-5p
+[2026-10-02 23:35:52] [done] hsa-mir-642a-5p (195.0s) max_absent=0.01 median@limit=0.213 τ=0.138
+[2026-10-02 23:35:52] [start] (119/149) hsa-mir-654-5p
+[2026-10-02 23:37:59] [done] hsa-mir-654-5p (127.5s) max_absent=0.11 median@limit=0.424 τ=0.374
+[2026-10-02 23:37:59] [start] (120/149) hsa-mir-655-3p
+[2026-10-02 23:41:00] [done] hsa-mir-655-3p (180.9s) max_absent=0.19 median@limit=0.519 τ=0.456
+[2026-10-02 23:41:00] [start] (121/149) hsa-mir-656-3p
+[2026-10-02 23:43:16] [done] hsa-mir-656-3p (136.1s) max_absent=0.23 median@limit=0.507 τ=0.480
+[2026-10-02 23:43:17] [start] (122/149) hsa-mir-676-3p
+[2026-10-02 23:46:07] [done] hsa-mir-676-3p (170.7s) max_absent=0.13 median@limit=0.387 τ=0.440
+[2026-10-02 23:46:07] [start] (123/149) hsa-mir-7-1-3p
+[2026-10-02 23:48:53] [done] hsa-mir-7-1-3p (165.4s) max_absent=0.02 median@limit=0.379 τ=0.248
+[2026-10-02 23:48:53] [start] (124/149) hsa-mir-7-5p
+[2026-10-02 23:52:42] [done] hsa-mir-7-5p (229.3s) max_absent=0.21 median@limit=0.451 τ=0.452
+[2026-10-02 23:52:42] [start] (125/149) hsa-mir-708-5p
+[2026-10-02 23:57:26] [done] hsa-mir-708-5p (283.8s) max_absent=0.51 median@limit=0.353 τ=0.378
+[2026-10-02 23:57:26] [start] (126/149) hsa-mir-744-5p
+[2026-10-03 00:00:35] [done] hsa-mir-744-5p (189.4s) max_absent=0.13 median@limit=0.359 τ=0.443
+[2026-10-03 00:00:35] [start] (127/149) hsa-mir-766-3p
+[2026-10-03 00:07:08] [done] hsa-mir-766-3p (392.7s) max_absent=0.14 median@limit=0.364 τ=0.419
+[2026-10-03 00:07:08] [start] (128/149) hsa-mir-874-3p
+[2026-10-03 00:08:54] [done] hsa-mir-874-3p (105.6s) max_absent=0.06 median@limit=0.244 τ=0.178
+[2026-10-03 00:08:54] [start] (129/149) hsa-mir-876-3p
+[2026-10-03 00:10:40] [done] hsa-mir-876-3p (105.8s) max_absent=0.03 median@limit=0.290 τ=0.222
+[2026-10-03 00:10:40] [start] (130/149) hsa-mir-889-3p
+[2026-10-03 00:17:21] [done] hsa-mir-889-3p (400.9s) max_absent=0.39 median@limit=0.429 τ=0.487
+[2026-10-03 00:17:21] [start] (131/149) hsa-mir-9-3p
+[2026-10-03 00:21:01] [done] hsa-mir-9-3p (220.1s) max_absent=0.09 median@limit=0.549 τ=0.443
+[2026-10-03 00:21:01] [start] (132/149) hsa-mir-9-5p
+[2026-10-03 00:25:05] [done] hsa-mir-9-5p (244.3s) max_absent=0.07 median@limit=0.314 τ=0.342
+[2026-10-03 00:25:05] [start] (133/149) hsa-mir-92a-1-5p
+[2026-10-03 00:32:49] [done] hsa-mir-92a-1-5p (463.6s) max_absent=0.21 median@limit=0.512 τ=0.416
+[2026-10-03 00:32:49] [start] (134/149) hsa-mir-92a-3p
+[2026-10-03 00:35:23] [done] hsa-mir-92a-3p (154.4s) max_absent=0.56 median@limit=0.432 τ=0.470
+[2026-10-03 00:35:23] [start] (135/149) hsa-mir-92b-3p
+[2026-10-03 00:38:28] [done] hsa-mir-92b-3p (184.7s) max_absent=0.04 median@limit=0.490 τ=0.392
+[2026-10-03 00:38:28] [start] (136/149) hsa-mir-93-5p
+[2026-10-03 00:41:11] [done] hsa-mir-93-5p (163.1s) max_absent=0.29 median@limit=0.432 τ=0.429
+[2026-10-03 00:41:11] [start] (137/149) hsa-mir-96-5p
+[2026-10-03 00:43:55] [done] hsa-mir-96-5p (164.2s) max_absent=0.06 median@limit=0.407 τ=0.403
+[2026-10-03 00:43:55] [start] (138/149) hsa-mir-98-5p
+[2026-10-03 00:51:06] [done] hsa-mir-98-5p (430.1s) max_absent=0.70 median@limit=0.413 τ=0.394
+[2026-10-03 00:51:06] [start] (139/149) hsa-mir-99a-5p
+[2026-10-03 00:54:33] [done] hsa-mir-99a-5p (206.9s) max_absent=0.39 median@limit=0.456 τ=0.438
+[2026-10-03 00:54:33] [start] (140/149) hsa-mir-99b-5p
+[2026-10-03 01:00:19] [done] hsa-mir-99b-5p (346.6s) max_absent=0.39 median@limit=0.528 τ=0.463
+[2026-10-03 01:00:19] [start] (141/149) hsa-let-7b-5p
+[2026-10-03 01:05:38] [done] hsa-let-7b-5p (318.5s) max_absent=0.79 median@limit=0.379 τ=0.396
+[2026-10-03 01:05:38] [start] (142/149) hsa-mir-100-5p
+[2026-10-03 01:12:07] [done] hsa-mir-100-5p (389.3s) max_absent=0.77 median@limit=0.492 τ=0.460
+[2026-10-03 01:12:07] [start] (143/149) hsa-mir-125b-5p
+[2026-10-03 01:18:25] [done] hsa-mir-125b-5p (377.6s) max_absent=0.72 median@limit=0.394 τ=0.405
+[2026-10-03 01:18:25] [start] (144/149) hsa-mir-142-3p
+[2026-10-03 01:33:22] [done] hsa-mir-142-3p (897.1s) max_absent=0.94 median@limit=0.860 τ=0.466
+[2026-10-03 01:33:22] [start] (145/149) hsa-mir-19a-3p
+[2026-10-03 01:38:31] [done] hsa-mir-19a-3p (309.2s) max_absent=0.81 median@limit=0.414 τ=0.417
+[2026-10-03 01:38:31] [start] (146/149) hsa-mir-20a-5p
+[2026-10-03 01:44:13] [done] hsa-mir-20a-5p (341.7s) max_absent=0.79 median@limit=0.552 τ=0.478
+[2026-10-03 01:44:13] [start] (147/149) hsa-mir-21-5p
+[2026-10-03 01:48:44] [done] hsa-mir-21-5p (271.1s) max_absent=0.68 median@limit=0.474 τ=0.468
+[2026-10-03 01:48:44] [start] (148/149) hsa-mir-27b-3p
+[2026-10-03 01:58:23] [done] hsa-mir-27b-3p (578.6s) max_absent=0.69 median@limit=0.550 τ=0.462
+[2026-10-03 01:58:23] [start] (149/149) hsa-mir-335-5p
+[2026-10-03 02:04:26] [done] hsa-mir-335-5p (362.9s) max_absent=0.62 median@limit=0.507 τ=0.448

@@ -14,6 +14,8 @@ An XGBoost model with default parameters was established as the baseline.
 9. **ResNet-like**  
 10. **RealMLP**
 11. **DCNv2**
+12. **TabPack**
+13. **TabR**
 
 ---
 
@@ -34,18 +36,19 @@ All remaining models were systematically evaluated using the following validatio
 ---
 
 ### Benchmarking resutls
-Based on our evaluation metrics, TabM, CatBoost and XGB models clearly outperformed the rest of the cohort. FT-Transformer achieved a better median performance than ResNet but showed worse mean performance due to several outlier predictions. Considering its high computational cost and inferior mean performance, we decided to exclude FT-Transformer from further analysis. ResNet, GANDALF, and RealMLP showed comparable mean and median performance. For downstream analysis and ensemble benchmarking, we selected ResNet as the fourth model. The top models were ranked by their mean and median $R^2$ scores on outer K1 (main cohort for comparing):
+Based on our evaluation metrics, TabPack and TabM clearly outperformed the rest of the cohort. 
+DCNv2, RealMLP, and GANDALF showed comparable mean and median performance. For downstream analysis and ensemble benchmarking, we selected TabPack and TabM as neural network-based models and XGB + Optuna as the best tree-based model. The top models were ranked by their average of means and medians $R^2$ scores among all cohorts (K1-K10):
 
-| Rank | Model | Mean $R^2$ | Model | Median $R^2$ |
+| Rank | Model | Average of medians $R^2$ | Model | Average of means $R^2$ |
 | :---: | :--- | :---: | :--- | :---: |
-| **1** | **TabM** | 0.2260 | **XGBoost + Optuna** | 0.1570 |
-| **2** | **CatBoost + Optuna** | 0.2215 | **CatBoost + Optuna** | 0.1443 |
-| **3** | **XGBoost + Optuna** | 0.2207 | **TabM** | 0.1350 |
-| **4** | **ResNet-like** | 0.1940 | **FT-Transformer** | 0.1249 |
+| **1** | **TabPack** | 0.81 | **TabPack** | 0.79 |
+| **2** | **TabM** | 0.8 | **TabM** | 0.78 |
+| **3** | **DCNv2** | 0.76 | **TabR** | 0.73 |
+| **4** | **RealMLP** | 0.75 | **RealMLP** | 0.73 |
 
 ##### FIGUERS
 ![R2 Performance](figures/mean_median_r2_by_model.png)
 ![R2 Performance](figures/r2_by_target_k1.png)
 
 
-> **Conclusion:** **TabM**, **CatBoost**, **XGBoost**, and **ResNet-like** architectures have been selected to construct advanced ensemble architectures in the next phase of the project (ensebmle benchmarking)
+> **Conclusion:** **TabPack**, **TabM**, and **XGBoost** architectures have been selected to construct advanced ensemble architectures in the next phase of the project (ensebmle benchmarking)

@@ -246,13 +246,20 @@ class StackPredictor:
         mirnas: Iterable[str] | None = None,
         *,
         genes: list[str] | None = None,
+        on_mirna=None,
     ) -> pd.DataFrame:
-        """Predict multiple miRNAs; returns cells × miRNAs DataFrame."""
+        """Predict multiple miRNAs; returns cells × miRNAs DataFrame.
+
+        ``on_mirna``, if given, is called as ``on_mirna(mirna)`` after each
+        target is predicted (used by ``miRPredictor`` for a progress bar).
+        """
         x_df = self._as_gene_matrix(x, genes)
         targets = list(mirnas) if mirnas is not None else self._available_mirnas
         out = pd.DataFrame(index=x_df.index)
         for mirna in targets:
             out[mirna] = self.predict(mirna, x_df)
+            if on_mirna is not None:
+                on_mirna(mirna)
         return out
 
     def predict_cohort(
