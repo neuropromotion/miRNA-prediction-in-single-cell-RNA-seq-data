@@ -6,7 +6,7 @@
 |------|------|
 | **Tune** weights | `inner_val` **K1 + PB** only (bulk excluded) |
 | **Report / rank** | `outer_val` K1 + PB + bulk |
-| Primary rank | `median_outer_val_k1_r2` |
+ 
 
 Summary also reports:
 - `avg_of_medians_K` — mean of per-cohort **medians** over K1 + PB K2–K10
@@ -20,17 +20,16 @@ Win counts are among ensembles in this stage (not vs solos). Per-target winners:
 
 | id | Source | Recipe |
 |----|--------|--------|
-| `xgb_optuna` | `model_selection` | XGB Optuna |
-| `tabpack` | `model_tuning` | TabPack Muon (paper) |
-| `dcnv2` | `model_selection` | DCNv2 AdamW |
-| `tabm` | `model_selection` | TabM AdamW |
+| `xgb_optuna` | `model_selection` | XGB + Optuna |
+| `tabpack` | `model_tuning` | TabPack + Muon | 
+| `tabm` | `model_selection` | TabM + AdamW |
 
-Sets = all pairs + triples (full quadruple excluded):
+Sets = all pairs + triple:
 
-- pairs (6): `xgb_tabpack`, `xgb_dcnv2`, `xgb_tabm`, `tabpack_dcnv2`, `tabpack_tabm`, `dcnv2_tabm`
-- triples (4): `xgb_tabpack_dcnv2`, `xgb_tabpack_tabm`, `xgb_dcnv2_tabm`, `tabpack_dcnv2_tabm`
+- pairs (3): `xgb_tabpack`, `xgb_tabm`, `tabpack_tabm`
+- triples (1): `xgb_tabpack_tabm`
 
-→ **10 sets × 3 methods = 30** configs.
+→ **4 sets × 3 methods = 12** configs.
 
 ## Methods
 
@@ -39,19 +38,14 @@ Sets = all pairs + triples (full quadruple excluded):
 | `blend` | non-negative weights on simplex (grid) |
 | `avg_uniform` | equal average of predictions |
 | `stack` | Ridge meta-learner (`RidgeCV`) |
+ 
 
-TabPack uses cached `preds.npz` (no live re-inference).
+## Benchmarking resutls
+Based on evaluation metrics, stacking of XGBoost, TabPack and TabM outperformed the rest of ensembles, despite that differences between ensebmles were subtle. But Tripple stacking is single ensemble that increased r2 above 0.4 for 23 miRNAs (best result). The top models were ranked by their average of means and medians $R^2$ scores among all cohorts (K1-K10):
 
-## Run
-
-```bash
-cd ml_pipeline/pipeline_benchmarking/ensembles_selection_v4
-bash run_docker.sh
-```
-
-Smoke:
-
-```bash
-STAGE04_SETS=xgb_tabpack STAGE04_METHODS=avg_uniform \
-  STAGE04_TARGETS=hsa-mir-1180-3p STAGE04_DEVICE=cuda bash run_docker.sh
-```
+| Rank | Model | Average of medians $R^2$ | Model | Average of means $R^2$ |
+| :---: | :--- | :---: | :--- | :---: |
+| **1** | **xgb_tabpack_tabm_stack** | 0.8263 | **xgb_tabpack_tabm_stack** | 0.8116 |
+| **2** | **tabpack_tabm_stack** | 0.8256 | **xgb_tabpack_stack** | 0.8102 |
+| **3** | **xgb_tabpack_stack** | 0.8237 | **xgb_tabpack_tabm_blend** | 0.81 |
+| **4** | **xgb_tabpack_tabm_blend** | 0.8222 | **tabpack_tabm_stack** | 0.8082 |
