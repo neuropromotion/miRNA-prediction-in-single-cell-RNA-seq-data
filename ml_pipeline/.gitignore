@@ -72,6 +72,7 @@ final_train_test_inference/Optimal_K/tables/bootstrap_medians_*
 final_train_test_inference/Optimal_K/tables/decisions_*
 final_train_test_inference/robustness/results/tables/budget_*
 final_train_test_inference/robustness/results/tables/_progress.csv
+final_train_test_inference/robustness/results/*.log
 final_train_test_inference/robustness/*.sh
 final_train_test_inference/inference/inference.ipynb
 
