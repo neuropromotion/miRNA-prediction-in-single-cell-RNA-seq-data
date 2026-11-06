@@ -38,7 +38,26 @@ INFERENCE_INPUT_DIR = ML_PIPELINE / "data" / "inference_inputs"
 INFERENCE_OUTPUT_DIR = ML_PIPELINE / "data" / "inference_outputs"
 
 CONFIG_PATH = INFERENCE_DIR / "prediction_config.json"
-ROBUSTNESS_CONFIG_PATH = INFERENCE_DIR / "robustness_config.json"
+
+ROBUSTNESS_RESULTS_DIR = FTTI_ROOT / "robustness" / "results"
+ROBUSTNESS_CONFIG_PATH_DEFAULT = ROBUSTNESS_RESULTS_DIR / "robustness_config.json"
+ROBUSTNESS_WEIGHTS_DIR = ROBUSTNESS_RESULTS_DIR / "feature_weights"
+ROBUSTNESS_CONFIG_LEGACY_PATH = INFERENCE_DIR / "robustness_config.json"
+# Back-compat alias (v3 path == v4 output location)
+ROBUSTNESS_CONFIG_V3_PATH = ROBUSTNESS_CONFIG_PATH_DEFAULT
+
+
+def resolve_robustness_config_path(explicit: Path | str | None = None) -> Path:
+    """Prefer ``robustness/results/robustness_config.json`` (v4); else inference copy."""
+    if explicit is not None:
+        return Path(explicit)
+    if ROBUSTNESS_CONFIG_PATH_DEFAULT.is_file():
+        return ROBUSTNESS_CONFIG_PATH_DEFAULT
+    return ROBUSTNESS_CONFIG_LEGACY_PATH
+
+
+ROBUSTNESS_CONFIG_PATH = resolve_robustness_config_path()
+
 GENE_LENGTHS_PATH = INFERENCE_DIR / "df_gene_mapping.parquet"
 MRNA_NAMES_PATH = INFERENCE_DIR / "mRNA_names.json"
 GENE_MAPPING_PATH = INFERENCE_DIR / "ensembl_gene_mapping.csv"

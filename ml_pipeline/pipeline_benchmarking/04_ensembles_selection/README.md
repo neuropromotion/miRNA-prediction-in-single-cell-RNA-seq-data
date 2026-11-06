@@ -16,6 +16,14 @@ Summary also reports:
 
 Win counts are among ensembles in this stage (not vs solos). Per-target winners: `results/best_per_target_outer_val_{k1,bulk}.csv`.
 
+## Ensembling methods
+
+| id | Meaning |
+|----|---------|
+| `blend` | non-negative weights on simplex (grid) |
+| `avg_uniform` | equal average of predictions |
+| `stack` | Ridge meta-learner (`RidgeCV`) |
+
 ## Base models
 
 | id | Source | Recipe |
@@ -31,14 +39,6 @@ Sets = all pairs + triple:
 
 → **4 sets × 3 methods = 12** configs.
 
-## Methods
-
-| id | Meaning |
-|----|---------|
-| `blend` | non-negative weights on simplex (grid) |
-| `avg_uniform` | equal average of predictions |
-| `stack` | Ridge meta-learner (`RidgeCV`) |
- 
 
 ## Benchmarking resutls
 Based on evaluation metrics, stacking of XGBoost, TabPack and TabM outperformed the rest of ensembles, despite that differences between ensebmles were subtle. But Tripple stacking is single ensemble that increased r2 above 0.4 for 23 miRNAs (best result). The top models were ranked by their average of means and medians $R^2$ scores among all cohorts (K1-K10):

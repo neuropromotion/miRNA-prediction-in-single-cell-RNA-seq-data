@@ -11,7 +11,7 @@ TRAIN_DIR = FTTI / "train"
 OPTIMAL_K_DIR = FTTI / "Optimal_K"
 
 # Protocol (match Optimal_K)
-SEED = 42
+SEED = 142
 N_BOOTSTRAP = 1000
 R2_THRESHOLD = 0.4
 

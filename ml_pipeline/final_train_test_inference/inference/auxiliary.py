@@ -55,7 +55,55 @@ def paired_umap(rcc_adata, healthy_adata):
     
     plt.tight_layout()
     plt.show()
-    
+
+
+def plot_dotplot(adata, n_genes=5, rcc=True, cmap='viridis'):
+
+    if "CellType" not in adata.obs.columns:
+        raise ValueError("'CellType' not found in adata.obs")
+
+    if "rank_genes_groups" not in adata.uns:
+        raise ValueError(
+            "Run sc.tl.rank_genes_groups() first."
+        )
+
+    # Groups from rank_genes_groups
+    groups = adata.uns["rank_genes_groups"]["names"].dtype.names
+
+    # Top N genes for each CellType
+    top_genes = {
+        group: list(
+            adata.uns["rank_genes_groups"]["names"][group][:n_genes]
+        )
+        for group in groups
+    }
+
+    # Dotplot
+
+    if rcc:
+        sc.pl.dotplot(
+            adata,
+            var_names=top_genes,
+            groupby="CellType",
+            standard_scale="var",
+            dendrogram=False, 
+            cmap=cmap
+        )
+    else:
+        sc.pl.dotplot(
+            adata,
+            var_names=top_genes,
+            groupby="CellType",
+            standard_scale="var",
+            dendrogram=False,
+            use_raw=False,
+            layer="log1p",
+            cmap=cmap
+        )
+        
+
+
+
 def plot_umap_expression(adata, mir, cluster_col = 'CellType', cmap="inferno", size=50, alpha=1):
     sc.pl.umap(
         adata,
@@ -540,3 +588,1006 @@ def compare_expression(
 
         "Cliffs_delta": delta,
     }
+
+
+
+
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from scipy.stats import mannwhitneyu
+
+
+def compare_expression_across_clusters(
+    df1,
+    df2,
+    gene,
+    cluster_pairs=None,
+    cluster_col="CellType",
+    malignant_color="#C44E52",
+    healthy_color="#4C72B0",
+    pseudocount=1e-6,
+    figsize=(8, 5.5),
+    sort_by=None,
+    save_path=None,
+    fc_threshold=1.0,
+    neutral_color="#999999",
+):
+    """
+    Compare predicted gene expression across matched clusters
+    in malignant (df1) and healthy (df2) scRNA-seq datasets.
+
+    Expression values must be log2(CPM + 1).
+
+    Metrics
+    -------
+    log2FC:
+        log2 ratio of mean CPM (malignant / healthy).
+
+    Cliff's delta:
+        Distributional effect size, computed from Mann-Whitney U.
+        Positive = higher expression in malignant.
+        Negative = higher expression in healthy.
+
+    Parameters
+    ----------
+    df1, df2 : pandas.DataFrame
+        Malignant and healthy expression datasets.
+
+    gene : str
+        Gene to compare.
+
+    cluster_pairs : list of tuples
+        (malignant_cluster, healthy_cluster).
+
+    cluster_col : str
+        Column containing cell-type annotations.
+
+    pseudocount : float
+        Pseudocount in CPM units for log2FC.
+
+    figsize : tuple
+        Figure size.
+
+    sort_by : str or None
+        None, "log2FC", "abs_log2FC",
+        "Cliffs_delta", "abs_Cliffs_delta".
+
+    save_path : str or None
+        Optional path to save figure.
+
+    Returns
+    -------
+    pd.DataFrame
+        Per-cluster summary statistics.
+    """
+
+    if cluster_pairs is None:
+        cluster_pairs = [
+            ("Malignant cells", "Proximal tubule cells"),
+            ("Endothelial cells", "Endothelial cells"),
+            ("Pericytes", "Interstitial cells"),
+            ("T and NK cells", "T and NK cells"),
+            ("Phagocytes", "Phagocytes"),
+            ("B cells", "B cells"),
+        ]
+
+    # -----------------------------------------
+    # Validation
+    # -----------------------------------------
+
+    for name, df in [("df1", df1), ("df2", df2)]:
+        if gene not in df.columns:
+            raise ValueError(f"Gene '{gene}' not found in {name}")
+
+        if cluster_col not in df.columns:
+            raise ValueError(
+                f"Column '{cluster_col}' not found in {name}"
+            )
+
+    if pseudocount <= 0:
+        raise ValueError("pseudocount must be positive.")
+
+    results = []
+
+    # -----------------------------------------
+    # Calculate metrics for each cluster pair
+    # -----------------------------------------
+
+    for malignant_cluster, healthy_cluster in cluster_pairs:
+
+        x = df1.loc[
+            df1[cluster_col] == malignant_cluster,
+            gene
+        ].to_numpy(dtype=np.float64)
+
+        y = df2.loc[
+            df2[cluster_col] == healthy_cluster,
+            gene
+        ].to_numpy(dtype=np.float64)
+
+        x = x[np.isfinite(x)]
+        y = y[np.isfinite(y)]
+
+        if len(x) == 0 or len(y) == 0:
+            raise ValueError(
+                f"No valid cells for pair: "
+                f"{malignant_cluster} / {healthy_cluster}"
+            )
+
+        # Clip small negative predictions to zero.
+        x = np.maximum(x, 0)
+        y = np.maximum(y, 0)
+
+        # Restore linear CPM.
+        x_cpm = np.expm1(x * np.log(2))
+        y_cpm = np.expm1(y * np.log(2))
+
+        mean_malignant = np.mean(x_cpm)
+        mean_healthy = np.mean(y_cpm)
+
+        log2fc = np.log2(
+            (mean_malignant + pseudocount)
+            / (mean_healthy + pseudocount)
+        )
+
+        # Cliff's delta from Mann-Whitney U.
+        # No pairwise comparison matrix is created.
+        u_stat = mannwhitneyu(
+            x,
+            y,
+            alternative="two-sided",
+            method="asymptotic",
+        ).statistic
+
+        delta = (
+            2.0 * u_stat / (len(x) * len(y))
+        ) - 1.0
+
+        if malignant_cluster == healthy_cluster:
+            label = malignant_cluster
+        else:
+            label = (
+                f"{malignant_cluster}\n"
+                f"vs {healthy_cluster}"
+            )
+
+        results.append({
+            "cluster": label,
+            "malignant_cluster": malignant_cluster,
+            "healthy_cluster": healthy_cluster,
+            "n_malignant": len(x),
+            "n_healthy": len(y),
+            "mean_CPM_malignant": mean_malignant,
+            "mean_CPM_healthy": mean_healthy,
+            "median_log2CPM_malignant": np.median(x),
+            "median_log2CPM_healthy": np.median(y),
+            "pct_expressing_malignant": np.mean(x > 0) * 100,
+            "pct_expressing_healthy": np.mean(y > 0) * 100,
+            "log2FC": log2fc,
+            "Cliffs_delta": delta,
+        })
+
+    stats_df = pd.DataFrame(results)
+
+    # -----------------------------------------
+    # Optional sorting
+    # -----------------------------------------
+
+    allowed_sort = {
+        None,
+        "log2FC",
+        "abs_log2FC",
+        "Cliffs_delta",
+        "abs_Cliffs_delta",
+    }
+
+    if sort_by not in allowed_sort:
+        raise ValueError(f"sort_by must be one of {allowed_sort}")
+
+    if sort_by is not None:
+        key = (
+            stats_df[sort_by[4:]].abs()
+            if sort_by.startswith("abs_")
+            else stats_df[sort_by]
+        )
+
+        stats_df = stats_df.iloc[
+            np.argsort(-key.to_numpy())
+        ].reset_index(drop=True)
+
+    # -----------------------------------------
+    # Plot
+    # -----------------------------------------
+    
+    n = len(stats_df)
+    positions = np.arange(n)
+    
+    fig, axes = plt.subplots(
+        1, 2,
+        figsize=figsize,
+        sharey=True,
+        gridspec_kw={"width_ratios": [1.15, 1]},
+    )
+    
+    # Colors are determined ONLY by log2FC
+    fc_values = stats_df["log2FC"].to_numpy()
+    
+    colors = np.where(
+        fc_values >= fc_threshold,
+        malignant_color,
+        np.where(
+            fc_values <= -fc_threshold,
+            healthy_color,
+            neutral_color,
+        ),
+    )
+    
+    metrics = [
+        ("log2FC", "log₂ fold change (mean CPM)"),
+        ("Cliffs_delta", "Cliff's delta"),
+    ]
+    
+    for ax, (metric, xlabel) in zip(axes, metrics):
+    
+        values = stats_df[metric].to_numpy()
+    
+        ax.axvline(
+            0,
+            color="gray",
+            linestyle="--",
+            linewidth=1,
+            zorder=1,
+        )
+    
+        # Threshold lines only on log2FC panel
+        if metric == "log2FC":
+            ax.axvline(
+                fc_threshold,
+                color=malignant_color,
+                linestyle=":",
+                linewidth=1.2,
+                alpha=0.7,
+            )
+    
+            ax.axvline(
+                -fc_threshold,
+                color=healthy_color,
+                linestyle=":",
+                linewidth=1.2,
+                alpha=0.7,
+            )
+    
+        for i, (value, color) in enumerate(zip(values, colors)):
+    
+            ax.plot(
+                [0, value],
+                [i, i],
+                color=color,
+                linewidth=2,
+                alpha=0.55,
+                zorder=2,
+            )
+    
+            ax.scatter(
+                value,
+                i,
+                s=85,
+                color=color,
+                edgecolor="white",
+                linewidth=0.8,
+                zorder=3,
+            )
+    
+        ax.set_xlabel(xlabel)
+        ax.set_yticks(positions)
+    
+        ax.grid(
+            axis="x",
+            alpha=0.15,
+        )
+    
+        ax.spines[["top", "right"]].set_visible(False)
+    
+    axes[0].set_yticklabels(stats_df["cluster"])
+    axes[0].tick_params(axis="y", labelleft=True)
+    axes[1].tick_params(axis="y", labelleft=False)
+    
+    # Symmetric x-axis for log2FC
+    max_fc = max(
+        np.max(np.abs(stats_df["log2FC"])),
+        fc_threshold,
+        0.5,
+    )
+    
+    axes[0].set_xlim(
+        -max_fc * 1.15,
+        max_fc * 1.15,
+    )
+    
+    # Cliff's delta range
+    axes[1].set_xlim(-1.05, 1.05)
+    
+    axes[0].invert_yaxis()
+    
+    fig.suptitle(
+        f"{gene} | RCC vs Healthy",
+        fontsize=15,
+        fontweight="bold",
+    )
+    
+    # Legend
+    from matplotlib.lines import Line2D
+    
+    legend_elements = [
+        Line2D(
+            [0], [0],
+            marker="o",
+            color="none",
+            markerfacecolor=malignant_color,
+            markeredgecolor="none",
+            markersize=8,
+            label=f"log₂FC ≥ +{fc_threshold:g}",
+        ),
+        Line2D(
+            [0], [0],
+            marker="o",
+            color="none",
+            markerfacecolor=neutral_color,
+            markeredgecolor="none",
+            markersize=8,
+            label=f"|log₂FC| < {fc_threshold:g}",
+        ),
+        Line2D(
+            [0], [0],
+            marker="o",
+            color="none",
+            markerfacecolor=healthy_color,
+            markeredgecolor="none",
+            markersize=8,
+            label=f"log₂FC ≤ −{fc_threshold:g}",
+        ),
+    ]
+    
+    fig.legend(
+        handles=legend_elements,
+        loc="lower center",
+        ncol=3,
+        frameon=False,
+        bbox_to_anchor=(0.5, 0.01),
+    )
+    
+    fig.tight_layout(rect=[0, 0.09, 1, 0.95])
+    
+    if save_path is not None:
+        fig.savefig(
+            save_path,
+            dpi=300,
+            bbox_inches="tight",
+        )
+    
+    plt.show()
+
+    return stats_df
+
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from scipy.stats import mannwhitneyu
+from matplotlib.lines import Line2D
+
+
+def compare_expression_across_clusters_v2(
+    df1,
+    df2,
+    gene,
+    cluster_pairs=None,
+    cluster_col="CellType",
+    malignant_color="#C44E52",
+    healthy_color="#4C72B0",
+    neutral_color="#999999",
+    non_significant_color="#BDBDBD",
+    pseudocount=1e-6,
+    figsize=(9, 6),
+    sort_by=None,
+    save_path=None,
+    fc_threshold=1.0,
+    significance_threshold=0.01,
+    include_global=True,
+):
+    """
+    Compare predicted gene expression between malignant and healthy
+    scRNA-seq datasets.
+
+    Input expression must be log2(CPM + 1).
+
+    Comparisons
+    -----------
+    1. Matched cell clusters defined by cluster_pairs.
+    2. Global comparison: ALL cells in df1 vs ALL cells in df2.
+       Each cell has equal weight, preserving natural cluster proportions.
+
+    Statistics
+    ----------
+    log2FC:
+        log2 ratio of mean CPM (malignant / healthy).
+
+    Cliff's delta:
+        Distributional effect size calculated from Mann-Whitney U.
+
+    p_value:
+        Two-sided Mann-Whitney U test on log2CPM values.
+
+    p_adj_BH:
+        Benjamini-Hochberg adjusted p-values across all comparisons,
+        including the global comparison.
+
+    IMPORTANT
+    ---------
+    These are cell-level tests. They do not correct for batch effects
+    or account for biological sample-level dependencies.
+
+    Parameters
+    ----------
+    df1, df2 : pandas.DataFrame
+        Malignant and healthy expression datasets.
+
+    gene : str
+        Gene to compare.
+
+    cluster_pairs : list of tuples or None
+        (malignant_cluster, healthy_cluster).
+
+    cluster_col : str
+        Column containing cell-type annotations.
+
+    include_global : bool
+        Whether to include comparison of all cells in both datasets.
+
+    significance_threshold : float
+        BH-adjusted p-value threshold for statistical significance.
+
+    fc_threshold : float
+        Absolute log2FC threshold for color classification.
+
+    sort_by : str or None
+        None, "log2FC", "abs_log2FC",
+        "Cliffs_delta", "abs_Cliffs_delta",
+        "p_value", "p_adj_BH".
+
+    save_path : str or None
+        Optional path to save figure.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Per-comparison statistics.
+    """
+
+    # -------------------------------------------------
+    # Default cluster pairs
+    # -------------------------------------------------
+
+    if cluster_pairs is None:
+        cluster_pairs = [
+            ("Malignant cells", "Proximal tubule cells")
+        ]
+
+    # -------------------------------------------------
+    # Validation
+    # -------------------------------------------------
+
+    for name, df in [("df1", df1), ("df2", df2)]:
+
+        if gene not in df.columns:
+            raise ValueError(f"Gene '{gene}' not found in {name}")
+
+    if cluster_pairs:
+        for name, df in [("df1", df1), ("df2", df2)]:
+            if cluster_col not in df.columns:
+                raise ValueError(
+                    f"Column '{cluster_col}' not found in {name}"
+                )
+
+    if not np.isfinite(pseudocount) or pseudocount <= 0:
+        raise ValueError("pseudocount must be positive.")
+
+    if not 0 <= significance_threshold <= 1:
+        raise ValueError(
+            "significance_threshold must be between 0 and 1."
+        )
+
+    if fc_threshold < 0:
+        raise ValueError("fc_threshold must be non-negative.")
+
+    # -------------------------------------------------
+    # Extract expression values
+    # -------------------------------------------------
+
+    def extract_expression(df, cluster=None, use_all=False):
+
+        if use_all:
+            values = df[gene].to_numpy(dtype=np.float64)
+
+        else:
+            values = df.loc[
+                df[cluster_col] == cluster,
+                gene
+            ].to_numpy(dtype=np.float64)
+
+        values = values[np.isfinite(values)]
+
+        # Clip negative predictions to zero
+        values = np.maximum(values, 0)
+
+        return values
+
+    # -------------------------------------------------
+    # Calculate statistics for one comparison
+    # -------------------------------------------------
+
+    def calculate_comparison(x, y, label, malignant_name, healthy_name,
+                              comparison_type):
+
+        if len(x) == 0 or len(y) == 0:
+            raise ValueError(
+                f"No valid cells for comparison: {label}"
+            )
+
+        # Restore linear CPM
+        x_cpm = np.expm1(x * np.log(2))
+        y_cpm = np.expm1(y * np.log(2))
+
+        mean_malignant = np.mean(x_cpm)
+        mean_healthy = np.mean(y_cpm)
+
+        # log2 fold change
+        log2fc = np.log2(
+            (mean_malignant + pseudocount)
+            / (mean_healthy + pseudocount)
+        )
+
+        # Mann-Whitney U test
+        test = mannwhitneyu(
+            x,
+            y,
+            alternative="two-sided",
+            method="asymptotic",
+        )
+
+        u_stat = test.statistic
+        p_value = test.pvalue
+
+        # Cliff's delta
+        delta = (
+            2.0 * u_stat / (len(x) * len(y))
+        ) - 1.0
+
+        return {
+            "cluster": label,
+            "comparison_type": comparison_type,
+            "malignant_cluster": malignant_name,
+            "healthy_cluster": healthy_name,
+
+            "n_malignant": len(x),
+            "n_healthy": len(y),
+
+            "mean_CPM_malignant": mean_malignant,
+            "mean_CPM_healthy": mean_healthy,
+
+            "median_log2CPM_malignant": np.median(x),
+            "median_log2CPM_healthy": np.median(y),
+
+            "pct_expressing_malignant": np.mean(x > 0) * 100,
+            "pct_expressing_healthy": np.mean(y > 0) * 100,
+
+            "log2FC": log2fc,
+            "Cliffs_delta": delta,
+            "p_value": p_value,
+        }
+
+    results = []
+
+    # -------------------------------------------------
+    # 1. Matched cluster comparisons
+    # -------------------------------------------------
+
+    for malignant_cluster, healthy_cluster in cluster_pairs:
+
+        x = extract_expression(
+            df1,
+            cluster=malignant_cluster
+        )
+
+        y = extract_expression(
+            df2,
+            cluster=healthy_cluster
+        )
+
+        if malignant_cluster == healthy_cluster:
+            label = malignant_cluster
+        else:
+            label = (
+                f"{malignant_cluster}\n"
+                f"vs {healthy_cluster}"
+            )
+
+        results.append(
+            calculate_comparison(
+                x=x,
+                y=y,
+                label=label,
+                malignant_name=malignant_cluster,
+                healthy_name=healthy_cluster,
+                comparison_type="cluster",
+            )
+        )
+
+    # -------------------------------------------------
+    # 2. Global comparison: ALL cells vs ALL cells
+    # -------------------------------------------------
+
+    if include_global:
+
+        x_all = extract_expression(
+            df1,
+            use_all=True
+        )
+
+        y_all = extract_expression(
+            df2,
+            use_all=True
+        )
+
+        results.append(
+            calculate_comparison(
+                x=x_all,
+                y=y_all,
+                label="All cells\n(all clusters)",
+                malignant_name="All malignant cells",
+                healthy_name="All healthy cells",
+                comparison_type="global",
+            )
+        )
+
+    if not results:
+        raise ValueError("No comparisons were requested.")
+
+    stats_df = pd.DataFrame(results)
+
+    # -------------------------------------------------
+    # 3. Benjamini-Hochberg correction
+    # -------------------------------------------------
+
+    def bh_adjust(p_values):
+
+        p_values = np.asarray(p_values, dtype=float)
+
+        n = len(p_values)
+        order = np.argsort(p_values)
+
+        ranked_p = p_values[order]
+
+        adjusted = (
+            ranked_p * n / np.arange(1, n + 1)
+        )
+
+        # Enforce monotonicity
+        adjusted = np.minimum.accumulate(
+            adjusted[::-1]
+        )[::-1]
+
+        adjusted = np.clip(adjusted, 0, 1)
+
+        result = np.empty(n)
+        result[order] = adjusted
+
+        return result
+
+    stats_df["p_adj_BH"] = bh_adjust(
+        stats_df["p_value"].to_numpy()
+    )
+
+    stats_df["significant_BH"] = (
+        stats_df["p_adj_BH"] <= significance_threshold
+    )
+
+    # -------------------------------------------------
+    # 4. Optional sorting
+    # -------------------------------------------------
+
+    allowed_sort = {
+        None,
+        "log2FC",
+        "abs_log2FC",
+        "Cliffs_delta",
+        "abs_Cliffs_delta",
+        "p_value",
+        "p_adj_BH",
+    }
+
+    if sort_by not in allowed_sort:
+        raise ValueError(
+            f"sort_by must be one of {allowed_sort}"
+        )
+
+    if sort_by is not None:
+
+        if sort_by.startswith("abs_"):
+
+            column = sort_by[4:]
+
+            stats_df = stats_df.iloc[
+                np.argsort(
+                    -np.abs(stats_df[column].to_numpy()),
+                    kind="stable"
+                )
+            ]
+
+        elif sort_by in {"p_value", "p_adj_BH"}:
+
+            stats_df = stats_df.sort_values(
+                sort_by,
+                ascending=True
+            )
+
+        else:
+
+            stats_df = stats_df.iloc[
+                np.argsort(
+                    -stats_df[sort_by].to_numpy(),
+                    kind="stable"
+                )
+            ]
+
+        stats_df = stats_df.reset_index(drop=True)
+
+    # -------------------------------------------------
+    # 5. Determine colors
+    # -------------------------------------------------
+
+    colors = []
+
+    for _, row in stats_df.iterrows():
+
+        # Non-significant comparisons are ALWAYS gray
+        if row["p_adj_BH"] > significance_threshold:
+
+            color = non_significant_color
+
+        # Significant comparisons: classify by log2FC
+        elif row["log2FC"] >= fc_threshold:
+
+            color = malignant_color
+
+        elif row["log2FC"] <= -fc_threshold:
+
+            color = healthy_color
+
+        else:
+
+            color = neutral_color
+
+        colors.append(color)
+
+    # -------------------------------------------------
+    # 6. Plot
+    # -------------------------------------------------
+
+    n = len(stats_df)
+    positions = np.arange(n)
+
+    fig, axes = plt.subplots(
+        1,
+        2,
+        figsize=figsize,
+        sharey=True,
+        gridspec_kw={"width_ratios": [1.2, 1]},
+    )
+
+    metrics = [
+        ("log2FC", "log₂ fold change (mean CPM)"),
+        ("Cliffs_delta", "Cliff's delta"),
+    ]
+
+    for ax, (metric, xlabel) in zip(axes, metrics):
+
+        values = stats_df[metric].to_numpy()
+
+        ax.axvline(
+            0,
+            color="gray",
+            linestyle="--",
+            linewidth=1,
+            zorder=1,
+        )
+
+        # FC threshold lines
+        if metric == "log2FC":
+
+            ax.axvline(
+                fc_threshold,
+                color=malignant_color,
+                linestyle=":",
+                linewidth=1.2,
+                alpha=0.7,
+            )
+
+            ax.axvline(
+                -fc_threshold,
+                color=healthy_color,
+                linestyle=":",
+                linewidth=1.2,
+                alpha=0.7,
+            )
+
+        for i, (value, color) in enumerate(
+            zip(values, colors)
+        ):
+
+            ax.plot(
+                [0, value],
+                [i, i],
+                color=color,
+                linewidth=2,
+                alpha=0.55,
+                zorder=2,
+            )
+
+            ax.scatter(
+                value,
+                i,
+                s=85,
+                color=color,
+                edgecolor="white",
+                linewidth=0.8,
+                zorder=3,
+            )
+
+            # Show BH-adjusted p-value above each comparison
+            # ONLY in the log2FC panel
+            if metric == "log2FC":
+
+                p_adj = stats_df.iloc[i]["p_adj_BH"]
+
+                ax.annotate(
+                    f"BH={p_adj:.2g}",
+                    xy=(value, i),
+                    xytext=(0, 9),
+                    textcoords="offset points",
+                    ha="center",
+                    va="bottom",
+                    fontsize=7.5,
+                    color="#333333",
+                    annotation_clip=False,
+                )
+
+        ax.set_xlabel(xlabel)
+
+        ax.set_yticks(positions)
+
+        ax.grid(
+            axis="x",
+            alpha=0.15,
+        )
+
+        ax.spines[["top", "right"]].set_visible(False)
+
+    # Cluster labels
+    axes[0].set_yticklabels(stats_df["cluster"])
+
+    axes[0].tick_params(
+        axis="y",
+        labelleft=True
+    )
+
+    axes[1].tick_params(
+        axis="y",
+        labelleft=False
+    )
+
+    # Allow room for p-value annotations above the first row
+    axes[0].set_ylim(n - 0.4, -0.8)
+
+    # Symmetric log2FC axis
+    max_fc = max(
+        np.max(np.abs(stats_df["log2FC"])),
+        fc_threshold,
+        0.5,
+    )
+
+    axes[0].set_xlim(
+        -max_fc * 1.15,
+        max_fc * 1.15,
+    )
+
+    # Cliff's delta range
+    axes[1].set_xlim(-1.05, 1.05)
+
+    fig.suptitle(
+        f"{gene} | RCC vs Healthy",
+        fontsize=15,
+        fontweight="bold",
+    )
+
+    # -------------------------------------------------
+    # 7. Legend
+    # -------------------------------------------------
+
+    legend_elements = [
+
+        Line2D(
+            [0], [0],
+            marker="o",
+            color="none",
+            markerfacecolor=malignant_color,
+            markeredgecolor="none",
+            markersize=8,
+            label=f"Significant: log₂FC ≥ +{fc_threshold:g}",
+        ),
+
+        Line2D(
+            [0], [0],
+            marker="o",
+            color="none",
+            markerfacecolor=neutral_color,
+            markeredgecolor="none",
+            markersize=8,
+            label=f"Significant: |log₂FC| < {fc_threshold:g}",
+        ),
+
+        Line2D(
+            [0], [0],
+            marker="o",
+            color="none",
+            markerfacecolor=healthy_color,
+            markeredgecolor="none",
+            markersize=8,
+            label=f"Significant: log₂FC ≤ −{fc_threshold:g}",
+        ),
+
+        Line2D(
+            [0], [0],
+            marker="o",
+            color="none",
+            markerfacecolor=non_significant_color,
+            markeredgecolor="none",
+            markersize=8,
+            label=f"Not significant: BH p > {significance_threshold:g}",
+        ),
+    ]
+
+    fig.legend(
+        handles=legend_elements,
+        loc="lower center",
+        ncol=2,
+        frameon=False,
+        bbox_to_anchor=(0.5, 0.01),
+        fontsize=8,
+    )
+
+    fig.tight_layout(
+        rect=[0, 0.12, 1, 0.95]
+    )
+
+    # -------------------------------------------------
+    # 8. Save and display
+    # -------------------------------------------------
+
+    if save_path is not None:
+
+        fig.savefig(
+            save_path,
+            dpi=300,
+            bbox_inches="tight",
+        )
+
+    plt.show()
+
+    return stats_df

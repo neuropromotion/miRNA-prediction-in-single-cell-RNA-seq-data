@@ -1,0 +1,3 @@
+# Core stack: install via setup_venv.sh (torch, tabm, …).
+# Extra for optional h5ad inference panel:
+anndata>=0.10

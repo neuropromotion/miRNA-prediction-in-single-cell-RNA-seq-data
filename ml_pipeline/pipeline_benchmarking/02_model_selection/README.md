@@ -30,8 +30,8 @@ In the initial iteration, we benchmarked the training and inference speeds of th
 ### Phase 2: Evaluation Protocol
 All remaining models were systematically evaluated using the following validation pipeline:
 *   **Data Composition:** Models were trained and validated using a mixed data combining **bulk RNA-seq**, **single-cell (K1)**, and **pseudobulk** data (K2, K3, K4, K5, K10) as usual.
-*   **Validation Split:** Train dataset was split into inner_train and inner_validation to train models and facilitate early stopping / optimal epoch selection, respectively. Model performance was tracked using this validation set (outer_val - used as temporary test cohort).
-*   **Scaler fit noise:** For DL / neural candidates that use `StandardScaler` or `QuantileTransformer`, we add N(0, 10e-5) noise (fixed seed) **only when fitting** the scaler, to avoid numerical issues from duplicate / zero-inflated feature values. 
+*   **Validation Split:** Train dataset was split into inner_train and inner_validation to train models and facilitate early stopping / optimal epoch selection, respectively. Model performance was tracked using validation set (outer_val).
+*   **Scaler fit noise:** For DL / neural candidates that use `StandardScaler` or `QuantileTransformer`, we add N(0, 10e-5) noise (fixed seed) **only when fitting** the scaler, to avoid numerical issues from duplicate / zero-inflated feature values, as recommended by tabular deep learning models developers (Gorishniy et al. (arXiv:2106.11959))
 
 ---
 

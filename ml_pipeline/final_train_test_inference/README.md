@@ -1,10 +1,8 @@
-## Layout
+# train → test → inference
 
-| Subfolder | Role |
-|-----------|------|
-| `train/` | Train **TabPack Muon + TabM AdamW + XGB Optuna** → Ridge stack |
-| `models/` | Published weights for inference (`train/publish_models.sh`) |
+1. **`train/`** — Train the final ensemble (Ridge TabPack+TabM+XGBoost).
+2. **`Optimal_K/`** — On held-out scRNA/bulk **TEST**: eligibility rules, **optimal cohort K** per miRNA
+3. **`test_metrics/`** — **Final** evaluation and metrics for eligible models
+4. **`robustness/`** — Feature importance and robustness to feature dropout evaluating 
+5. **`inference/`** — Prediction miRNAs on independent scRNA-seq datasets
 
-See `train/README.md`. Winner from `pipeline_benchmarking/ensembles_selection_v4`.
-
-Related (repo root): `inference/`, `test_metrics/`.

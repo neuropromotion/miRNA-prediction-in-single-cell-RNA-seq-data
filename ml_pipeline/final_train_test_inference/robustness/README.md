@@ -1,55 +1,29 @@
-# robustness v3
+# Robustness
 
-Estimates per–miRNA **`max_absent_frac`**: largest fraction of the SC panel that can be
-globally zeroed while masked eval-half R² stays above **`retention_ratio × r2_reference`**.
+On the same data as test_metrics (**eval** half of scRNA TEST), each eligible miRNA gets a rule for how much **missing sc signal** (absent or all-zero genes in the panel) is acceptable at inference. In uses **gene importance weights** (leave-one-out [LOO] on eval) and an **importance budget**: a cap on the summed weight of absent genes, calibrated with the same R² retention idea as earlier versions (aligned with `sc_r2_median` from test_metrics). Evaluating carried out using single-cell (sc) derived features only (without bulk features due to their irrelevance to the scRNA-seq data). 
 
-## Method
+Roughly: **how important is each sc feature**, and **how much missing importance** are we willing to tolerate before we expect performance to collapse?
 
-- Eval half of `sc_TEST` (Optimal_K split).
-- **Binary search** on `p ∈ [0, 0.95]` until interval width **&lt; 0.01**.
-- **200** random masks per bisect probe; **1000** masks at the final `p`.
-- **Retention statistic** (CLI `--retention-stat`):
-  - `median` (default) — `median(R²_masks) ≥ τ`
-  - `q25` — `Q25(R²_masks) ≥ τ` (stricter; re-run pipeline with this flag)
+## Algorithm 
 
-Reference `r2_reference`: bootstrap `sc_r2_median` when cohort matches, else `test_sc_r2` from `prediction_config.json`.
+**Step 1 — feature importance (per miRNA)**  
+For each eligible miRNA we run **leave-one-out (LOO)** on the Optimal_K **eval** half of `data/sc_TEST`: zero out one sc gene at a time, predict, and measure how much R² drops. Those drops are turned into **normalized weights** (one weight per sc gene). So for each miRNA we get a table: **gene → importance**.
 
-## Setup (once per machine / after reboot)
+**Step 2 — calibrate an “importance budget”**  
+We need a single number per miRNA: the maximum allowed **sum of weights over genes that are absent** in a new sample.  
+To pick that number we simulate **random masks** (turn off several sc genes at once according to the weights), re-predict, and require that **median R² under masking** does not fall below a fixed fraction of the **reference** sc performance from test_metrics.
 
-```bash
-cd final_train_test_inference/robustness
-./setup_venv.sh
-conda deactivate   # important on Mac
-source ./setup_env.sh
-./warm_eval_cache.sh
-```
+**The reference and the threshold**  
+The reference is **`sc_r2_median`** for that miRNA from `test_metrics` (bootstrap summary on the eval half).  
+The **cutoff** we enforce during calibration is:
 
-## Run (manual chunks)
+**median R² (masked) ≥ `retention_ratio` × `sc_r2_median`**
 
-```bash
-source ./setup_env.sh
-./run_next_chunk.sh 10
-```
+By default **`retention_ratio` = 0.5**, i.e. **half** of that test median R². (This is the same “retention” idea as in older robustness versions.)
 
-Progress: `grep -c ',done,' results/tables/_progress.csv`
+We search for the **largest budget** (sum of weights we allow to be “spent” on absent genes) that still satisfies that inequality on the eval split; that becomes **`importance_budget`** in `robustness_config.json`.
 
-### Q25 instead of median
+**Outputs**
 
-```bash
-export ROBUSTNESS_RETENTION_STAT=q25
-# optional: fresh results dir or delete _progress.csv to recompute all
-./run_robustness.py --retention-stat q25 --max-targets 5
-```
-
-## Outputs (`results/`)
-
-| File | Content |
-|------|---------|
-| `robustness_config.json` | v3 inference tolerances |
-| `tables/tolerance_summary.csv` | one row per completed miRNA |
-| `tables/_progress.csv` | resume state |
-| `journal.log` | human log |
-
-Optional: `--save-probes` → `tables/bisect_probes.csv`
-
-Legacy grid search pipeline: `../robustness_/`
+- **`results/robustness_config.json`** — per miRNA: `importance_budget`, pointer to the weight CSV, calibration metadata.
+- **`results/feature_weights/<mirna>.csv`** — gene-level weights used both for calibration and at inference.

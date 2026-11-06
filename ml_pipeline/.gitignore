@@ -8,23 +8,13 @@ data/bulk_TRAIN/
 data/bulk_TEST/
 data/sc_TRAIN/
 data/sc_TEST/
-data/RCC_python/
-final_train_test_inference/test_metrics/test_evaluating/bulk_TEST/
-final_train_test_inference/test_metrics/test_evaluating/sc_TEST/
-final_train_test_inference/test_metrics/test_evaluating/bulk_test_run/
-final_train_test_inference/test_metrics/test_evaluating/sc_test_run/
-data/RCC_new/
-data/RCC_h/
-data/rcc_inference/
 data/*.csv
 data/*.gz
 data/*.h5ad
 # models
 final_train_test_inference/models/*
 
-# Local jupyter launcher lives at repo root — see ../.gitignore (run_jupyter.sh).
-# Absolute paths and ../ patterns do NOT work reliably from this file.
-
+  
 # inference I/O (keep README.md tracked)
 data/inference_inputs/**
 !data/inference_inputs/README.md
@@ -50,12 +40,10 @@ pipeline_benchmarking/02_model_selection/smoke_tmp
 pipeline_benchmarking/02_model_selection/tables_pre_retrain_20260729_224202
 pipeline_benchmarking/04_ensembles_selection/*.log
 pipeline_benchmarking/diagnostics
-pipeline_benchmarking/ensembles_selection_deprecated
-pipeline_benchmarking/ensembles_selection_v2
-pipeline_benchmarking/ensembles_selection_v3
+ 
 pipeline_benchmarking/model_diagnostics
 pipeline_benchmarking/01_imputation_selection/run_docker.sh
-pipeline_benchmarking/02_model_selection/config_*.json
+pipeline_benchmarking/02_model_selection/*.json
 pipeline_benchmarking/02_model_selection/*.log
 pipeline_benchmarking/02_model_selection/smoke_tmp
 pipeline_benchmarking/02_model_selection/results_pre_retrain_20260729_224202
@@ -82,6 +70,10 @@ final_train_test_inference/Optimal_K/logs
 final_train_test_inference/Optimal_K/figures/*.pdf
 final_train_test_inference/Optimal_K/tables/bootstrap_medians_*
 final_train_test_inference/Optimal_K/tables/decisions_*
+final_train_test_inference/robustness/results/tables/budget_*
+final_train_test_inference/robustness/results/tables/_progress.csv
+final_train_test_inference/robustness/*.sh
+final_train_test_inference/inference/inference.ipynb
 
 
 final_train_test_inference/test_metrics/*.sh
@@ -91,6 +83,7 @@ final_train_test_inference/test_metrics/figures/*.pdf
 final_train_test_inference/test_metrics/figures/.ipynb_checkpoints
 final_train_test_inference/inference/.ipynb_checkpoints
 final_train_test_inference/train/model.tar.gz
+final_train_test_inference/final_train_test_inference/inference/inference.ipynb
 
 final_train_test_inference/test_metrics/.ipynb_checkpoints/
 # Vendored upstream repos (clone locally; do NOT git-add as embedded repos)

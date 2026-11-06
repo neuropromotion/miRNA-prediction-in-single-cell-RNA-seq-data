@@ -1,9 +1,3 @@
-"""miRNA stack inference for single-cell RNA-seq.
-
-Public entry point: ``miRPredictor`` with ``predict_csv`` / ``predict`` (AnnData),
-plus ``get_mirs`` / ``get_features`` / ``get_metrics``.
-"""
-
 from __future__ import annotations
 
 import contextlib
@@ -22,6 +16,7 @@ try:
         CONFIG_PATH,
         ROBUSTNESS_CONFIG_PATH,
         resolve_gene_mapping_path,
+        resolve_robustness_config_path,
         parse_prediction_config,
     )
     from stack_predictor import StackPredictor
@@ -34,6 +29,7 @@ except ImportError:  # pragma: no cover
         CONFIG_PATH,
         ROBUSTNESS_CONFIG_PATH,
         resolve_gene_mapping_path,
+        resolve_robustness_config_path,
         parse_prediction_config,
     )
     from stack_predictor import StackPredictor
@@ -43,7 +39,7 @@ DEFAULT_KNN_REF_PATH = str(K1_REF_PATH)
 
 _CELLTYPE_CANDIDATES = ("CellType", "celltype", "cell_type", "Celltype")
 _CLUSTER_FALLBACK = ("clusters", "cluster", "leiden", "louvain")
-_PCA_CANDIDATES = ("X_pca_harmony", "X_pca")
+_PCA_CANDIDATES = ("X_pca_harmony", "X_harmony", "X_pca")
 
 try:
     from tqdm.auto import tqdm
@@ -185,6 +181,23 @@ def _to_dense_float_df(matrix, index, columns) -> pd.DataFrame:
         matrix = matrix.toarray()
     return pd.DataFrame(np.asarray(matrix, dtype=np.float64), index=index, columns=columns)
 
+def _benjamini_hochberg(pvals: np.ndarray) -> np.ndarray:
+    p = np.asarray(pvals, dtype=float)
+    n = p.size
+    if n == 0:
+        return p
+    order = np.argsort(p)
+    ranked = p[order]
+    q = np.empty(n, dtype=float)
+    prev = 1.0
+    for i in range(n - 1, -1, -1):
+        rank = i + 1
+        val = ranked[i] * n / rank
+        prev = min(prev, val)
+        q[i] = min(prev, 1.0)
+    out = np.empty(n, dtype=float)
+    out[order] = q
+    return out
 
 class miRPredictor:
     """End-to-end miRNA prediction from raw scRNA-seq counts (CSV or AnnData)."""
@@ -206,7 +219,9 @@ class miRPredictor:
         self._device = device
         self._catboost_task = catboost_task
         self._config_path = Path(config_path or CONFIG_PATH)
-        self._robustness_config_path = Path(robustness_config_path or ROBUSTNESS_CONFIG_PATH)
+        self._robustness_config_path = resolve_robustness_config_path(
+            robustness_config_path
+        )
 
         path_length = Path(path_length)
         path_mrna = Path(path_mrna)
@@ -240,6 +255,7 @@ class miRPredictor:
             self._robustness_config_path
         )
         self._robustness_version = int(self._robustness_meta.get("version") or 1)
+        self._gene_weights_cache: dict[str, dict[str, float]] = {}
         self._minimal_features = {
             mir: list(info.get("minimal_features") or [])
             for mir, info in self._robustness_targets.items()
@@ -289,15 +305,20 @@ class miRPredictor:
         By default the panel is ``sc_features.json`` intersected with the
         trained model panel (bulk-only genes are excluded). With
         ``feature_set='minimal'``, uses legacy ``minimal_features`` gene lists
-        (robustness config v1 only); for v3 configs this is the same as ``sc``.
+        (robustness config v1 only); for v3/v4 configs this is the same as ``sc``.
 
         A feature counts as *absent* when it is missing from the measured count
         matrix or is present but all-zero across every cell (after ENSG mapping).
 
         Returns a table with ``n_sc_features``, ``n_missing``, ``n_all_zero``,
-        ``n_absent``, and ``pct_absent`` (0–100). When robustness v3 limits are
-        available, also ``max_absent_frac``, ``absent_frac``, and
-        ``passes_robustness``.
+        ``n_absent``, and ``pct_absent`` (0–100).
+
+        **Robustness v4** (``importance_budget``): ``importance_budget``,
+        ``absent_importance``, ``budget_used_fraction``, ``passes_robustness``
+        (``absent_importance <= importance_budget``), plus ``robustness_status``
+        and ``meets_calibration`` from the config.
+
+        **Robustness v3**: ``max_absent_frac``, ``absent_frac``, ``passes_robustness``.
         """
         targets = self._resolve_mirna_subset(mirnas)
         measured = self._measured_ensg_from_adata(adata, mapping_path=mapping_path)
@@ -314,12 +335,39 @@ class miRPredictor:
             stats = self._absent_feature_stats(measured, panel)
             stats["n_sc_features"] = stats.pop("n_features")
             row = {"mirna": mir, **stats}
-            limit = self._max_absent_frac_for_mir(mir)
-            if limit is not None and stats["n_sc_features"]:
-                absent_frac = stats["pct_absent"] / 100.0
-                row["max_absent_frac"] = limit
-                row["absent_frac"] = absent_frac
-                row["passes_robustness"] = absent_frac <= limit
+            cfg_info = self._robustness_targets.get(mir) or {}
+            row["robustness_status"] = str(cfg_info.get("status") or "")
+            if cfg_info.get("meets_threshold") is not None:
+                row["meets_calibration"] = bool(cfg_info.get("meets_threshold"))
+
+            if self._robustness_version >= 4:
+                budget = self._importance_budget_for_mir(mir)
+                row["importance_budget"] = budget
+                if not self._robustness_gate_ready(mir):
+                    row["passes_robustness"] = False
+                    row["robustness_gate_reason"] = self._robustness_gate_block_reason(mir)
+                elif budget is not None and stats["n_sc_features"]:
+                    if self._gene_weights_for_mir(mir) is None:
+                        row["passes_robustness"] = False
+                        row["robustness_gate_reason"] = "missing_gene_weights"
+                    else:
+                        w_absent, _ = self._absent_importance_for_panel(
+                            measured, panel, mir
+                        )
+                        row["absent_importance"] = w_absent
+                        row["budget_used_fraction"] = (
+                            w_absent / budget if budget > 1e-9 else float("nan")
+                        )
+                        row["passes_robustness"] = w_absent <= budget
+                        if not row["passes_robustness"]:
+                            row["robustness_gate_reason"] = "exceeds_importance_budget"
+            else:
+                limit = self._max_absent_frac_for_mir(mir)
+                if limit is not None and stats["n_sc_features"]:
+                    absent_frac = stats["pct_absent"] / 100.0
+                    row["max_absent_frac"] = limit
+                    row["absent_frac"] = absent_frac
+                    row["passes_robustness"] = absent_frac <= limit
             rows.append(row)
         return pd.DataFrame(rows).set_index("mirna", drop=False)
 
@@ -433,6 +481,180 @@ class miRPredictor:
     # Core inference orchestration
     # ------------------------------------------------------------------
 
+    def differential_expression(
+        self,
+        adata,
+        groupby: str,
+        *,
+        mirnas: list[str] | None = None,
+        groups: list[str] | None = None,
+        reference: str | None = None,
+        method: str = "wilcoxon",
+        min_cells: int = 3,
+        adjust: str = "fdr_bh",
+    ) -> pd.DataFrame:
+        """Differential expression on **predicted** miRNAs (log2(CPM+1)).
+
+        Uses ``obsm['X_mirna']`` / ``obs`` columns written by ``predict()``.
+        By default each group in ``adata.obs[groupby]`` is tested against all other
+        cells (Scanpy-style). With ``reference=<group>``, every other group is
+        compared to that reference only.
+
+        Parameters
+        ----------
+        groupby
+            ``adata.obs`` column with cluster / condition labels.
+        mirnas
+            Subset of predicted miRNAs; default = all stored predictions.
+        groups
+            Subset of labels to include; default = all non-null labels.
+        reference
+            If set, comparisons are ``group`` vs ``reference`` for each
+            ``group != reference``. If ``None``, each group vs the rest.
+        method
+            ``"wilcoxon"`` (Mann–Whitney U) or ``"t-test"``.
+        min_cells
+            Skip comparisons with fewer than this many cells on either side.
+        adjust
+            ``"fdr_bh"`` for Benjamini–Hochberg across all rows, or ``"none"``.
+
+        Returns
+        -------
+        DataFrame
+            One row per (miRNA, group) with ``log2fc`` (difference of means on
+            the log2(CPM+1) scale), ``pval``, ``pval_adj``, cell counts, and
+            detection rates (fraction of cells with value > 0).
+        """
+        if groupby not in adata.obs.columns:
+            raise KeyError(f"groupby column {groupby!r} not in adata.obs")
+
+        expr = self._predicted_mirna_matrix(adata)
+        if mirnas is not None:
+            missing = [m for m in mirnas if m not in expr.columns]
+            if missing:
+                raise KeyError(f"miRNAs not in prediction matrix: {missing[:5]}")
+            expr = expr[list(mirnas)]
+
+        cell_ids = adata.obs_names.astype(str)
+        expr = expr.copy()
+        expr.index = expr.index.astype(str)
+        labels = adata.obs[groupby]
+        if not isinstance(labels, pd.Series):
+            labels = pd.Series(labels, index=cell_ids)
+        else:
+            labels = labels.copy()
+            labels.index = labels.index.astype(str)
+        labels = labels.reindex(expr.index)
+        mask = labels.notna() & (labels.astype(str) != "nan")
+        expr = expr.loc[mask]
+        labels = labels.loc[mask].astype(str)
+
+        uniq = sorted(labels.dropna().unique(), key=str)
+        if groups is not None:
+            wanted = {str(g) for g in groups}
+            uniq = [g for g in uniq if g in wanted]
+        if not uniq:
+            raise ValueError(f"No groups left after filtering for {groupby!r}")
+
+        if reference is not None:
+            reference = str(reference)
+            if reference not in uniq:
+                raise ValueError(f"reference {reference!r} not in groups: {uniq}")
+
+        method = method.lower().replace("_", "-")
+        if method not in ("wilcoxon", "t-test", "ttest"):
+            raise ValueError("method must be 'wilcoxon' or 't-test'")
+        use_ttest = method.startswith("t")
+
+        from scipy import stats
+
+        rows: list[dict] = []
+        for mir in expr.columns:
+            y = pd.to_numeric(expr[mir], errors="coerce").to_numpy(dtype=float)
+            for group in uniq:
+                if reference is not None:
+                    if group == reference:
+                        continue
+                    in_g = labels == group
+                    in_r = labels == reference
+                    ref_label = reference
+                else:
+                    in_g = labels == group
+                    in_r = ~in_g
+                    ref_label = "_rest_"
+
+                n_g = int(in_g.sum())
+                n_r = int(in_r.sum())
+                if n_g < min_cells or n_r < min_cells:
+                    continue
+
+                x_g = y[in_g.to_numpy()]
+                x_r = y[in_r.to_numpy()]
+                x_g = x_g[np.isfinite(x_g)]
+                x_r = x_r[np.isfinite(x_r)]
+                if len(x_g) < min_cells or len(x_r) < min_cells:
+                    continue
+
+                mean_g = float(np.mean(x_g))
+                mean_r = float(np.mean(x_r))
+                log2fc = mean_g - mean_r
+
+                if use_ttest:
+                    stat, pval = stats.ttest_ind(x_g, x_r, equal_var=False)
+                    stat = float(stat) if stat == stat else float("nan")
+                else:
+                    stat, pval = stats.mannwhitneyu(
+                        x_g, x_r, alternative="two-sided"
+                    )
+                    stat = float(stat)
+
+                pval = float(pval) if pval == pval else 1.0
+                rows.append(
+                    {
+                        "mirna": mir,
+                        "group": group,
+                        "reference": ref_label,
+                        "log2fc": log2fc,
+                        "mean_group": mean_g,
+                        "mean_reference": mean_r,
+                        "statistic": stat,
+                        "pval": pval,
+                        "n_group": len(x_g),
+                        "n_reference": len(x_r),
+                        "pct_detect_group": float(np.mean(x_g > 0)),
+                        "pct_detect_reference": float(np.mean(x_r > 0)),
+                    }
+                )
+
+        if not rows:
+            return pd.DataFrame(
+                columns=[
+                    "mirna",
+                    "group",
+                    "reference",
+                    "log2fc",
+                    "mean_group",
+                    "mean_reference",
+                    "statistic",
+                    "pval",
+                    "pval_adj",
+                    "n_group",
+                    "n_reference",
+                    "pct_detect_group",
+                    "pct_detect_reference",
+                ]
+            )
+
+        out = pd.DataFrame(rows)
+        if adjust == "fdr_bh":
+            out["pval_adj"] = _benjamini_hochberg(out["pval"].to_numpy())
+        elif adjust == "none":
+            out["pval_adj"] = out["pval"]
+        else:
+            raise ValueError("adjust must be 'fdr_bh' or 'none'")
+        out = out.sort_values(["pval_adj", "mirna", "group"], kind="mergesort")
+        return out.reset_index(drop=True)
+
     def _run_full_inference(
         self,
         *,
@@ -450,7 +672,7 @@ class miRPredictor:
         requested = self._resolve_mirna_subset(mirnas)
         n_cells, n_genes = expression.shape
         print(
-            f"Full inference: {n_cells} cells, {n_genes} genes, "
+            f"Configuration: {n_cells} cells, {n_genes} genes, "
             f"{len(requested)} eligible miRNAs"
         )
 
@@ -469,11 +691,12 @@ class miRPredictor:
             n_req = len(requested)
             n_run = len(runnable)
             n_skip = len(skipped)
-            skip_reason = (
-                "exceed SC feature dropout tolerance (robustness_config)"
-                if self._robustness_uses_fraction_gate()
-                else "require minimal robustness features missing from the input data"
-            )
+            if self._robustness_version >= 4:
+                skip_reason = "not be predicted due to insufficient features in the current dataset"
+            elif self._robustness_uses_fraction_gate():
+                skip_reason = "exceed SC feature dropout tolerance (robustness_config)"
+            else:
+                skip_reason = "require minimal robustness features missing from the input data"
             print(f"Predicting {n_run}/{n_req} miRNAs; {n_skip}/{n_req} {skip_reason}")
 
             if not runnable:
@@ -577,16 +800,37 @@ class miRPredictor:
         for mir in skipped[:max_mirs]:
             info = skip_detail.get(mir) or {}
             reason = info.get("reason")
-            if reason in ("exceeds_max_absent_frac", "pending_robustness", "no_robustness_limit"):
-                pct = info.get("pct_absent")
-                max_af = info.get("max_absent_frac")
-                if pct is not None and max_af is not None:
-                    lines.append(
-                        f"  - {mir}: absent {pct:.1f}% of SC panel "
-                        f"(limit {100.0 * max_af:.1f}% absent)"
-                    )
+            if reason in (
+                "exceeds_max_absent_frac",
+                "exceeds_importance_budget",
+                "pending_robustness",
+                "failed_robustness",
+                "no_robustness_limit",
+                "missing_gene_weights",
+            ):
+                if reason == "missing_gene_weights":
+                    lines.append(f"  - {mir}: gene weight file not found for v4 gate")
+                    continue
+                if reason == "exceeds_importance_budget":
+                    w_abs = info.get("absent_importance")
+                    budget = info.get("importance_budget")
+                    if w_abs is not None and budget is not None:
+                        lines.append(
+                            f"  - {mir}: absent importance {w_abs:.3f} "
+                            f"(budget {budget:.3f})"
+                        )
+                    else:
+                        lines.append(f"  - {mir}: {reason}")
                 else:
-                    lines.append(f"  - {mir}: {reason}")
+                    pct = info.get("pct_absent")
+                    max_af = info.get("max_absent_frac")
+                    if pct is not None and max_af is not None:
+                        lines.append(
+                            f"  - {mir}: absent {pct:.1f}% of SC panel "
+                            f"(limit {100.0 * max_af:.1f}% absent)"
+                        )
+                    else:
+                        lines.append(f"  - {mir}: {reason}")
                 continue
             missing = info.get("missing") or []
             allzero = info.get("all_zero") or []
@@ -615,10 +859,13 @@ class miRPredictor:
         obs_index = pd.Index(out.obs_names.astype(str))
         aligned = pred.reindex(obs_index)
         predicted = [c for c in aligned.columns if aligned[c].notna().any()]
- 
         if predicted:
-            out.obs[predicted] = aligned[predicted].to_numpy()
-            out.obsm["X_mirna"] = aligned[predicted].to_numpy(dtype=np.float32)
+            mir_block = aligned[predicted]
+            drop_cols = [c for c in predicted if c in out.obs.columns]
+            obs_base = out.obs.drop(columns=drop_cols) if drop_cols else out.obs
+            # Single concat avoids fragmented-obs PerformanceWarning from column-wise insert.
+            out.obs = pd.concat([obs_base, mir_block], axis=1)
+            out.obsm["X_mirna"] = mir_block.to_numpy(dtype=np.float32)
             out.uns["mirna_prediction"] = {
                 "predicted_mirnas": predicted,
                 "skipped_mirnas": list(pred.attrs.get("skipped_mirnas") or []),
@@ -631,6 +878,35 @@ class miRPredictor:
                 "columns": [],
             }
         return out
+
+    def _predicted_mirna_matrix(self, adata) -> pd.DataFrame:
+        """Cells × miRNAs matrix from ``predict()`` outputs."""
+        meta = (getattr(adata, "uns", None) or {}).get("mirna_prediction") or {}
+        cols = list(meta.get("columns") or [])
+        if not cols:
+            eligible = set(self.get_mirs())
+            cols = [c for c in adata.obs.columns if c in eligible]
+        if not cols:
+            raise ValueError(
+                "No predicted miRNAs in adata. Run predict() first, or pass an "
+                "AnnData with obsm['X_mirna'] and uns['mirna_prediction']."
+            )
+
+        obsm = getattr(adata, "obsm", None)
+        if obsm is not None and "X_mirna" in obsm:
+            arr = np.asarray(obsm["X_mirna"], dtype=float)
+            if arr.shape[1] == len(cols):
+                return pd.DataFrame(
+                    arr,
+                    index=adata.obs_names.astype(str),
+                    columns=cols,
+                )
+        present = [c for c in cols if c in adata.obs.columns]
+        if not present:
+            raise ValueError(
+                "mirna_prediction metadata found but no matching obs/obsm columns."
+            )
+        return adata.obs[present].apply(pd.to_numeric, errors="coerce")
 
     def _prepare_k1_imputed_cells_x_genes(
         self,
@@ -745,12 +1021,115 @@ class miRPredictor:
         return meta, targets
 
     def _robustness_uses_fraction_gate(self) -> bool:
+        if self._robustness_version >= 4:
+            return False
         if self._robustness_version >= 3:
             return True
         return any(
             info.get("max_absent_frac") is not None
             for info in self._robustness_targets.values()
         )
+
+    def _robustness_results_dir(self) -> Path:
+        return self._robustness_config_path.resolve().parent
+
+    def _robustness_weight_search_roots(self) -> list[Path]:
+        """Directories that may contain ``feature_weights/`` (config may live in inference/)."""
+        roots = [self._robustness_results_dir()]
+        canonical = (self._base_dir.parent / "robustness" / "results").resolve()
+        if canonical not in {r.resolve() for r in roots}:
+            roots.append(canonical)
+        return roots
+
+    def _resolve_weights_csv_path(self, mir: str) -> Path | None:
+        info = self._robustness_targets.get(mir) or {}
+        explicit = info.get("weights_path")
+        if explicit:
+            p = Path(str(explicit))
+            if p.is_file():
+                return p
+        wfile = info.get("weights_file")
+        if not wfile:
+            return None
+        rel_dir = str(self._robustness_meta.get("weights_dir") or "feature_weights")
+        for root in self._robustness_weight_search_roots():
+            path = root / rel_dir / str(wfile)
+            if path.is_file():
+                return path
+        return None
+
+    @staticmethod
+    def _robustness_status_blocks_gate(status: str | None) -> bool:
+        return status in ("pending", "failed")
+
+    def _robustness_gate_ready(self, mir: str) -> bool:
+        info = self._robustness_targets.get(mir) or {}
+        if self._robustness_status_blocks_gate(str(info.get("status") or "")):
+            return False
+        if self._robustness_version >= 4:
+            return self._importance_budget_for_mir(mir) is not None
+        if self._robustness_uses_fraction_gate():
+            return self._max_absent_frac_for_mir(mir) is not None
+        return bool(self._minimal_features.get(mir))
+
+    def _robustness_gate_block_reason(self, mir: str) -> str:
+        info = self._robustness_targets.get(mir) or {}
+        st = str(info.get("status") or "")
+        if st == "pending":
+            return "pending_robustness"
+        if st == "failed":
+            return "failed_robustness"
+        if self._robustness_version >= 4 and self._importance_budget_for_mir(mir) is None:
+            return "no_robustness_limit"
+        return "no_robustness_limit"
+
+    def _gene_weights_for_mir(self, mir: str) -> dict[str, float] | None:
+        if mir in self._gene_weights_cache:
+            return self._gene_weights_cache[mir]
+        path = self._resolve_weights_csv_path(mir)
+        if path is None:
+            return None
+        df = pd.read_csv(path)
+        if "gene" not in df.columns or "weight" not in df.columns:
+            return None
+        wmap = {
+            self._normalize_ensg(g): float(v)
+            for g, v in zip(df["gene"].astype(str), df["weight"].astype(float))
+        }
+        self._gene_weights_cache[mir] = wmap
+        return wmap
+
+    def _importance_budget_for_mir(self, mir: str) -> float | None:
+        info = self._robustness_targets.get(mir) or {}
+        if self._robustness_status_blocks_gate(str(info.get("status") or "")):
+            return None
+        val = info.get("importance_budget")
+        if val is None:
+            return None
+        return float(val)
+
+    def _absent_importance_for_panel(
+        self,
+        measured_ensg_genes_x_cells: pd.DataFrame,
+        panel: list[str],
+        mir: str,
+    ) -> tuple[float, set[str]]:
+        stats = self._absent_feature_stats(measured_ensg_genes_x_cells, panel)
+        panel_n = [self._normalize_ensg(g) for g in panel]
+        present = set(map(self._normalize_ensg, measured_ensg_genes_x_cells.index.astype(str)))
+        nz = (measured_ensg_genes_x_cells != 0).any(axis=1)
+        nonzero = {
+            self._normalize_ensg(g) for g, flag in nz.items() if bool(flag)
+        }
+        absent_set = {g for g in panel_n if g not in present or g not in nonzero}
+        wmap = self._gene_weights_for_mir(mir) or {}
+        w_absent = sum(wmap.get(g, 0.0) for g in absent_set)
+        panel_set = set(panel_n)
+        unknown = [g for g in absent_set if g not in wmap and g in panel_set]
+        if unknown and wmap:
+            mean_w = sum(wmap.values()) / len(wmap)
+            w_absent += len(unknown) * mean_w
+        return float(w_absent), absent_set
 
     def _max_absent_frac_for_mir(self, mir: str) -> float | None:
         info = self._robustness_targets.get(mir) or {}
@@ -829,13 +1208,70 @@ class miRPredictor:
         ``measured_ensg_genes_x_cells`` must be genes × cells with ENSG index from the
         input assay (symbol→ENSG mapped if needed), *without* zero-filling absent genes.
 
-        v3+: keep miRNA when absent fraction of its SC feature panel is
-        ``<= max_absent_frac`` from ``robustness_config.json``.
+        v4+: sum of LOO weights over absent SC genes ``<= importance_budget``.
+        v3: absent fraction of SC panel ``<= max_absent_frac``.
         Legacy v1: every gene in ``minimal_features`` must be present and non-zero.
         """
+        if self._robustness_version >= 4:
+            return self._filter_by_robustness_budget(measured_ensg_genes_x_cells, mirnas)
         if self._robustness_uses_fraction_gate():
             return self._filter_by_robustness_fraction(measured_ensg_genes_x_cells, mirnas)
         return self._filter_by_robustness_minimal_list(measured_ensg_genes_x_cells, mirnas)
+
+    def _filter_by_robustness_budget(
+        self,
+        measured_ensg_genes_x_cells: pd.DataFrame,
+        mirnas: list[str],
+    ) -> tuple[list[str], list[str], dict[str, dict]]:
+        ok: list[str] = []
+        skipped: list[str] = []
+        detail: dict[str, dict] = {}
+        for mir in mirnas:
+            info = self._robustness_targets.get(mir) or {}
+            st = str(info.get("status") or "")
+            if st == "pending":
+                skipped.append(mir)
+                detail[mir] = {"reason": "pending_robustness"}
+                continue
+            if st == "failed":
+                skipped.append(mir)
+                detail[mir] = {"reason": "failed_robustness", "error": info.get("error")}
+                continue
+            budget = self._importance_budget_for_mir(mir)
+            if budget is None:
+                skipped.append(mir)
+                detail[mir] = {"reason": "no_robustness_limit"}
+                continue
+            if self._gene_weights_for_mir(mir) is None:
+                skipped.append(mir)
+                detail[mir] = {"reason": "missing_gene_weights"}
+                continue
+            panel = self._sc_panel_for_mir(mir)
+            stats = self._absent_feature_stats(measured_ensg_genes_x_cells, panel)
+            n_feat = stats["n_features"]
+            if n_feat == 0:
+                skipped.append(mir)
+                detail[mir] = {
+                    "reason": "empty_sc_panel",
+                    "importance_budget": budget,
+                }
+                continue
+            w_absent, _ = self._absent_importance_for_panel(
+                measured_ensg_genes_x_cells, panel, mir
+            )
+            if w_absent > budget:
+                skipped.append(mir)
+                detail[mir] = {
+                    "reason": "exceeds_importance_budget",
+                    "importance_budget": budget,
+                    "absent_importance": w_absent,
+                    "pct_absent": stats["pct_absent"],
+                    "n_absent": stats["n_absent"],
+                    "n_sc_features": n_feat,
+                }
+            else:
+                ok.append(mir)
+        return ok, skipped, detail
 
     def _filter_by_robustness_fraction(
         self,
@@ -1237,6 +1673,7 @@ class miRPredictor:
 
     def _resolve_adata_pca(self, adata) -> pd.DataFrame:
         obsm = getattr(adata, "obsm", {})
+ 
         for key in _PCA_CANDIDATES:
             if key in obsm:
                 arr = np.asarray(obsm[key], dtype=np.float32)
@@ -1247,7 +1684,7 @@ class miRPredictor:
                 )
         raise ValueError(
             "PCA coordinates not found in adata.obsm. "
-            "Expected 'X_pca_harmony' (preferred for integrated data) or 'X_pca'."
+            "Expected 'X_pca_harmony', 'X_harmony' (preferred for integrated data) or 'X_pca'."
         )
 
     # ------------------------------------------------------------------
@@ -1306,3 +1743,4 @@ class miRPredictor:
         for anchor in range(n_cells):
             out[:, anchor] = counts_gc[:, neighbor_indices[anchor]].sum(axis=1)
         return out
+
