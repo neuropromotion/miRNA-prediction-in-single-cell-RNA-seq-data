@@ -2,10 +2,10 @@ import scanpy as sc
 import matplotlib.pyplot as plt 
 import numpy as np
 import pandas as pd 
-
-
 import seaborn as sns
 from scipy.stats import mannwhitneyu, ks_2samp
+from matplotlib.lines import Line2D
+
 
 def plot_umap(adata, color='CellType'):
     sc.pl.umap(
@@ -590,400 +590,7 @@ def compare_expression(
     }
 
 
-
-
-
-
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
-from scipy.stats import mannwhitneyu
-
-
 def compare_expression_across_clusters(
-    df1,
-    df2,
-    gene,
-    cluster_pairs=None,
-    cluster_col="CellType",
-    malignant_color="#C44E52",
-    healthy_color="#4C72B0",
-    pseudocount=1e-6,
-    figsize=(8, 5.5),
-    sort_by=None,
-    save_path=None,
-    fc_threshold=1.0,
-    neutral_color="#999999",
-):
-    """
-    Compare predicted gene expression across matched clusters
-    in malignant (df1) and healthy (df2) scRNA-seq datasets.
-
-    Expression values must be log2(CPM + 1).
-
-    Metrics
-    -------
-    log2FC:
-        log2 ratio of mean CPM (malignant / healthy).
-
-    Cliff's delta:
-        Distributional effect size, computed from Mann-Whitney U.
-        Positive = higher expression in malignant.
-        Negative = higher expression in healthy.
-
-    Parameters
-    ----------
-    df1, df2 : pandas.DataFrame
-        Malignant and healthy expression datasets.
-
-    gene : str
-        Gene to compare.
-
-    cluster_pairs : list of tuples
-        (malignant_cluster, healthy_cluster).
-
-    cluster_col : str
-        Column containing cell-type annotations.
-
-    pseudocount : float
-        Pseudocount in CPM units for log2FC.
-
-    figsize : tuple
-        Figure size.
-
-    sort_by : str or None
-        None, "log2FC", "abs_log2FC",
-        "Cliffs_delta", "abs_Cliffs_delta".
-
-    save_path : str or None
-        Optional path to save figure.
-
-    Returns
-    -------
-    pd.DataFrame
-        Per-cluster summary statistics.
-    """
-
-    if cluster_pairs is None:
-        cluster_pairs = [
-            ("Malignant cells", "Proximal tubule cells"),
-            ("Endothelial cells", "Endothelial cells"),
-            ("Pericytes", "Interstitial cells"),
-            ("T and NK cells", "T and NK cells"),
-            ("Phagocytes", "Phagocytes"),
-            ("B cells", "B cells"),
-        ]
-
-    # -----------------------------------------
-    # Validation
-    # -----------------------------------------
-
-    for name, df in [("df1", df1), ("df2", df2)]:
-        if gene not in df.columns:
-            raise ValueError(f"Gene '{gene}' not found in {name}")
-
-        if cluster_col not in df.columns:
-            raise ValueError(
-                f"Column '{cluster_col}' not found in {name}"
-            )
-
-    if pseudocount <= 0:
-        raise ValueError("pseudocount must be positive.")
-
-    results = []
-
-    # -----------------------------------------
-    # Calculate metrics for each cluster pair
-    # -----------------------------------------
-
-    for malignant_cluster, healthy_cluster in cluster_pairs:
-
-        x = df1.loc[
-            df1[cluster_col] == malignant_cluster,
-            gene
-        ].to_numpy(dtype=np.float64)
-
-        y = df2.loc[
-            df2[cluster_col] == healthy_cluster,
-            gene
-        ].to_numpy(dtype=np.float64)
-
-        x = x[np.isfinite(x)]
-        y = y[np.isfinite(y)]
-
-        if len(x) == 0 or len(y) == 0:
-            raise ValueError(
-                f"No valid cells for pair: "
-                f"{malignant_cluster} / {healthy_cluster}"
-            )
-
-        # Clip small negative predictions to zero.
-        x = np.maximum(x, 0)
-        y = np.maximum(y, 0)
-
-        # Restore linear CPM.
-        x_cpm = np.expm1(x * np.log(2))
-        y_cpm = np.expm1(y * np.log(2))
-
-        mean_malignant = np.mean(x_cpm)
-        mean_healthy = np.mean(y_cpm)
-
-        log2fc = np.log2(
-            (mean_malignant + pseudocount)
-            / (mean_healthy + pseudocount)
-        )
-
-        # Cliff's delta from Mann-Whitney U.
-        # No pairwise comparison matrix is created.
-        u_stat = mannwhitneyu(
-            x,
-            y,
-            alternative="two-sided",
-            method="asymptotic",
-        ).statistic
-
-        delta = (
-            2.0 * u_stat / (len(x) * len(y))
-        ) - 1.0
-
-        if malignant_cluster == healthy_cluster:
-            label = malignant_cluster
-        else:
-            label = (
-                f"{malignant_cluster}\n"
-                f"vs {healthy_cluster}"
-            )
-
-        results.append({
-            "cluster": label,
-            "malignant_cluster": malignant_cluster,
-            "healthy_cluster": healthy_cluster,
-            "n_malignant": len(x),
-            "n_healthy": len(y),
-            "mean_CPM_malignant": mean_malignant,
-            "mean_CPM_healthy": mean_healthy,
-            "median_log2CPM_malignant": np.median(x),
-            "median_log2CPM_healthy": np.median(y),
-            "pct_expressing_malignant": np.mean(x > 0) * 100,
-            "pct_expressing_healthy": np.mean(y > 0) * 100,
-            "log2FC": log2fc,
-            "Cliffs_delta": delta,
-        })
-
-    stats_df = pd.DataFrame(results)
-
-    # -----------------------------------------
-    # Optional sorting
-    # -----------------------------------------
-
-    allowed_sort = {
-        None,
-        "log2FC",
-        "abs_log2FC",
-        "Cliffs_delta",
-        "abs_Cliffs_delta",
-    }
-
-    if sort_by not in allowed_sort:
-        raise ValueError(f"sort_by must be one of {allowed_sort}")
-
-    if sort_by is not None:
-        key = (
-            stats_df[sort_by[4:]].abs()
-            if sort_by.startswith("abs_")
-            else stats_df[sort_by]
-        )
-
-        stats_df = stats_df.iloc[
-            np.argsort(-key.to_numpy())
-        ].reset_index(drop=True)
-
-    # -----------------------------------------
-    # Plot
-    # -----------------------------------------
-    
-    n = len(stats_df)
-    positions = np.arange(n)
-    
-    fig, axes = plt.subplots(
-        1, 2,
-        figsize=figsize,
-        sharey=True,
-        gridspec_kw={"width_ratios": [1.15, 1]},
-    )
-    
-    # Colors are determined ONLY by log2FC
-    fc_values = stats_df["log2FC"].to_numpy()
-    
-    colors = np.where(
-        fc_values >= fc_threshold,
-        malignant_color,
-        np.where(
-            fc_values <= -fc_threshold,
-            healthy_color,
-            neutral_color,
-        ),
-    )
-    
-    metrics = [
-        ("log2FC", "log₂ fold change (mean CPM)"),
-        ("Cliffs_delta", "Cliff's delta"),
-    ]
-    
-    for ax, (metric, xlabel) in zip(axes, metrics):
-    
-        values = stats_df[metric].to_numpy()
-    
-        ax.axvline(
-            0,
-            color="gray",
-            linestyle="--",
-            linewidth=1,
-            zorder=1,
-        )
-    
-        # Threshold lines only on log2FC panel
-        if metric == "log2FC":
-            ax.axvline(
-                fc_threshold,
-                color=malignant_color,
-                linestyle=":",
-                linewidth=1.2,
-                alpha=0.7,
-            )
-    
-            ax.axvline(
-                -fc_threshold,
-                color=healthy_color,
-                linestyle=":",
-                linewidth=1.2,
-                alpha=0.7,
-            )
-    
-        for i, (value, color) in enumerate(zip(values, colors)):
-    
-            ax.plot(
-                [0, value],
-                [i, i],
-                color=color,
-                linewidth=2,
-                alpha=0.55,
-                zorder=2,
-            )
-    
-            ax.scatter(
-                value,
-                i,
-                s=85,
-                color=color,
-                edgecolor="white",
-                linewidth=0.8,
-                zorder=3,
-            )
-    
-        ax.set_xlabel(xlabel)
-        ax.set_yticks(positions)
-    
-        ax.grid(
-            axis="x",
-            alpha=0.15,
-        )
-    
-        ax.spines[["top", "right"]].set_visible(False)
-    
-    axes[0].set_yticklabels(stats_df["cluster"])
-    axes[0].tick_params(axis="y", labelleft=True)
-    axes[1].tick_params(axis="y", labelleft=False)
-    
-    # Symmetric x-axis for log2FC
-    max_fc = max(
-        np.max(np.abs(stats_df["log2FC"])),
-        fc_threshold,
-        0.5,
-    )
-    
-    axes[0].set_xlim(
-        -max_fc * 1.15,
-        max_fc * 1.15,
-    )
-    
-    # Cliff's delta range
-    axes[1].set_xlim(-1.05, 1.05)
-    
-    axes[0].invert_yaxis()
-    
-    fig.suptitle(
-        f"{gene} | RCC vs Healthy",
-        fontsize=15,
-        fontweight="bold",
-    )
-    
-    # Legend
-    from matplotlib.lines import Line2D
-    
-    legend_elements = [
-        Line2D(
-            [0], [0],
-            marker="o",
-            color="none",
-            markerfacecolor=malignant_color,
-            markeredgecolor="none",
-            markersize=8,
-            label=f"log₂FC ≥ +{fc_threshold:g}",
-        ),
-        Line2D(
-            [0], [0],
-            marker="o",
-            color="none",
-            markerfacecolor=neutral_color,
-            markeredgecolor="none",
-            markersize=8,
-            label=f"|log₂FC| < {fc_threshold:g}",
-        ),
-        Line2D(
-            [0], [0],
-            marker="o",
-            color="none",
-            markerfacecolor=healthy_color,
-            markeredgecolor="none",
-            markersize=8,
-            label=f"log₂FC ≤ −{fc_threshold:g}",
-        ),
-    ]
-    
-    fig.legend(
-        handles=legend_elements,
-        loc="lower center",
-        ncol=3,
-        frameon=False,
-        bbox_to_anchor=(0.5, 0.01),
-    )
-    
-    fig.tight_layout(rect=[0, 0.09, 1, 0.95])
-    
-    if save_path is not None:
-        fig.savefig(
-            save_path,
-            dpi=300,
-            bbox_inches="tight",
-        )
-    
-    plt.show()
-
-    return stats_df
-
-
-
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
-from scipy.stats import mannwhitneyu
-from matplotlib.lines import Line2D
-
-
-def compare_expression_across_clusters_v2(
     df1,
     df2,
     gene,
@@ -1379,142 +986,106 @@ def compare_expression_across_clusters_v2(
     # -------------------------------------------------
     # 6. Plot
     # -------------------------------------------------
-
+    
     n = len(stats_df)
     positions = np.arange(n)
-
-    fig, axes = plt.subplots(
-        1,
-        2,
-        figsize=figsize,
-        sharey=True,
-        gridspec_kw={"width_ratios": [1.2, 1]},
+    
+    fig, ax = plt.subplots(figsize=figsize)
+    
+    values = stats_df["log2FC"].to_numpy()
+    
+    ax.axvline(
+        0,
+        color="gray",
+        linestyle="--",
+        linewidth=1,
+        zorder=1,
     )
-
-    metrics = [
-        ("log2FC", "log₂ fold change (mean CPM)"),
-        ("Cliffs_delta", "Cliff's delta"),
-    ]
-
-    for ax, (metric, xlabel) in zip(axes, metrics):
-
-        values = stats_df[metric].to_numpy()
-
-        ax.axvline(
-            0,
-            color="gray",
-            linestyle="--",
-            linewidth=1,
-            zorder=1,
+    
+    # FC threshold lines
+    ax.axvline(
+        fc_threshold,
+        color=malignant_color,
+        linestyle=":",
+        linewidth=1.2,
+        alpha=0.7,
+    )
+    
+    ax.axvline(
+        -fc_threshold,
+        color=healthy_color,
+        linestyle=":",
+        linewidth=1.2,
+        alpha=0.7,
+    )
+    
+    for i, (value, color) in enumerate(zip(values, colors)):
+    
+        ax.plot(
+            [0, value],
+            [i, i],
+            color=color,
+            linewidth=2,
+            alpha=0.55,
+            zorder=2,
         )
-
-        # FC threshold lines
-        if metric == "log2FC":
-
-            ax.axvline(
-                fc_threshold,
-                color=malignant_color,
-                linestyle=":",
-                linewidth=1.2,
-                alpha=0.7,
-            )
-
-            ax.axvline(
-                -fc_threshold,
-                color=healthy_color,
-                linestyle=":",
-                linewidth=1.2,
-                alpha=0.7,
-            )
-
-        for i, (value, color) in enumerate(
-            zip(values, colors)
-        ):
-
-            ax.plot(
-                [0, value],
-                [i, i],
-                color=color,
-                linewidth=2,
-                alpha=0.55,
-                zorder=2,
-            )
-
-            ax.scatter(
-                value,
-                i,
-                s=85,
-                color=color,
-                edgecolor="white",
-                linewidth=0.8,
-                zorder=3,
-            )
-
-            # Show BH-adjusted p-value above each comparison
-            # ONLY in the log2FC panel
-            if metric == "log2FC":
-
-                p_adj = stats_df.iloc[i]["p_adj_BH"]
-
-                ax.annotate(
-                    f"BH={p_adj:.2g}",
-                    xy=(value, i),
-                    xytext=(0, 9),
-                    textcoords="offset points",
-                    ha="center",
-                    va="bottom",
-                    fontsize=7.5,
-                    color="#333333",
-                    annotation_clip=False,
-                )
-
-        ax.set_xlabel(xlabel)
-
-        ax.set_yticks(positions)
-
-        ax.grid(
-            axis="x",
-            alpha=0.15,
+    
+        ax.scatter(
+            value,
+            i,
+            s=85,
+            color=color,
+            edgecolor="white",
+            linewidth=0.8,
+            zorder=3,
         )
-
-        ax.spines[["top", "right"]].set_visible(False)
-
-    # Cluster labels
-    axes[0].set_yticklabels(stats_df["cluster"])
-
-    axes[0].tick_params(
-        axis="y",
-        labelleft=True
-    )
-
-    axes[1].tick_params(
-        axis="y",
-        labelleft=False
-    )
-
-    # Allow room for p-value annotations above the first row
-    axes[0].set_ylim(n - 0.4, -0.8)
-
+    
+        # Show BH-adjusted p-value and Cliff's delta
+        p_adj = stats_df.iloc[i]["p_adj_BH"]
+        delta = stats_df.iloc[i]["Cliffs_delta"]
+    
+        ax.annotate(
+            f"BH={p_adj:.2g} | δ={delta:.2f}",
+            xy=(value, i),
+            xytext=(0, 9),
+            textcoords="offset points",
+            ha="center",
+            va="bottom",
+            fontsize=7.5,
+            color="#333333",
+            annotation_clip=False,
+        )
+    
+    ax.set_xlabel("log₂ fold change (mean CPM)")
+    ax.set_yticks(positions)
+    ax.set_yticklabels(stats_df["cluster"])
+    
+    ax.grid(axis="x", alpha=0.15)
+    ax.spines[["top", "right"]].set_visible(False)
+    
+    ax.tick_params(axis="y", labelleft=True)
+    
+    # Allow room for annotations above the first row
+    ax.set_ylim(n - 0.4, -0.8)
+    
     # Symmetric log2FC axis
     max_fc = max(
         np.max(np.abs(stats_df["log2FC"])),
         fc_threshold,
         0.5,
     )
-
-    axes[0].set_xlim(
+    
+    ax.set_xlim(
         -max_fc * 1.15,
         max_fc * 1.15,
     )
-
-    # Cliff's delta range
-    axes[1].set_xlim(-1.05, 1.05)
-
+    
     fig.suptitle(
         f"{gene} | RCC vs Healthy",
         fontsize=15,
         fontweight="bold",
     )
+
 
     # -------------------------------------------------
     # 7. Legend
