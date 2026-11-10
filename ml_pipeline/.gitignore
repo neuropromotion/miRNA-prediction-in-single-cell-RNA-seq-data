@@ -13,7 +13,7 @@ data/*.gz
 data/*.h5ad
 # models
 final_train_test_inference/models/*
-
+data/preds
   
 # inference I/O (keep README.md tracked)
 data/inference_inputs/**

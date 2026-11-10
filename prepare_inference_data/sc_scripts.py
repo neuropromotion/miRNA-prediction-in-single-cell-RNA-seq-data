@@ -38,6 +38,12 @@ def _resolve_10x_file(path: Path, name: str) -> Path:
 
 
 def read_10x(path: Path) -> ad.AnnData:
+
+    if str(path).endswith('.h5'):
+        adata = sc.read_10x_h5(path)
+        adata.var_names_make_unique()
+        return adata
+    
     path = Path(path)
 
     adata = sc.read_mtx(_resolve_10x_file(path, "matrix.mtx.gz")).T

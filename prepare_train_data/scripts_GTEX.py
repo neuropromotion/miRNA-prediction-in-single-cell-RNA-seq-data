@@ -322,9 +322,7 @@ def generate_noise_reduction_stats(gtex_mir_numeric, results_k):
             
         n_samples = tissue_data.shape[0]
         opt_k = results_k[tissue]
-        
-        # 1. Считаем абсолютную дисперсию для каждого miRNA и берем среднее
-        # Это дает средний разброс экспрессии на одну miRNA
+ 
         var_initial_abs = tissue_data.var(axis=0).mean()
         
         # 2. Считаем дисперсию после бутстрепа (усредняем 100 синтетических пар)

@@ -37,7 +37,7 @@ except ImportError:  # pragma: no cover
 ALLOWED_PSEUDOBULK_K = frozenset({2, 3, 4, 5, 10})
 DEFAULT_KNN_REF_PATH = str(K1_REF_PATH)
 
-_CELLTYPE_CANDIDATES = ("CellType", "celltype", "cell_type", "Celltype")
+_CELLTYPE_CANDIDATES = ("CellType", "celltype", "cell_type", "Celltype", 'clusters')
 _CLUSTER_FALLBACK = ("clusters", "cluster", "leiden", "louvain")
 _PCA_CANDIDATES = ("X_pca_harmony", "X_harmony", "X_pca")
 
@@ -181,23 +181,41 @@ def _to_dense_float_df(matrix, index, columns) -> pd.DataFrame:
         matrix = matrix.toarray()
     return pd.DataFrame(np.asarray(matrix, dtype=np.float64), index=index, columns=columns)
 
+
 def _benjamini_hochberg(pvals: np.ndarray) -> np.ndarray:
+    """BH q-values; NaN p-values stay NaN and do not count towards the family size."""
     p = np.asarray(pvals, dtype=float)
-    n = p.size
+    out = np.full(p.shape, np.nan)
+    ok = np.isfinite(p)
+    n = int(ok.sum())
     if n == 0:
-        return p
-    order = np.argsort(p)
-    ranked = p[order]
-    q = np.empty(n, dtype=float)
-    prev = 1.0
-    for i in range(n - 1, -1, -1):
-        rank = i + 1
-        val = ranked[i] * n / rank
-        prev = min(prev, val)
-        q[i] = min(prev, 1.0)
-    out = np.empty(n, dtype=float)
-    out[order] = q
+        return out
+    pv = p[ok]
+    order = np.argsort(pv)
+    q = pv[order] * n / np.arange(1, n + 1)
+    q = np.minimum.accumulate(q[::-1])[::-1]
+    adjusted = np.empty(n, dtype=float)
+    adjusted[order] = np.minimum(q, 1.0)
+    out[ok] = adjusted
     return out
+
+
+def _log2cpm1_to_cpm(values: np.ndarray) -> np.ndarray:
+    return np.clip(np.exp2(values) - 1.0, 0.0, None)
+
+
+def _log2fc_from_cpm(mean_cpm_a: float, mean_cpm_b: float) -> float:
+    """log2 fold change of mean linear CPM, with the same +1 pseudocount as log2(CPM+1)."""
+    return float(np.log2((mean_cpm_a + 1.0) / (mean_cpm_b + 1.0)))
+
+
+def _auroc(x_a: np.ndarray, x_b: np.ndarray) -> float:
+    """P(value in a > value in b), ties counted as 1/2."""
+    from scipy import stats
+
+    u, _ = stats.mannwhitneyu(x_a, x_b, alternative="two-sided")
+    return float(u) / (len(x_a) * len(x_b))
+
 
 class miRPredictor:
     """End-to-end miRNA prediction from raw scRNA-seq counts (CSV or AnnData)."""
@@ -427,11 +445,22 @@ class miRPredictor:
         n_hvg=2000,
         n_pca=30,
         show_missing_report=False,
+        *,
+        groupby: str | None = None,
     ) -> pd.DataFrame:
-        """Full inference from a raw-counts CSV / parquet / DataFrame."""
+        """Full inference from a raw-counts CSV / parquet / DataFrame.
+
+        ``groupby`` names the cluster / cell-type column that bounds the KNN
+        pseudobulk neighbourhoods (same meaning as in ``predict``);
+        ``celltype_col`` is kept as a back-compat alias. ``None`` = auto-detect.
+        """
+        if groupby is not None and celltype_col is not None and groupby != celltype_col:
+            raise ValueError(
+                f"groupby={groupby!r} and celltype_col={celltype_col!r} disagree; pass one."
+            )
         raw = self._load_raw_input(data)
         expression, celltypes = self._split_expression_and_celltype(
-            raw, celltype_col=celltype_col
+            raw, celltype_col=groupby or celltype_col
         )
         return self._run_full_inference(
             expression=expression,
@@ -455,14 +484,44 @@ class miRPredictor:
         knn_k=5,
         show_missing_report=False,
         inplace: bool = False,
+        *,
+        groupby: str | None = None,
+        embedding_key: str | bool | None = None,
+        embedding_dims: int | None = None,
+        n_hvg: int = 2000,
+        n_pca: int = 30,
     ):
         """Full inference from AnnData; returns AnnData with miRNA columns in ``.obs``.
 
         Adds one ``obs`` column per successfully predicted miRNA (log2 scale).
         Also writes ``obsm['X_mirna']`` (cells × predicted miRNAs) and
-        ``uns['mirna_prediction']`` metadata (predicted / skipped lists).
+        ``uns['mirna_prediction']`` metadata (predicted / skipped lists, and the
+        ``groupby`` / ``embedding_key`` actually used).
+
+        Parameters
+        ----------
+        groupby
+            ``adata.obs`` column whose labels bound the KNN pseudobulk
+            neighbourhoods (cohorts K2–K10). ``None`` = auto-detect a cell-type
+            column, then a cluster column.
+        embedding_key
+            ``adata.obsm`` key used to find KNN neighbours (e.g. ``"X_pca"``,
+            ``"X_pca_harmony"``, ``"X_scanorama"``, ``"X_umap"``). ``None`` =
+            auto-detect ``X_pca_harmony`` then ``X_pca``. ``False`` = ignore
+            ``obsm`` and compute HVG + PCA per cluster from raw counts
+            (``n_hvg`` / ``n_pca``).
+        embedding_dims
+            Use only the first ``embedding_dims`` columns of the embedding.
+        n_hvg, n_pca
+            Only used when neighbours are computed from counts
+            (``embedding_key=False``).
         """
-        expression, celltypes, pca_coords = self._extract_from_adata(adata)
+        expression, celltypes, pca_coords = self._extract_from_adata(
+            adata,
+            groupby=groupby,
+            embedding_key=embedding_key,
+            embedding_dims=embedding_dims,
+        )
         pred = self._run_full_inference(
             expression=expression,
             celltypes=celltypes,
@@ -470,16 +529,17 @@ class miRPredictor:
             mapping_path=mapping_path,
             knn_ref_path=knn_ref_path,
             knn_k=knn_k,
-            n_hvg=2000,
-            n_pca=30,
+            n_hvg=n_hvg,
+            n_pca=n_pca,
             pca_coords=pca_coords,
             show_missing_report=show_missing_report,
         )
-        return self._attach_predictions_to_adata(adata, pred, inplace=inplace)
-
-    # ------------------------------------------------------------------
-    # Core inference orchestration
-    # ------------------------------------------------------------------
+        out = self._attach_predictions_to_adata(adata, pred, inplace=inplace)
+        out.uns["mirna_prediction"]["groupby"] = str(celltypes.name)
+        out.uns["mirna_prediction"]["embedding_key"] = (
+            str(pca_coords.attrs.get("obsm_key")) if pca_coords is not None else "computed_pca"
+        )
+        return out
 
     def differential_expression(
         self,
@@ -489,73 +549,51 @@ class miRPredictor:
         mirnas: list[str] | None = None,
         groups: list[str] | None = None,
         reference: str | None = None,
+        sample_col: str | None = None,
         method: str = "wilcoxon",
         min_cells: int = 3,
+        min_samples: int = 3,
         adjust: str = "fdr_bh",
     ) -> pd.DataFrame:
-        """Differential expression on **predicted** miRNAs (log2(CPM+1)).
+        """Differential expression of **predicted** miRNAs between groups of cells.
 
-        Uses ``obsm['X_mirna']`` / ``obs`` columns written by ``predict()``.
-        By default each group in ``adata.obs[groupby]`` is tested against all other
-        cells (Scanpy-style). With ``reference=<group>``, every other group is
-        compared to that reference only.
+        Uses the predictions written by ``predict()`` (log2(CPM+1)). By default each
+        group in ``adata.obs[groupby]`` is compared with all other cells; with
+        ``reference=<group>``, every other group is compared with that reference.
 
-        Parameters
-        ----------
-        groupby
-            ``adata.obs`` column with cluster / condition labels.
-        mirnas
-            Subset of predicted miRNAs; default = all stored predictions.
-        groups
-            Subset of labels to include; default = all non-null labels.
-        reference
-            If set, comparisons are ``group`` vs ``reference`` for each
-            ``group != reference``. If ``None``, each group vs the rest.
-        method
-            ``"wilcoxon"`` (Mann–Whitney U) or ``"t-test"``.
-        min_cells
-            Skip comparisons with fewer than this many cells on either side.
-        adjust
-            ``"fdr_bh"`` for Benjamini–Hochberg across all rows, or ``"none"``.
+        Effect sizes (always computed on cells):
 
-        Returns
-        -------
-        DataFrame
-            One row per (miRNA, group) with ``log2fc`` (difference of means on
-            the log2(CPM+1) scale), ``pval``, ``pval_adj``, cell counts, and
-            detection rates (fraction of cells with value > 0).
+        - ``log2fc`` — log2 ratio of mean **linear** CPM,
+          ``log2((mean CPM_group + 1) / (mean CPM_reference + 1))``, where
+          ``CPM = 2**prediction - 1``.
+        - ``auroc`` — probability that a random cell of the group has a higher
+          prediction than a random reference cell (0.5 = no difference,
+          1 = perfect separation, 0 = perfectly lower).
+
+        P-values:
+
+        - ``sample_col=None`` — Mann–Whitney U (``method="wilcoxon"``) or Welch
+          t-test (``method="t-test"``) with **cells** as observations. Cells are not
+          independent (shared donors, shared KNN pseudobulk neighbours), so these
+          p-values are near zero for almost any difference in large datasets. Use
+          them for ranking only; rely on ``log2fc`` and ``auroc`` for effect size.
+        - ``sample_col="<obs column>"`` — **samples** (donors) are the observations:
+          each sample contributes log2(mean CPM + 1) per side. If at least
+          ``min_samples`` samples contain cells of both sides, a paired test is used
+          (Wilcoxon signed-rank or paired t-test); otherwise samples are compared
+          unpaired (Mann–Whitney or Welch t-test). This is the appropriate p-value
+          for condition comparisons across donors.
+
+        ``pval_adj`` is Benjamini–Hochberg across miRNAs **within each comparison**
+        (one family per ``group`` vs ``reference``), as in Scanpy.
+
+        ``groups`` restricts the analysis to these labels; in the default
+        one-vs-rest mode "rest" then means the other selected groups only.
+
+        Returns one row per (miRNA, comparison), sorted by group, then ``pval_adj``,
+        then ``auroc``.
         """
-        if groupby not in adata.obs.columns:
-            raise KeyError(f"groupby column {groupby!r} not in adata.obs")
-
-        expr = self._predicted_mirna_matrix(adata)
-        if mirnas is not None:
-            missing = [m for m in mirnas if m not in expr.columns]
-            if missing:
-                raise KeyError(f"miRNAs not in prediction matrix: {missing[:5]}")
-            expr = expr[list(mirnas)]
-
-        cell_ids = adata.obs_names.astype(str)
-        expr = expr.copy()
-        expr.index = expr.index.astype(str)
-        labels = adata.obs[groupby]
-        if not isinstance(labels, pd.Series):
-            labels = pd.Series(labels, index=cell_ids)
-        else:
-            labels = labels.copy()
-            labels.index = labels.index.astype(str)
-        labels = labels.reindex(expr.index)
-        mask = labels.notna() & (labels.astype(str) != "nan")
-        expr = expr.loc[mask]
-        labels = labels.loc[mask].astype(str)
-
-        uniq = sorted(labels.dropna().unique(), key=str)
-        if groups is not None:
-            wanted = {str(g) for g in groups}
-            uniq = [g for g in uniq if g in wanted]
-        if not uniq:
-            raise ValueError(f"No groups left after filtering for {groupby!r}")
-
+        expr, labels, uniq = self._labelled_predictions(adata, groupby, mirnas, groups)
         if reference is not None:
             reference = str(reference)
             if reference not in uniq:
@@ -565,95 +603,319 @@ class miRPredictor:
         if method not in ("wilcoxon", "t-test", "ttest"):
             raise ValueError("method must be 'wilcoxon' or 't-test'")
         use_ttest = method.startswith("t")
+        if adjust not in ("fdr_bh", "none"):
+            raise ValueError("adjust must be 'fdr_bh' or 'none'")
+
+        samples = None
+        if sample_col is not None:
+            if sample_col not in adata.obs.columns:
+                raise KeyError(f"sample_col {sample_col!r} not in adata.obs")
+            s = adata.obs[sample_col].copy()
+            s.index = s.index.astype(str)
+            samples = s.reindex(expr.index).astype(str).to_numpy()
+
+        lab = labels.to_numpy()
+        comparisons: list[tuple[str, str, np.ndarray, np.ndarray]] = []
+        for group in uniq:
+            if reference is not None:
+                if group == reference:
+                    continue
+                comparisons.append((group, reference, lab == group, lab == reference))
+            else:
+                in_g = lab == group
+                comparisons.append((group, "_rest_", in_g, ~in_g))
 
         from scipy import stats
 
         rows: list[dict] = []
         for mir in expr.columns:
-            y = pd.to_numeric(expr[mir], errors="coerce").to_numpy(dtype=float)
-            for group in uniq:
-                if reference is not None:
-                    if group == reference:
-                        continue
-                    in_g = labels == group
-                    in_r = labels == reference
-                    ref_label = reference
-                else:
-                    in_g = labels == group
-                    in_r = ~in_g
-                    ref_label = "_rest_"
-
-                n_g = int(in_g.sum())
-                n_r = int(in_r.sum())
-                if n_g < min_cells or n_r < min_cells:
-                    continue
-
-                x_g = y[in_g.to_numpy()]
-                x_r = y[in_r.to_numpy()]
-                x_g = x_g[np.isfinite(x_g)]
-                x_r = x_r[np.isfinite(x_r)]
+            y = expr[mir].to_numpy(dtype=float)
+            finite = np.isfinite(y)
+            for group, ref_label, in_g, in_r in comparisons:
+                sel_g = in_g & finite
+                sel_r = in_r & finite
+                x_g = y[sel_g]
+                x_r = y[sel_r]
                 if len(x_g) < min_cells or len(x_r) < min_cells:
                     continue
 
-                mean_g = float(np.mean(x_g))
-                mean_r = float(np.mean(x_r))
-                log2fc = mean_g - mean_r
+                mean_cpm_g = float(_log2cpm1_to_cpm(x_g).mean())
+                mean_cpm_r = float(_log2cpm1_to_cpm(x_r).mean())
+                row = {
+                    "mirna": mir,
+                    "group": group,
+                    "reference": ref_label,
+                    "log2fc": _log2fc_from_cpm(mean_cpm_g, mean_cpm_r),
+                    "auroc": _auroc(x_g, x_r),
+                    "mean_cpm_group": mean_cpm_g,
+                    "mean_cpm_reference": mean_cpm_r,
+                    "n_cells_group": len(x_g),
+                    "n_cells_reference": len(x_r),
+                }
 
-                if use_ttest:
-                    stat, pval = stats.ttest_ind(x_g, x_r, equal_var=False)
-                    stat = float(stat) if stat == stat else float("nan")
+                if samples is None:
+                    if use_ttest:
+                        _, pval = stats.ttest_ind(x_g, x_r, equal_var=False)
+                    else:
+                        _, pval = stats.mannwhitneyu(x_g, x_r, alternative="two-sided")
+                    row["test_level"] = "cell"
                 else:
-                    stat, pval = stats.mannwhitneyu(
-                        x_g, x_r, alternative="two-sided"
+                    pval, design, n_s = self._sample_level_pval(
+                        y, sel_g, sel_r, samples,
+                        use_ttest=use_ttest,
+                        min_cells=min_cells,
+                        min_samples=min_samples,
                     )
-                    stat = float(stat)
+                    row["test_level"] = f"sample_{design}"
+                    row["n_samples"] = n_s
+                row["pval"] = float(pval) if np.isfinite(pval) else np.nan
+                rows.append(row)
 
-                pval = float(pval) if pval == pval else 1.0
-                rows.append(
-                    {
-                        "mirna": mir,
-                        "group": group,
-                        "reference": ref_label,
-                        "log2fc": log2fc,
-                        "mean_group": mean_g,
-                        "mean_reference": mean_r,
-                        "statistic": stat,
-                        "pval": pval,
-                        "n_group": len(x_g),
-                        "n_reference": len(x_r),
-                        "pct_detect_group": float(np.mean(x_g > 0)),
-                        "pct_detect_reference": float(np.mean(x_r > 0)),
-                    }
-                )
-
+        columns = [
+            "mirna", "group", "reference", "log2fc", "auroc",
+            "mean_cpm_group", "mean_cpm_reference", "pval", "pval_adj",
+            "n_cells_group", "n_cells_reference", "test_level",
+        ]
+        if samples is not None:
+            columns.append("n_samples")
         if not rows:
-            return pd.DataFrame(
-                columns=[
-                    "mirna",
-                    "group",
-                    "reference",
-                    "log2fc",
-                    "mean_group",
-                    "mean_reference",
-                    "statistic",
-                    "pval",
-                    "pval_adj",
-                    "n_group",
-                    "n_reference",
-                    "pct_detect_group",
-                    "pct_detect_reference",
-                ]
-            )
+            return pd.DataFrame(columns=columns)
 
         out = pd.DataFrame(rows)
         if adjust == "fdr_bh":
-            out["pval_adj"] = _benjamini_hochberg(out["pval"].to_numpy())
-        elif adjust == "none":
-            out["pval_adj"] = out["pval"]
+            out["pval_adj"] = np.nan
+            for _, idx in out.groupby(["group", "reference"]).groups.items():
+                out.loc[idx, "pval_adj"] = _benjamini_hochberg(out.loc[idx, "pval"].to_numpy())
         else:
-            raise ValueError("adjust must be 'fdr_bh' or 'none'")
-        out = out.sort_values(["pval_adj", "mirna", "group"], kind="mergesort")
+            out["pval_adj"] = out["pval"]
+        out = out[columns].sort_values(
+            ["group", "pval_adj", "auroc"],
+            ascending=[True, True, False],
+            na_position="last",
+            kind="mergesort",
+        )
         return out.reset_index(drop=True)
+
+    def find_markers(
+        self,
+        adata,
+        groupby: str,
+        *,
+        group: str | list[str] | None = None,
+        mirnas: list[str] | None = None,
+        min_log2fc: float = 0.25,
+        min_auroc: float = 0.7,
+        min_cells: int = 3,
+        only_markers: bool = True,
+        top_n: int | None = None,
+    ) -> pd.DataFrame:
+        """Find miRNAs **specific** to a group of cells (not just above average).
+
+        For each target group and miRNA:
+
+        - ``log2fc_vs_rest`` / ``auroc_vs_rest`` — group vs all other cells
+          (sensitivity: the group is high overall).
+        - ``next_group`` — the other group with the highest mean predicted CPM.
+        - ``log2fc_vs_next`` / ``auroc_vs_next`` — group vs that runner-up group.
+          Because ``next_group`` has the highest mean among the others,
+          ``log2fc_vs_next`` is the smallest pairwise fold change, i.e. the miRNA is
+          at least this much higher than in **every** other group.
+
+        ``is_marker`` requires ``log2fc_vs_next >= min_log2fc`` and both AUROCs
+        ``>= min_auroc``. Fold changes use linear CPM (see
+        ``differential_expression``). No p-values: cells are not independent
+        observations, so specificity is judged by effect size.
+
+        Parameters
+        ----------
+        group
+            Target group(s); ``None`` = every group in ``groupby``.
+        only_markers
+            Return only rows with ``is_marker``; ``False`` returns all scored pairs.
+        top_n
+            Keep at most this many miRNAs per group (after filtering).
+        """
+        expr, labels, uniq = self._labelled_predictions(adata, groupby, mirnas, None)
+        lab = labels.to_numpy()
+        sizes = {g: int((lab == g).sum()) for g in uniq}
+        usable = [g for g in uniq if sizes[g] >= min_cells]
+        if len(usable) < 2:
+            raise ValueError(
+                f"Need at least two groups with >= {min_cells} cells in {groupby!r}."
+            )
+
+        if group is None:
+            targets = usable
+        else:
+            wanted = [str(g) for g in ([group] if isinstance(group, str) else group)]
+            missing = [g for g in wanted if g not in usable]
+            if missing:
+                raise ValueError(
+                    f"group(s) {missing} not found or with < {min_cells} cells; "
+                    f"available: {usable}"
+                )
+            targets = wanted
+
+        masks = {g: lab == g for g in usable}
+        rows: list[dict] = []
+        for mir in expr.columns:
+            y = expr[mir].to_numpy(dtype=float)
+            finite = np.isfinite(y)
+            means = {}
+            for g in usable:
+                vals = y[masks[g] & finite]
+                if len(vals) >= min_cells:
+                    means[g] = float(_log2cpm1_to_cpm(vals).mean())
+            for g in targets:
+                others = {k: v for k, v in means.items() if k != g}
+                if g not in means or not others:
+                    continue
+                x_g = y[masks[g] & finite]
+                x_rest = y[~masks[g] & finite]
+                if len(x_rest) < min_cells:
+                    continue
+                nxt = max(others, key=others.get)
+                x_next = y[masks[nxt] & finite]
+                mean_rest = float(_log2cpm1_to_cpm(x_rest).mean())
+                rows.append(
+                    {
+                        "group": g,
+                        "mirna": mir,
+                        "mean_cpm_group": means[g],
+                        "log2fc_vs_rest": _log2fc_from_cpm(means[g], mean_rest),
+                        "auroc_vs_rest": _auroc(x_g, x_rest),
+                        "next_group": nxt,
+                        "mean_cpm_next": others[nxt],
+                        "log2fc_vs_next": _log2fc_from_cpm(means[g], others[nxt]),
+                        "auroc_vs_next": _auroc(x_g, x_next),
+                        "n_cells_group": len(x_g),
+                    }
+                )
+
+        columns = [
+            "group", "mirna", "rank", "is_marker", "log2fc_vs_next", "auroc_vs_next",
+            "log2fc_vs_rest", "auroc_vs_rest", "next_group", "mean_cpm_group",
+            "mean_cpm_next", "n_cells_group",
+        ]
+        if not rows:
+            return pd.DataFrame(columns=columns)
+
+        out = pd.DataFrame(rows)
+        out["is_marker"] = (
+            (out["log2fc_vs_next"] >= min_log2fc)
+            & (out["auroc_vs_next"] >= min_auroc)
+            & (out["auroc_vs_rest"] >= min_auroc)
+        )
+        if only_markers:
+            out = out.loc[out["is_marker"]]
+        out = out.sort_values(
+            ["group", "log2fc_vs_next", "auroc_vs_next"],
+            ascending=[True, False, False],
+            kind="mergesort",
+        )
+        out["rank"] = out.groupby("group").cumcount() + 1
+        if top_n is not None:
+            out = out.loc[out["rank"] <= top_n]
+        return out[columns].reset_index(drop=True)
+
+    def _labelled_predictions(
+        self,
+        adata,
+        groupby: str,
+        mirnas: list[str] | None,
+        groups: list[str] | None,
+    ) -> tuple[pd.DataFrame, pd.Series, list[str]]:
+        """Predicted log2(CPM+1) (cells × miRNAs), aligned labels, sorted group names."""
+        if groupby not in adata.obs.columns:
+            raise KeyError(f"groupby column {groupby!r} not in adata.obs")
+
+        expr = self._predicted_mirna_matrix(adata)
+        if mirnas is not None:
+            missing = [m for m in mirnas if m not in expr.columns]
+            if missing:
+                raise KeyError(f"miRNAs not in prediction matrix: {missing[:5]}")
+            expr = expr[list(mirnas)]
+        expr = expr.copy()
+        expr.index = expr.index.astype(str)
+
+        labels = adata.obs[groupby].copy()
+        labels.index = labels.index.astype(str)
+        labels = labels.reindex(expr.index)
+        keep = labels.notna().to_numpy()
+        expr = expr.loc[keep]
+        labels = labels.loc[keep].astype(str)
+
+        n_nan = int(expr.isna().any(axis=1).sum())
+        if n_nan:
+            warnings.warn(
+                f"{n_nan}/{len(expr)} cells have no prediction for some miRNAs "
+                "(e.g. clusters smaller than the pseudobulk K); they are excluded "
+                "from those miRNAs' comparisons.",
+                UserWarning,
+                stacklevel=3,
+            )
+
+        uniq = sorted(labels.unique(), key=str)
+        if groups is not None:
+            wanted = {str(g) for g in groups}
+            uniq = [g for g in uniq if g in wanted]
+            keep = labels.isin(uniq).to_numpy()
+            expr = expr.loc[keep]
+            labels = labels.loc[keep]
+        if not uniq:
+            raise ValueError(f"No groups left after filtering for {groupby!r}")
+        return expr, labels, uniq
+
+    @staticmethod
+    def _sample_level_pval(
+        y: np.ndarray,
+        sel_g: np.ndarray,
+        sel_r: np.ndarray,
+        samples: np.ndarray,
+        *,
+        use_ttest: bool,
+        min_cells: int,
+        min_samples: int,
+    ) -> tuple[float, str, int]:
+        """P-value with samples as observations; returns (pval, design, n_samples)."""
+        from scipy import stats
+
+        def per_sample(sel: np.ndarray) -> dict[str, float]:
+            vals: dict[str, float] = {}
+            for s in np.unique(samples[sel]):
+                x = y[sel & (samples == s)]
+                if len(x) >= min_cells:
+                    vals[str(s)] = float(np.log2(_log2cpm1_to_cpm(x).mean() + 1.0))
+            return vals
+
+        side_g = per_sample(sel_g)
+        side_r = per_sample(sel_r)
+        both = sorted(set(side_g) & set(side_r))
+        if len(both) >= min_samples:
+            a = np.array([side_g[s] for s in both])
+            b = np.array([side_r[s] for s in both])
+            if np.allclose(a, b):
+                return 1.0, "paired", len(both)
+            if use_ttest:
+                _, p = stats.ttest_rel(a, b)
+            else:
+                _, p = stats.wilcoxon(a, b)
+            return float(p), "paired", len(both)
+
+        if len(side_g) >= min_samples and len(side_r) >= min_samples:
+            a = np.array(list(side_g.values()))
+            b = np.array(list(side_r.values()))
+            if use_ttest:
+                _, p = stats.ttest_ind(a, b, equal_var=False)
+            else:
+                _, p = stats.mannwhitneyu(a, b, alternative="two-sided")
+            return float(p), "unpaired", len(side_g) + len(side_r)
+
+        return float("nan"), "insufficient", len(set(side_g) | set(side_r))
+
+    # ------------------------------------------------------------------
+    # Core inference orchestration
+    # ------------------------------------------------------------------
 
     def _run_full_inference(
         self,
@@ -672,7 +934,7 @@ class miRPredictor:
         requested = self._resolve_mirna_subset(mirnas)
         n_cells, n_genes = expression.shape
         print(
-            f"Configuration: {n_cells} cells, {n_genes} genes, "
+            f"Full inference: {n_cells} cells, {n_genes} genes, "
             f"{len(requested)} eligible miRNAs"
         )
 
@@ -692,7 +954,7 @@ class miRPredictor:
             n_run = len(runnable)
             n_skip = len(skipped)
             if self._robustness_version >= 4:
-                skip_reason = "not be predicted due to insufficient features in the current dataset"
+                skip_reason = "blocked by robustness v4 (importance budget / missing weights)"
             elif self._robustness_uses_fraction_gate():
                 skip_reason = "exceed SC feature dropout tolerance (robustness_config)"
             else:
@@ -862,6 +1124,20 @@ class miRPredictor:
         if predicted:
             mir_block = aligned[predicted]
             drop_cols = [c for c in predicted if c in out.obs.columns]
+            if drop_cols:
+                warnings.warn(
+                    f"Overwriting {len(drop_cols)} existing adata.obs column(s) with new "
+                    f"miRNA predictions (e.g. {drop_cols[:5]}).",
+                    UserWarning,
+                    stacklevel=3,
+                )
+            if "X_mirna" in out.obsm:
+                warnings.warn(
+                    "Overwriting existing adata.obsm['X_mirna'] and "
+                    "adata.uns['mirna_prediction'].",
+                    UserWarning,
+                    stacklevel=3,
+                )
             obs_base = out.obs.drop(columns=drop_cols) if drop_cols else out.obs
             # Single concat avoids fragmented-obs PerformanceWarning from column-wise insert.
             out.obs = pd.concat([obs_base, mir_block], axis=1)
@@ -881,8 +1157,16 @@ class miRPredictor:
 
     def _predicted_mirna_matrix(self, adata) -> pd.DataFrame:
         """Cells × miRNAs matrix from ``predict()`` outputs."""
-        meta = (getattr(adata, "uns", None) or {}).get("mirna_prediction") or {}
-        cols = list(meta.get("columns") or [])
+        uns = getattr(adata, "uns", None)
+        meta = uns.get("mirna_prediction") if uns is not None else None
+        raw_cols = None
+        if isinstance(meta, dict) and "columns" in meta:
+            raw_cols = meta["columns"]
+        # After h5ad round-trip, uns lists are numpy arrays; ``arr or []`` is invalid.
+        if raw_cols is None:
+            cols = []
+        else:
+            cols = [str(c) for c in np.asarray(raw_cols).ravel().tolist()]
         if not cols:
             eligible = set(self.get_mirs())
             cols = [c for c in adata.obs.columns if c in eligible]
@@ -1594,8 +1878,15 @@ class miRPredictor:
                 return lower[name]
         return None
 
-    def _extract_from_adata(self, adata):
-        """Return (cells×genes counts DF, celltype Series, PCA DataFrame)."""
+    def _extract_from_adata(
+        self,
+        adata,
+        *,
+        groupby: str | None = None,
+        embedding_key: str | bool | None = None,
+        embedding_dims: int | None = None,
+    ):
+        """Return (cells×genes counts DF, celltype Series, embedding DataFrame or None)."""
         counts_matrix, gene_labels, source = self._resolve_adata_counts(adata)
         obs_names = np.asarray(adata.obs_names).astype(str)
 
@@ -1612,8 +1903,10 @@ class miRPredictor:
         if expression.columns.duplicated().any():
             expression = expression.T.groupby(level=0).sum().T
 
-        celltypes = self._resolve_adata_clusters(adata)
-        pca_coords = self._resolve_adata_pca(adata)
+        celltypes = self._resolve_adata_clusters(adata, groupby=groupby)
+        pca_coords = self._resolve_adata_pca(
+            adata, embedding_key=embedding_key, embedding_dims=embedding_dims
+        )
         return expression, celltypes, pca_coords
 
     def _resolve_adata_counts(self, adata):
@@ -1643,8 +1936,18 @@ class miRPredictor:
             return np.asarray(adata.raw.var_names).astype(str)
         return np.asarray(adata.var_names).astype(str)
 
-    def _resolve_adata_clusters(self, adata) -> pd.Series:
+    def _resolve_adata_clusters(self, adata, groupby: str | None = None) -> pd.Series:
         cols = list(adata.obs.columns)
+        if groupby is not None:
+            if groupby not in cols:
+                raise KeyError(
+                    f"groupby column {groupby!r} not in adata.obs. "
+                    f"Available columns: {cols}"
+                )
+            s = adata.obs[groupby].copy()
+            s.index = np.asarray(adata.obs_names).astype(str)
+            s.name = groupby
+            return s
         for name in _CELLTYPE_CANDIDATES:
             if name in cols:
                 s = adata.obs[name].copy()
@@ -1671,21 +1974,50 @@ class miRPredictor:
             "Please run clustering (and preferably cell-type annotation) first."
         )
 
-    def _resolve_adata_pca(self, adata) -> pd.DataFrame:
+    def _resolve_adata_pca(
+        self,
+        adata,
+        embedding_key: str | bool | None = None,
+        embedding_dims: int | None = None,
+    ) -> pd.DataFrame | None:
+        """Embedding used for within-cluster KNN; ``None`` means compute PCA from counts."""
+        if embedding_key is False:
+            return None
         obsm = getattr(adata, "obsm", {})
- 
-        for key in _PCA_CANDIDATES:
-            if key in obsm:
-                arr = np.asarray(obsm[key], dtype=np.float32)
-                return pd.DataFrame(
-                    arr,
-                    index=np.asarray(adata.obs_names).astype(str),
-                    columns=[f"PC{i+1}" for i in range(arr.shape[1])],
+        available = list(obsm.keys())
+        if embedding_key is not None and embedding_key is not True:
+            if embedding_key not in obsm:
+                raise KeyError(
+                    f"embedding_key {embedding_key!r} not in adata.obsm. "
+                    f"Available keys: {available}"
                 )
-        raise ValueError(
-            "PCA coordinates not found in adata.obsm. "
-            "Expected 'X_pca_harmony', 'X_harmony' (preferred for integrated data) or 'X_pca'."
+            key = str(embedding_key)
+        else:
+            key = next((k for k in _PCA_CANDIDATES if k in obsm), None)
+            if key is None:
+                raise ValueError(
+                    "PCA coordinates not found in adata.obsm "
+                    f"(looked for {list(_PCA_CANDIDATES)}; available: {available}). "
+                    "Pass embedding_key='<obsm key>' or embedding_key=False to "
+                    "compute PCA from counts."
+                )
+
+        arr = np.asarray(obsm[key], dtype=np.float32)
+        if arr.ndim != 2:
+            raise ValueError(f"adata.obsm[{key!r}] must be 2-D, got shape {arr.shape}")
+        if embedding_dims is not None:
+            if embedding_dims < 1:
+                raise ValueError("embedding_dims must be >= 1")
+            arr = arr[:, :embedding_dims]
+        if not np.isfinite(arr).all():
+            raise ValueError(f"adata.obsm[{key!r}] contains NaN/inf values")
+        emb = pd.DataFrame(
+            arr,
+            index=np.asarray(adata.obs_names).astype(str),
+            columns=[f"dim{i + 1}" for i in range(arr.shape[1])],
         )
+        emb.attrs["obsm_key"] = key
+        return emb
 
     # ------------------------------------------------------------------
     # KNN pseudobulk helpers
@@ -1744,3 +2076,5 @@ class miRPredictor:
             out[:, anchor] = counts_gc[:, neighbor_indices[anchor]].sum(axis=1)
         return out
 
+
+ 

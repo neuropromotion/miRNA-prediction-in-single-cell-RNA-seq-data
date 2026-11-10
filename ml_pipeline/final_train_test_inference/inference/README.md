@@ -15,18 +15,26 @@ mp.get_mirs()
 mp.get_features()
 mp.get_metrics(["hsa-let-7b-5p"])
 
-pred_df = mp.predict_csv("counts.csv")   # DataFrame: cells × miRNAs
-adata = sc.read_h5ad("data.h5ad")
-adata = mp.predict(adata)                # AnnData with miRNA columns in .obs
+pred_df = mp.predict_csv("counts.csv", groupby='CellType')   # DataFrame: cells × miRNAs and cluster annotation column
+adata = sc.read_h5ad("data.h5ad") 
+adata = mp.predict(adata,                          # AnnData with miRNA columns in .obs
+                  groupby = 'CellType',            # Cluster annotation
+                  embedding_key = 'X_pca_harmony', # Recommended using corrected PCA embeddings for integrated data. UMAP embedings also possible but not recommended
+                  embedding_dims=30)         
+
 de = mp.differential_expression(adata, # de analysis
                                  groupby="CellType",       
                                  method="wilcoxon",        
                                  reference=None,            
-                                 # reference="healthy",   
+                                 # reference="Malignant cells",   # possible to use reference cluster 
                                  mirnas=None, # all 
                                  min_cells=3,
                                  adjust="fdr_bh",
                               )
+
+mk = predictor.find_markers(adata,                 # Specific markers 
+                           groupby="CellType") 
+
 # also: adata.obsm['X_mirna'], adata.uns['mirna_prediction']
 ```
  
