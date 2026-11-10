@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-"""Tables + figures for final_train bases and Ridge stack (Stage00 val)."""
+# Tables + figures for final_train bases and Ridge stack (Stage00 val) 
 
 from __future__ import annotations
 

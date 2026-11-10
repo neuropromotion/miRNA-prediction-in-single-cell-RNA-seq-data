@@ -1,4 +1,4 @@
-"""Dispatch train/predict for final_train base models: tabpack / tabm / xgb_optuna."""
+# Dispatch train/predict for final_train base models: tabpack / tabm / xgb_optuna 
 
 from __future__ import annotations
 

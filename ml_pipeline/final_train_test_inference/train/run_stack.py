@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-"""Fit Ridge stack on SC+PB validation; report metrics on all val splits."""
+# Fit Ridge stack on SC+PB validation; report metrics on all val splits 
 
 from __future__ import annotations
 

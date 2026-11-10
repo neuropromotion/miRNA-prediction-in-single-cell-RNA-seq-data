@@ -1,4 +1,4 @@
-"""Ridge stack ensemble with safety gate (SC+PB val tune only)."""
+# Ridge stack ensemble with safety gate (SC+PB val tune only)
 
 from __future__ import annotations
 

@@ -1,18 +1,14 @@
-"""Load prepared splits and feature lists."""
+# Load prepared splits and feature lists 
 
 from __future__ import annotations
-
 import json
 import re
-
 import pandas as pd
-
 from constants import FEATURES, PB_COHORTS, SPLITS, ZERO_EXPRESSED_MIRS
 
 
 def load_features() -> dict[str, list[str]]:
     return json.loads(FEATURES.read_text(encoding="utf-8"))
-
 
 def load_zero_expressed_mirs() -> set[str]:
     """Targets that must not be trained (from zero_expressed_mirs.txt)."""

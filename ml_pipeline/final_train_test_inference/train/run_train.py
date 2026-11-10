@@ -1,6 +1,4 @@
-#!/usr/bin/env python3
-"""Train TabPack / TabM / XGB Optuna on eligible miRNA targets (final_train)."""
-
+# Train TabPack / TabM / XGB Optuna on eligible miRNA targets (final_train) 
 from __future__ import annotations
 
 import json

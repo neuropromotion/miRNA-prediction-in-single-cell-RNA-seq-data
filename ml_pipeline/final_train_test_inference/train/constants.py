@@ -1,7 +1,4 @@
-"""Constants for final model training.
-
-Final stack: TabPack Muon (paper) + TabM AdamW + XGB Optuna → Ridge.
-"""
+# Constants for final model training. Final stack: TabPack Muon (paper) + TabM AdamW + XGB Optuna → Ridge.
 
 from __future__ import annotations
 

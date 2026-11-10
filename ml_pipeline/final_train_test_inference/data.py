@@ -1,4 +1,4 @@
-"""Pooled train/val bundles with modality sample weights."""
+# Pooled train/val bundles with modality sample weights
 
 from __future__ import annotations
 

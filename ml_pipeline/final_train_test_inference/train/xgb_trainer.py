@@ -1,7 +1,4 @@
-"""XGB Optuna trainer for final_train (recipe from 02_model_selection)."""
-
 from __future__ import annotations
-
 import json
 import os
 from pathlib import Path

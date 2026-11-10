@@ -1,16 +1,11 @@
-#!/usr/bin/env python3
-"""Merge shard val_metrics_shard*.csv → val_metrics.csv for one model."""
+# Merge shard val_metrics_shard*.csv → val_metrics.csv for one model 
 
 from __future__ import annotations
-
 import argparse
 import sys
 from pathlib import Path
-
 import pandas as pd
-
 from constants import MODELS, RESULTS
-
 
 def merge_model(model: str) -> Path:
     root = RESULTS / model

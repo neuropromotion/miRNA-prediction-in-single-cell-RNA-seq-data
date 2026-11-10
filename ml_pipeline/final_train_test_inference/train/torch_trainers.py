@@ -1,9 +1,5 @@
-"""Thin wrappers: TabM with modality-weighted loss."""
-
 from __future__ import annotations
-
 from pathlib import Path
-
 import numpy as np
 
 try:

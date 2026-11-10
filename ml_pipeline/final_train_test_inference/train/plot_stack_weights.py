@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-"""Analyze Ridge stack coefficients and model contributions (final_train)."""
+# Analyze Ridge stack coefficients and model contributions (final_train) 
 
 from __future__ import annotations
 

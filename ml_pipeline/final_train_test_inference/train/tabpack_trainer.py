@@ -1,10 +1,3 @@
-"""TabPack Muon (paper) trainer for final_train.
-
-Wraps ``shared.tabpack_trainer.train_tabpack_screen`` with Stage00 train/val
-layout used by final_train. Artifacts: ``preds.npz`` + ``meta.json`` +
-``inference_bundle.pt`` (live ``predict(x)`` via shared.predict_tabpack).
-"""
-
 from __future__ import annotations
 
 import os
