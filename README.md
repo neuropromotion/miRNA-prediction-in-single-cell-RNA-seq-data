@@ -7,7 +7,7 @@ The training dataset combines bulk RNA-seq (TCGA, GTEx) with paired single-cell 
 Out of 312 miRNAs, 159 achieved acceptable predictive performance on the test set (R² > 0.4), with a median R² of 0.82 in scRNA-seq data and 0.77 in bulk test data.
 
 ### Processed datasets and models
-- **Training and inference datasets:** *[link](https://www.kaggle.com/datasets/ismailovaly/mirna-prediction-project)*
+- **Train datasets:** *[link](https://www.kaggle.com/datasets/ismailovaly/mirna-prediction-project)*
 - **Pretrained models:** *[link](https://www.kaggle.com/models/ismailovaly/mirna-prediction-model)*
 
 ## Repository Structure
