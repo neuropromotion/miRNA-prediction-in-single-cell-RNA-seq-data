@@ -44,7 +44,7 @@ Sets = all pairs + triple:
 Based on evaluation metrics, stacking of XGBoost, TabPack and TabM outperformed the rest of ensembles, despite that differences between ensebmles were subtle. But Tripple stacking is single ensemble that increased r2 above 0.4 for 23 miRNAs (best result). The top models were ranked by their average of means and medians $R^2$ scores among all cohorts (K1-K10):
 
 | Rank | Model | Average of means $R^2$ | Average of medians $R^2$ | miRs with $R^2$ > 0.4 |
-| :---: | :--- | :---: | :--- | :---: |
+| :---: | :--- | :---: | :---: | :---: |
 | **1** | **xgb_tabpack_tabm_stack** | 0.8116 | 0.8263 | 23 |
 | **2** | **xgb_tabpack_stack** | 0.8102 | 0.8237 | 21 |
 | **3** | **xgb_tabpack_tabm_blend** | 0.8099 | 0.8222 | 22 |
