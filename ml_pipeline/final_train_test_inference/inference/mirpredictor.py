@@ -40,6 +40,8 @@ DEFAULT_KNN_REF_PATH = str(K1_REF_PATH)
 _CELLTYPE_CANDIDATES = ("CellType", "celltype", "cell_type", "Celltype", 'clusters')
 _CLUSTER_FALLBACK = ("clusters", "cluster", "leiden", "louvain")
 _PCA_CANDIDATES = ("X_pca_harmony", "X_harmony", "X_pca")
+_LOW_PANEL_COVERAGE = 0.5
+
 
 try:
     from tqdm.auto import tqdm
@@ -329,7 +331,9 @@ class miRPredictor:
         matrix or is present but all-zero across every cell (after ENSG mapping).
 
         Returns a table with ``n_sc_features``, ``n_missing``, ``n_all_zero``,
-        ``n_absent``, and ``pct_absent`` (0–100).
+        ``n_absent``, and ``pct_absent`` (0–100). ``attrs['gene_mapping']`` holds
+        how input gene labels were resolved to ENSG (direct IDs, mapped symbols,
+        unrecognised labels, SC panel coverage).
 
         **Robustness v4** (``importance_budget``): ``importance_budget``,
         ``absent_importance``, ``budget_used_fraction``, ``passes_robustness``
@@ -340,6 +344,9 @@ class miRPredictor:
         """
         targets = self._resolve_mirna_subset(mirnas)
         measured = self._measured_ensg_from_adata(adata, mapping_path=mapping_path)
+        gene_mapping = dict(measured.attrs.get("gene_mapping") or {})
+        self._report_gene_mapping(gene_mapping, verbose=False)
+
         rows: list[dict] = []
         for mir in targets:
             if feature_set == "minimal":
@@ -938,14 +945,15 @@ class miRPredictor:
             f"{len(requested)} eligible miRNAs"
         )
 
+        # Robustness gate runs on the *measured* ENSG matrix (before zero-fill).
+        measured_ensg = self._expression_to_ensg_counts(expression, mapping_path=mapping_path)
+        gene_mapping = dict(measured_ensg.attrs.get("gene_mapping") or {})
+        self._report_gene_mapping(gene_mapping)
+
         # Quiet third-party noise (NVML, sklearn version, empty-slice, …).
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            standardized = self._prepare_input(expression, mapping_path=mapping_path)
-            # Robustness gate on ENSG IDs from the *measured* matrix (before zero-fill).
-            measured_ensg = self._expression_to_ensg_counts(
-                expression, mapping_path=mapping_path
-            )
+            standardized = self._standardize_mrna(measured_ensg)
             runnable, skipped, skip_detail = self._filter_by_robustness(
                 measured_ensg, requested
             )
@@ -954,9 +962,9 @@ class miRPredictor:
             n_run = len(runnable)
             n_skip = len(skipped)
             if self._robustness_version >= 4:
-                skip_reason = "blocked by robustness v4 (importance budget / missing weights)"
+                skip_reason = "blocked by exceeding importance budget (missing features))"
             elif self._robustness_uses_fraction_gate():
-                skip_reason = "exceed SC feature dropout tolerance (robustness_config)"
+                skip_reason = "exceed SC feature dropout tolerance"
             else:
                 skip_reason = "require minimal robustness features missing from the input data"
             print(f"Predicting {n_run}/{n_req} miRNAs; {n_skip}/{n_req} {skip_reason}")
@@ -968,6 +976,7 @@ class miRPredictor:
                 empty.attrs["skipped_mirnas"] = skipped
                 empty.attrs["skip_detail"] = skip_detail
                 empty.attrs["predicted_mirnas"] = []
+                empty.attrs["gene_mapping"] = gene_mapping
                 return empty
 
             barcodes = standardized.columns.astype(str)
@@ -1023,6 +1032,7 @@ class miRPredictor:
             preds.attrs["predicted_mirnas"] = list(runnable)
             preds.attrs["skipped_mirnas"] = list(skipped)
             preds.attrs["skip_detail"] = skip_detail
+            preds.attrs["gene_mapping"] = gene_mapping
             return preds
 
     @staticmethod
@@ -1045,15 +1055,16 @@ class miRPredictor:
         gene_axis = self._detect_gene_axis(df)
         if gene_axis == "columns":
             df = df.T
-        mapping_path = resolve_gene_mapping_path(mapping_path)
-        if self._needs_symbol_to_ens_mapping(df.index):
-            df = self._replace_genes_names(df, mapping_path=mapping_path)
         df = df.apply(pd.to_numeric, errors="coerce").fillna(0.0)
-        df = df.loc[~df.index.duplicated(keep="first")]
-        df.index = [self._normalize_ensg(g) for g in df.index]
-        # if normalize created dupes, sum
-        if pd.Index(df.index).duplicated().any():
-            df = df.groupby(level=0).sum()
+        df = self._harmonize_to_ensg(df, mapping_path=mapping_path)
+        report = df.attrs["gene_mapping"]
+        present = set(df.index)
+        report["model_gene_coverage"] = len(present & self.standard_mrna_set) / max(
+            len(self.standard_mrna_set), 1
+        )
+        sc_union = self._sc_panel_union()
+        if sc_union:
+            report["sc_panel_coverage"] = len(present & sc_union) / len(sc_union)
         return df
 
     @staticmethod
@@ -1424,16 +1435,25 @@ class miRPredictor:
             return None
         return float(val)
 
+    def _adata_gene_labels(self, var: pd.DataFrame, gene_labels) -> list[str]:
+        """Per gene: ENSG from ``var['gene_ids']`` when it is one, else the var_names label."""
+        labels = [str(g) for g in gene_labels]
+        if "gene_ids" not in var.columns:
+            return labels
+        ids = var["gene_ids"].astype(object).tolist()
+        if len(ids) != len(labels):
+            return labels
+        return [
+            str(i) if self._looks_like_ens_id(i) else label
+            for i, label in zip(ids, labels)
+        ]
+
     def _measured_ensg_from_adata(self, adata, mapping_path=None) -> pd.DataFrame:
         """Raw counts from AnnData → genes×cells ENSG matrix (no zero-fill)."""
         counts_matrix, gene_labels, source = self._resolve_adata_counts(adata)
         obs_names = np.asarray(adata.obs_names).astype(str)
-        if source == "raw":
-            var = adata.raw.var
-        else:
-            var = adata.var
-        if "gene_ids" in var.columns:
-            gene_labels = var["gene_ids"].astype(str).tolist()
+        var = adata.raw.var if source == "raw" else adata.var
+        gene_labels = self._adata_gene_labels(var, gene_labels)
         expression = _to_dense_float_df(
             counts_matrix, index=obs_names, columns=gene_labels
         )
@@ -1644,13 +1664,31 @@ class miRPredictor:
     # Private preprocessing (TPM / prepare_input / mapping)
     # ------------------------------------------------------------------
 
+    def _symbol_to_ensg_map(self, mapping_path=None) -> dict[str, str]:
+        """Gene symbol → ENSG from the mapping table (cached per path)."""
+        path = resolve_gene_mapping_path(mapping_path)
+        cache = self.__dict__.setdefault("_symbol_map_cache", {})
+        if path not in cache:
+            mapping = pd.read_csv(path).dropna(subset=["feature_name", "feature_id"])
+            mapping = mapping.drop_duplicates(subset=["feature_name"])
+            cache[path] = dict(
+                zip(mapping["feature_name"].astype(str), mapping["feature_id"].astype(str))
+            )
+        return cache[path]
+
     def _detect_gene_axis(self, data):
-        genes = pd.read_csv(resolve_gene_mapping_path())
-        gene_ens = set(genes["feature_id"].tolist())
-        gene_names = set(genes["feature_name"].tolist())
-        all_gene_names = gene_ens | gene_names
-        index_hits = len(set(data.index) & all_gene_names)
-        col_hits = len(set(data.columns) & all_gene_names)
+        ens_map = self._symbol_to_ensg_map()
+        known = set(ens_map) | set(ens_map.values())
+
+        def hits(labels) -> int:
+            return sum(
+                1
+                for g in labels
+                if isinstance(g, str) and (g in known or self._normalize_ensg(g) in known)
+            )
+
+        index_hits = hits(data.index)
+        col_hits = hits(data.columns)
         if index_hits == 0 and col_hits == 0:
             raise ValueError("Genes were not found neither in columns nor in index")
         return "index" if index_hits > col_hits else "columns"
@@ -1659,13 +1697,88 @@ class miRPredictor:
     def _looks_like_ens_id(value):
         return isinstance(value, str) and value.startswith("ENSG")
 
-    def _needs_symbol_to_ens_mapping(self, genes):
-        gene_tokens = [gene for gene in genes if isinstance(gene, str) and gene]
-        if not gene_tokens:
-            return False
-        if any(self._looks_like_ens_id(gene) for gene in gene_tokens):
-            return False
-        return True
+    def _harmonize_to_ensg(self, df: pd.DataFrame, mapping_path=None) -> pd.DataFrame:
+        """genes×cells with any mix of ENSG IDs and symbols → ENSG index.
+
+        Each label is resolved on its own: ENSG IDs are kept (version suffix
+        stripped), symbols are looked up in the mapping table, anything else is
+        dropped. When several rows resolve to the same ENSG, a row that was
+        labelled with the ENSG directly wins; otherwise the first row is kept.
+        The mapping summary is stored in ``attrs['gene_mapping']``.
+        """
+        ens_map = self._symbol_to_ensg_map(mapping_path)
+        targets: list[str | None] = []
+        sources: list[str] = []
+        for label in df.index:
+            if self._looks_like_ens_id(label):
+                targets.append(self._normalize_ensg(label))
+                sources.append("ensembl")
+            elif isinstance(label, str) and label in ens_map:
+                targets.append(self._normalize_ensg(ens_map[label]))
+                sources.append("symbol")
+            else:
+                targets.append(None)
+                sources.append("unmapped")
+
+        target_arr = np.array(targets, dtype=object)
+        src = np.array(sources)
+        mapped = src != "unmapped"
+        order = np.lexsort((np.arange(len(src)), src != "ensembl"))
+        order = order[mapped[order]]
+        first = ~pd.Index(target_arr[order]).duplicated()
+        chosen = np.sort(order[first])
+
+        out = df.iloc[chosen].copy()
+        out.index = pd.Index(target_arr[chosen].astype(str))
+        unmapped = [str(g) for g, s in zip(df.index, sources) if s == "unmapped"]
+        out.attrs["gene_mapping"] = {
+            "n_input_genes": int(len(df)),
+            "n_ensembl_labels": int((src == "ensembl").sum()),
+            "n_symbol_mapped": int((src == "symbol").sum()),
+            "n_unmapped": len(unmapped),
+            "unmapped_examples": unmapped[:5],
+            "n_duplicates_dropped": int(mapped.sum() - len(chosen)),
+        }
+        return out
+
+    def _sc_panel_union(self) -> set[str]:
+        """Union of SC panels over eligible miRNAs (genes the robustness gate checks)."""
+        if getattr(self, "_sc_union_cache", None) is None:
+            union: set[str] = set()
+            for mir in self._available_mirnas:
+                try:
+                    union.update(self._sc_panel_for_mir(mir))
+                except KeyError:
+                    continue
+            self._sc_union_cache = union
+        return self._sc_union_cache
+
+    def _report_gene_mapping(self, report: dict, *, verbose: bool = True) -> None:
+        """Print the mapping summary and warn when panel coverage looks like a naming problem."""
+        if not report:
+            return
+        sc_cov = report.get("sc_panel_coverage")
+        model_cov = report.get("model_gene_coverage")
+        if verbose:
+            print(
+                "Gene mapping: "
+                f"{report['n_ensembl_labels']} ENSG labels, "
+                f"{report['n_symbol_mapped']} symbols mapped, "
+                f"{report['n_unmapped']} unrecognised"
+                + (f"; SC panel coverage {100 * sc_cov:.1f}%" if sc_cov is not None else "")
+            )
+        if sc_cov is not None and sc_cov < _LOW_PANEL_COVERAGE:
+            warnings.warn(
+                f"Only {100 * sc_cov:.1f}% of the SC panel genes "
+                f"({100 * (model_cov or 0):.1f}% of all model genes) were found after "
+                f"mapping gene labels to ENSG ({report['n_unmapped']} of "
+                f"{report['n_input_genes']} labels unrecognised, e.g. "
+                f"{report['unmapped_examples']}). Most miRNAs will be blocked by the "
+                "robustness gate. Check that genes are human Ensembl IDs or HGNC "
+                "symbols, or pass var['gene_ids'] / mapping_path.",
+                UserWarning,
+                stacklevel=3,
+            )
 
     def _standardize_mrna(self, data):
         df = data.copy(deep=True)
@@ -1685,14 +1798,9 @@ class miRPredictor:
         return df.reindex(self.standard_mrna, axis=0, fill_value=0.0)
 
     def _prepare_input(self, data, mapping_path=None):
-        df = data.copy(deep=True)
-        gene_axis = self._detect_gene_axis(df)
-        if gene_axis == "columns":
-            df = df.T
-        mapping_path = resolve_gene_mapping_path(mapping_path)
-        if self._needs_symbol_to_ens_mapping(df.index):
-            df = self._replace_genes_names(df, mapping_path=mapping_path)
-        return self._standardize_mrna(df)
+        return self._standardize_mrna(
+            self._expression_to_ensg_counts(data, mapping_path=mapping_path)
+        )
 
     def _tpm(self, data, log=True, enforce_mrna_standard=True):
         df = data.copy(deep=True)
@@ -1717,19 +1825,7 @@ class miRPredictor:
         if log:
             return np.log2(tpm + 1)
         return tpm
-
-    def _replace_genes_names(self, data, mapping_path=None):
-        mapping_path = resolve_gene_mapping_path(mapping_path)
-        mapping = pd.read_csv(mapping_path)
-        mapping = mapping.dropna(subset=["feature_name", "feature_id"])
-        mapping = mapping.drop_duplicates(subset=["feature_name"])
-        ens_map = dict(zip(mapping["feature_name"], mapping["feature_id"]))
-        df = data.copy(deep=True)
-        df["ensembl_id"] = df.index.map(ens_map)
-        df_clean = df.dropna(subset=["ensembl_id"]).copy()
-        df_clean = df_clean[~df_clean["ensembl_id"].duplicated()]
-        df_clean.index = df_clean.pop("ensembl_id")
-        return df_clean.sort_index()
+ 
 
     def _predict_stack(
         self,
@@ -1890,14 +1986,8 @@ class miRPredictor:
         counts_matrix, gene_labels, source = self._resolve_adata_counts(adata)
         obs_names = np.asarray(adata.obs_names).astype(str)
 
-        # Prefer ENSG from var['gene_ids'] when labels are not already ENSG
-        if source == "raw":
-            var = adata.raw.var
-        else:
-            var = adata.var
-        if "gene_ids" in var.columns:
-            gene_ids = var["gene_ids"].astype(str).tolist()
-            gene_labels = gene_ids
+        var = adata.raw.var if source == "raw" else adata.var
+        gene_labels = self._adata_gene_labels(var, gene_labels)
 
         expression = _to_dense_float_df(counts_matrix, index=obs_names, columns=gene_labels)
         if expression.columns.duplicated().any():
