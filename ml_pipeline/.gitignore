@@ -70,7 +70,7 @@ final_train_test_inference/Optimal_K/logs
 final_train_test_inference/Optimal_K/figures/*.pdf
 final_train_test_inference/Optimal_K/tables/bootstrap_medians_*
 final_train_test_inference/Optimal_K/tables/decisions_*
-final_train_test_inference/robustness/results/tables/budget_*
+final_train_test_inference/robustness/results/_backup_before_reconfirm
 final_train_test_inference/robustness/results/tables/_progress.csv
 final_train_test_inference/robustness/results/*.log
 
