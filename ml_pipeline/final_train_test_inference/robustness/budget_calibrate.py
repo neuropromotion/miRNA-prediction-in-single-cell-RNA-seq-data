@@ -1,13 +1,24 @@
-"""Bisect max importance budget B on eval (joint masks, weighted subsets)."""
+"""Bisect max importance budget B on eval (joint masks, weighted subsets).
+
+The bisection result is then confirmed on fresh masks. If confirmation fails,
+the next smaller budget that passed the search is confirmed instead, and so on;
+the reported budget is the largest one that passed both search and confirmation.
+"""
 
 from __future__ import annotations
 
+import zlib
 from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
 
 import masking as mk
+
+
+def target_seed(base_seed: int, target: str) -> int:
+    """Per-miRNA seed that is identical across processes (unlike built-in ``hash``)."""
+    return int(base_seed) + zlib.crc32(target.encode("utf-8")) % 10_000
 
 
 def retention_statistic(r2_samples: np.ndarray, stat: str) -> float:
@@ -57,6 +68,60 @@ class BudgetResult:
     meets_threshold: bool
     n_sc_features: int
     probes: list[dict]
+    budget_search: float = 0.0
+    n_confirm_rounds: int = 0
+
+
+def confirmation_candidates(probes: list[dict]) -> list[float]:
+    """Budgets > 0 that passed the search phase, largest first."""
+    passed = {
+        float(p["budget"])
+        for p in probes
+        if p.get("phase") == "search" and bool(p.get("ok")) and float(p["budget"]) > 0
+    }
+    return sorted(passed, reverse=True)
+
+
+def confirm_with_fallback(
+    bundle,
+    x: pd.DataFrame,
+    y: pd.Series,
+    sc_genes: list[str],
+    weights: dict[str, float],
+    candidates: list[float],
+    *,
+    threshold: float,
+    retention_stat: str,
+    confirm_n_masks: int,
+    rng: np.random.Generator,
+    common_mod,
+    k1_ref: pd.DataFrame | None,
+) -> tuple[float | None, np.ndarray | None, list[dict]]:
+    """Confirm candidate budgets on fresh masks, stepping down until one passes.
+
+    Returns ``(budget, confirm_samples, confirm_probes)``; ``budget`` is ``None``
+    when no candidate passes.
+    """
+    probes: list[dict] = []
+    for b in candidates:
+        samples = sample_r2_at_budget(
+            bundle,
+            x,
+            y,
+            sc_genes,
+            weights,
+            b,
+            n_masks=confirm_n_masks,
+            rng=rng,
+            common_mod=common_mod,
+            k1_ref=k1_ref,
+        )
+        stat = retention_statistic(samples, retention_stat)
+        ok = stat >= threshold
+        probes.append({"budget": b, "phase": "confirm", "stat": stat, "ok": ok})
+        if ok:
+            return b, samples, probes
+    return None, None, probes
 
 
 def calibrate_importance_budget(
@@ -134,30 +199,28 @@ def calibrate_importance_budget(
             hi = mid
 
     b_star = float(lo)
-    confirm = sample_r2_at_budget(
+    b_final, confirm, confirm_probes = confirm_with_fallback(
         bundle,
         x,
         y,
         sc_genes,
         weights,
-        b_star,
-        n_masks=confirm_n_masks,
+        confirmation_candidates(probes),
+        threshold=threshold,
+        retention_stat=retention_stat,
+        confirm_n_masks=confirm_n_masks,
         rng=rng,
         common_mod=common_mod,
         k1_ref=k1_ref,
     )
-    stat_final = retention_statistic(confirm, retention_stat)
-    probes.append(
-        {
-            "budget": b_star,
-            "phase": "confirm",
-            "stat": stat_final,
-            "ok": stat_final >= threshold,
-        }
-    )
+    probes.extend(confirm_probes)
+    if b_final is None:
+        # No positive budget survives confirmation: only a complete SC panel is accepted.
+        b_final, confirm = 0.0, base_samples
 
+    stat_final = retention_statistic(confirm, retention_stat)
     return BudgetResult(
-        importance_budget=b_star,
+        importance_budget=float(b_final),
         r2_reference=float(r2_reference),
         r2_threshold=threshold,
         r2_baseline_loo=r2_baseline,
@@ -166,4 +229,6 @@ def calibrate_importance_budget(
         meets_threshold=bool(stat_final >= threshold),
         n_sc_features=len(sc_genes),
         probes=probes,
+        budget_search=b_star,
+        n_confirm_rounds=len(confirm_probes),
     )

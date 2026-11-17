@@ -82,6 +82,12 @@ def build_robustness_config(
                 "r2_threshold": float(row["r2_threshold"]),
                 "r2_baseline_loo": float(row.get("r2_baseline_loo", row.get("r2_baseline_masks"))),
                 "importance_budget": float(row["importance_budget"]),
+                "budget_search": float(row["budget_search"])
+                if pd.notna(row.get("budget_search"))
+                else None,
+                "n_confirm_rounds": int(row["n_confirm_rounds"])
+                if pd.notna(row.get("n_confirm_rounds"))
+                else None,
                 "weights_file": wfile,
                 "meets_threshold": bool(row.get("meets_threshold", True)),
                 "median_at_budget": float(row["median_at_budget"])
@@ -129,7 +135,8 @@ def build_robustness_config(
         "n_done": n_done,
         "n_pending": len(eligible_mirs) - n_done,
         "safety": (
-            f"{retention_stat} R2(mask) >= {retention_ratio:.0%} * sc_r2_median; "
+            f"{retention_stat} R2(mask) >= {retention_ratio:.0%} * sc_r2_median on search "
+            "and on fresh confirmation masks (largest budget passing both); "
             "inference gate: sum(weight[g] for absent g) <= importance_budget"
         ),
         "targets": targets_out,

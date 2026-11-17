@@ -141,7 +141,11 @@ def _weights_dir() -> Path:
     packaged = C.FTTI / "models" / "ensemble" / ensemble_id / "weights"
     if packaged.is_dir() and any(packaged.glob("*.json")):
         return packaged
-    return repo["RESULTS"] / "ensemble" / ensemble_id / "weights"
+    nested = repo["RESULTS"] / "ensemble" / ensemble_id / "weights"
+    flat = repo["RESULTS"] / "ensemble" / "weights"
+    if not nested.is_dir() and flat.is_dir():
+        return flat
+    return nested
 
 
 def r2(y_true, y_pred) -> float:

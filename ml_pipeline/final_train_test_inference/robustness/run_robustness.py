@@ -31,7 +31,7 @@ os.environ.setdefault("TABPACK_ROOT", str(Path(_TABPACK).resolve()))
 
 import common as cm  # noqa: E402
 import robustness_paths as C  # noqa: E402
-from budget_calibrate import calibrate_importance_budget  # noqa: E402
+from budget_calibrate import calibrate_importance_budget, target_seed  # noqa: E402
 from config_builder import build_robustness_config, load_bootstrap_references  # noqa: E402
 from loo_importance import compute_loo_importance  # noqa: E402
 
@@ -146,7 +146,7 @@ def _process_one_target(
 
     y = split.y[target]
     k1_ref = test_splits.get("_k1_ref") if cohort == "K1" else None
-    seed = C.SEED + (hash(target) % 10_000)
+    seed = target_seed(C.SEED, target)
 
     def _loo_progress(done: int, total: int) -> None:
         if done == total or done % max(1, total // 10) == 0:
@@ -200,6 +200,8 @@ def _process_one_target(
         "r2_baseline_loo": r2_loo_base,
         "r2_baseline_masks": cal.r2_baseline_loo,
         "importance_budget": cal.importance_budget,
+        "budget_search": cal.budget_search,
+        "n_confirm_rounds": cal.n_confirm_rounds,
         "stat_at_budget": cal.stat_at_budget,
         "median_at_budget": cal.median_at_budget,
         "meets_threshold": cal.meets_threshold,
