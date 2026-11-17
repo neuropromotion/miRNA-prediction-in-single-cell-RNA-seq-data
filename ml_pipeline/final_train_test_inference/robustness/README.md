@@ -7,23 +7,18 @@ Roughly: **how important is each sc feature**, and **how much missing importance
 ## Algorithm 
 
 **Step 1 — feature importance (per miRNA)**  
-For each eligible miRNA we run **leave-one-out (LOO)** on the Optimal_K **eval** half of `data/sc_TEST`: zero out one sc gene at a time, predict, and measure how much R² drops. Those drops are turned into **normalized weights** (one weight per sc gene). So for each miRNA we get a table: **gene → importance**.
+for each eligible miRNA i, we run **leave-one-out (LOO)** the importance of each associated gene feature j (j = 1, ..., mᵢ) was estimated by individually setting that feature to zero while keeping all other features unchanged. The resulting change in predictive performance was calculated as the difference between the R² obtained using all genes and the R² obtained after masking gene j (ΔR²ⱼ = R²_all genes − R²_gene j masked). Feature importance weights were then calculated by normalizing the positive contributions across all associated genes: wᵢⱼ = max(0, ΔR²ⱼ) / sumₖ max(0, ΔR²ₖ).
 
-**Step 2 — calibrate an “importance budget”**  
-We need a single number per miRNA: the maximum allowed **sum of weights over genes that are absent** in a new sample.  
-To pick that number we simulate **random masks** (turn off several sc genes at once according to the weights), re-predict, and require that **median R² under masking** does not fall below a fixed fraction of the **reference** sc performance from test_metrics.
 
-**The reference and the threshold**  
-The reference is **`sc_r2_median`** for that miRNA from `test_metrics` (bootstrap summary on the eval half).  
-The **cutoff** we enforce during calibration is:
+**Step 2 — random joint masking**  
+for each miRNA, gene features were randomly shuffled and sequentially masked until the cumulative importance of the removed features reached the predefined importance budget Bᵢ. This procedure was repeated 200 times using independently randomized feature orders to obtain a distribution of masked-model performance.
+
+**Step 3 - budget calibration**  
+the maximum allowable importance budget Bᵢ was determined using binary search (bisection), identifying the largest budget for which the median masked-model R² remained at least 50% of the original test R² for that miRNA. The selected budget was then evaluated using 500 additional independently generated masks. If the confirmation median R² fell below the predefined threshold, the budget was recalibrated
 
 **median R² (masked) ≥ `retention_ratio` × `sc_r2_median`**
 
-By default **`retention_ratio` = 0.5**, i.e. **half** of that test median R². (This is the same “retention” idea as in older robustness versions.)
+**`retention_ratio` = 0.5**, i.e. **half** of that test median R². 
 
 We search for the **largest budget** (sum of weights we allow to be “spent” on absent genes) that still satisfies that inequality on the eval split; that becomes **`importance_budget`** in `robustness_config.json`.
-
-**Outputs**
-
-- **`results/robustness_config.json`** — per miRNA: `importance_budget`, pointer to the weight CSV, calibration metadata.
-- **`results/feature_weights/<mirna>.csv`** — gene-level weights used both for calibration and at inference.
+ 
